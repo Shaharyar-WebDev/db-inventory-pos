@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Models\Purchase;
+
+use App\Enums\TransactionType;
+use App\Models\Accounting\SupplierLedger;
+use App\Models\Inventory\InventoryLedger;
+use App\Models\Master\Product;
+use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class PurchaseItem extends Model
+{
+    protected $fillable = [
+        'purchase_id',
+        'product_id',
+        'qty',
+        'rate',
+        'total'
+    ];
+
+    public function purchase(): BelongsTo
+    {
+        return $this->belongsTo(Purchase::class);
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function ledger()
+    {
+        return $this->morphOne(InventoryLedger::class, 'source');
+    }
+
+    public function supplierLedger()
+    {
+        return $this->morphOne(SupplierLedger::class, 'source');
+    }
+
+    public static function booted()
+    {
+        static::saved(function ($item) {
+            $value = $item->qty * $item->rate;
+            $item->total = $value;
+            $item->saveQuietly();
+
+            // Inventory Ledger
+            InventoryLedger::updateOrCreate(
+                [
+                    'source_type' => self::class,
+                    'source_id' => $item->id,
+                ],
+                [
+                    'product_id' => $item->product_id,
+                    'unit_id' => $item->product?->unit_id,
+                    'qty' => $item->qty,
+                    'rate' => $item->rate,
+                    'value' => $value,
+                    'transaction_type' => TransactionType::PURCHASE->value,
+                    'remarks' => 'Purchase Saved',
+                ]
+            );
+
+            // Supplier Ledger
+            SupplierLedger::updateOrCreate(
+                [
+                    'source_type' => self::class,
+                    'source_id' => $item->id,
+                ],
+                [
+                    'supplier_id' => $item->purchase->supplier_id,
+                    'amount' => $value,
+                    'transaction_type' => TransactionType::PURCHASE->value,
+                    'remarks' => 'Purchase Saved',
+                ]
+            );
+        });
+
+        static::deleting(function ($item) {
+            if ($item->ledger || $item->supplierLedger) {
+                Notification::make('record_deletion_error')
+                    ->danger()
+                    ->title('Error While Deleting Record')
+                    ->body('Cannot delete item with linked ledger entries')
+                    ->send();
+
+                throw new Halt;
+            }
+        });
+    }
+}

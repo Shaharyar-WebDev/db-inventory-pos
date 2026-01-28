@@ -1,0 +1,137 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@source '../../../../app/Filament/Admin/**/*';
+@source '../../../../resources/views/filament/admin/**/*';
+
+.table-song-card img {
+    /* width: 100% !important; */
+    @apply !rounded-md;
+}
+
+.table-song-card {
+    @apply flex justify-center items-center m-2;
+}
+
+/* .fi-modal-close-overlay {
+    @apply backdrop-blur-sm;
+} */
+
+.icon-column {
+    @apply flex justify-center items-center;
+}
+
+.global-loading-indicator {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 8px;
+}
+
+@media (min-width: 768px) {
+    ::-webkit-scrollbar {
+        height: 5px;
+        width: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #e5e7eb
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #d1d5db
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #c9cbcd
+    }
+
+    .dark ::-webkit-scrollbar-track {
+        background: #101215
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+        background: #1f2126
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: #1a1d21
+    }
+
+    @supports (-moz-appearance: none) {
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db #e5e7eb;
+        }
+
+        .dark, .dark * {
+            scrollbar-color: #1f2126 #101215;
+        }
+    }
+}
+
+  /* wrapper */
+    .auth-theme-switcher {
+        @apply fixed top-0 z-50 flex w-full justify-end p-4;
+    }
+
+    .auth-theme-switcher__box {
+        @apply rounded-lg bg-gray-50 dark:bg-gray-950;
+    }
+
+    .theme-switcher {
+        @apply grid grid-flow-col gap-x-1;
+    }
+
+    /* base button */
+    .theme-btn {
+        @apply flex justify-center rounded-lg p-2 outline-none transition duration-75;
+        @apply hover:bg-gray-50 focus:bg-gray-50;
+        @apply dark:hover:bg-white/5 dark:focus:bg-white/5;
+    }
+
+    /* active state */
+    .theme-btn--active {
+        @apply bg-gray-50 text-primary-500;
+        @apply dark:bg-white/5 dark:text-primary-400;
+    }
+
+    /* inactive state */
+    .theme-btn--inactive {
+        @apply text-gray-400 hover:text-gray-500 focus:text-gray-500;
+        @apply dark:text-gray-500 dark:hover:text-gray-400 dark:focus:text-gray-400;
+    }
+
+    /* icon */
+    .theme-btn__icon {
+        @apply h-5 w-5;
+    }
+
+
+.bg-blob-img-outer {
+    @apply absolute inset-0 -z-10 overflow-hidden;
+}
+
+.bg-blob-img {
+    @apply w-full h-full object-cover;
+    background-image: var(--background-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+/* .fi-modal-window {
+  transition: none !important;
+} */
+
+.fi-modal-header,
+.fi-modal-heading,
+[data-slot="title"] {
+  cursor: move !important;
+}
+
+.fi-modal-header button,
+.fi-modal-header a,
+.fi-modal-header input {
+  cursor: pointer !important;
+}
