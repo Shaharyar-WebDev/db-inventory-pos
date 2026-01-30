@@ -16,10 +16,11 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class SupplierResource extends Resource
 {
+    use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Supplier::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -63,12 +64,4 @@ class SupplierResource extends Resource
         return parent::getEloquentQuery()->withBalances();
     }
 
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
 }

@@ -19,9 +19,9 @@ class Sale extends Model
 {
     use SoftDeletes, BelongsToOutlet, HasDocumentNumber;
 
-    protected static string $documentNumberColumn = 'sale_number';
+    public static string $documentNumberColumn = 'sale_number';
 
-    protected static string $documentNumberPrefix = 'SALE';
+    public static string $documentNumberPrefix = 'SALE';
 
     protected $fillable = [
         'sale_number',

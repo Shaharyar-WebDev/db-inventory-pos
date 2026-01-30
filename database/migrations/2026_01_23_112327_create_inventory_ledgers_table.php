@@ -19,6 +19,7 @@ return new class extends Migration
             $table->money('rate')->default(0);
             $table->money('value')->default(0);
             $table->morphs('source');
+            $table->morphs('reference');
             $table->string('transaction_type', 255)->nullable();
             $table->text('remarks');
             $table->belongsToOutlet();

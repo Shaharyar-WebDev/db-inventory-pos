@@ -39,7 +39,7 @@ class PurchasesTable
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordActions([
+            ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),

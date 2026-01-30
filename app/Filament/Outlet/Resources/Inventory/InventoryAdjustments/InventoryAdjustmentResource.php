@@ -2,24 +2,27 @@
 
 namespace App\Filament\Outlet\Resources\Inventory\InventoryAdjustments;
 
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\CreateInventoryAdjustment;
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\EditInventoryAdjustment;
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\ListInventoryAdjustments;
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\ViewInventoryAdjustment;
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas\InventoryAdjustmentForm;
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas\InventoryAdjustmentInfolist;
-use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Tables\InventoryAdjustmentsTable;
-use App\Models\Inventory\InventoryAdjustment;
 use BackedEnum;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Inventory\InventoryAdjustment;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\EditInventoryAdjustment;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\ViewInventoryAdjustment;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\ListInventoryAdjustments;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\CreateInventoryAdjustment;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas\InventoryAdjustmentForm;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Tables\InventoryAdjustmentsTable;
+use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas\InventoryAdjustmentInfolist;
 
 class InventoryAdjustmentResource extends Resource
 {
+    use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = InventoryAdjustment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -56,13 +59,5 @@ class InventoryAdjustmentResource extends Resource
             // 'view' => ViewInventoryAdjustment::route('/{record}'),
             'edit' => EditInventoryAdjustment::route('/{record}/edit'),
         ];
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }

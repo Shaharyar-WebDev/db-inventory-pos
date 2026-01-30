@@ -33,7 +33,7 @@ class CitiesTable
             ->filters([
                  TrashedFilter::make(),
             ])
-            ->recordActions([
+            ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                  DeleteAction::make(),

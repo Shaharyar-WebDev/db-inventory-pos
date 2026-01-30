@@ -9,7 +9,7 @@ use App\Models\Master\Customer;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Admin\Resources\Master\Customers\Pages\EditCustomer;
 use App\Filament\Admin\Resources\Master\Customers\Pages\ViewCustomer;
 use App\Filament\Admin\Resources\Master\Customers\Pages\ListCustomers;
@@ -20,6 +20,7 @@ use App\Filament\Admin\Resources\Master\Customers\Schemas\CustomerInfolist;
 
 class CustomerResource extends Resource
 {
+    use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Customer::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -63,11 +64,5 @@ class CustomerResource extends Resource
         return parent::getEloquentQuery()->withCustomerBalances();
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
+
 }

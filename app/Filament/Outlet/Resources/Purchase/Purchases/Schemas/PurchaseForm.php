@@ -122,7 +122,6 @@ class PurchaseForm
                             ->minValue(1)
                             ->step(1),
                         TextInput::make('rate')
-                            ->numeric()
                             ->required()
                             ->currency()
                             ->afterStateUpdatedJs(<<<'JS'

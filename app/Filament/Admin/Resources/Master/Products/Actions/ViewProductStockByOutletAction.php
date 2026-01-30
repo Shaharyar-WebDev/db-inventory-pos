@@ -23,7 +23,7 @@ class ViewProductStockByOutletAction
                             $stocks && $stocks->isNotEmpty() ? $stocks->map(function ($row) use ($record) {
                                 return TextEntry::make("outlet_{$row->outlet_id}")
                                     ->label($row->outlet->name)
-                                    ->state(number_format($row->stock, 2).' '.($record->unit?->symbol ?? ''))
+                                    ->state(number_format($row->stock, 2) . ' ' . ($record->unit?->symbol ?? ''))
                                     ->weight('bold')
                                     ->color(
                                         $row->stock <= 0
@@ -31,9 +31,15 @@ class ViewProductStockByOutletAction
                                             : ($row->stock < 10 ? 'warning' : 'success')
                                     );
                             })->toArray() :
-                            [TextEntry::make('no_stock')]
+                                [TextEntry::make('no_stock')]
                         ),
                 ];
-            });
+            })
+            ->extraModalFooterActions([
+                Action::make('refresh')
+                    ->action(function ($livewire) {
+                        $livewire->refresh();
+                    }),
+            ]);
     }
 }

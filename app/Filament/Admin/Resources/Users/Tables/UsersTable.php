@@ -2,13 +2,14 @@
 
 namespace App\Filament\Admin\Resources\Users\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class UsersTable
 {
@@ -17,47 +18,43 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->toggleable()
-                    ->searchable(),
+                    ->copyable(),
                 TextColumn::make('email')
                     ->label('Email address')
-                    ->toggleable()
-                    ->searchable(),
+                    ->copyable(),
                 // TextColumn::make('email_verified_at')
                 // ->dateTime()
                 // ->sortable(),
                 TextColumn::make('roles.name')
                     ->placeholder('---')
-                    ->toggleable()
                     ->badge(),
                 TextColumn::make('outlets.name')
                     ->placeholder('---')
-                    ->toggleable()
                     ->color('info')
                     ->badge(),
                 TextColumn::make('created_at')
-                    ->toggleable()
-                    ->date(app_date_time_format())
-                    ->sortable()
+                    ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->date(app_date_time_format())
-                    ->sortable()
-                    ->toggleable()
+                    ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
-            ->recordActions([
+            ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn($record) => $record->isSuperAdmin()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(Model $record): bool => !$record->isSuperAdmin(),
+            );
     }
 }

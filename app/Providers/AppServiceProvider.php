@@ -2,20 +2,22 @@
 
 namespace App\Providers;
 
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
+use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Select;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\ServiceProvider;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Enums\FiltersLayout;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
+use Filament\Support\Facades\FilamentAsset;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -86,7 +88,27 @@ class AppServiceProvider extends ServiceProvider
                 ->reorderableColumns()
                 ->defaultDateDisplayFormat(app_date_format())
                 ->defaultDateTimeDisplayFormat(app_date_time_format())
-                ->deferColumnManager(false);
+                ->deferColumnManager(false)
+                ->striped()
+                // ->filters([], layout: FiltersLayout::Modal)
+                // ->filtersTriggerAction(
+                //     fn(Action $action) => $action
+                //         ->slideOver() // This makes the filter panel a slide-over
+                // )
+                // ->recordActions([
+                //     ActionGroup::make([
+                //         ...$table->getRecordActions(),
+                //     ]),
+                // ]) Configured in vendor/filament/tables/src/Table/Concerns/HasRecordActions.php;
+            ;
+        });
+
+        Table::macro('groupedRecordActions', function (array $actions) {
+            return $this->recordActions([
+                ActionGroup::make([
+                    ...$actions,
+                ]),
+            ]);
         });
 
         Select::configureUsing(function (Select $select) {
@@ -98,7 +120,7 @@ class AppServiceProvider extends ServiceProvider
         ForceDeleteAction::configureUsing(function (ForceDeleteAction $action) {
             $action->action(function () use ($action): void {
                 try {
-                    $result = $action->process(static fn (Model $record): ?bool => $record->forceDelete());
+                    $result = $action->process(static fn(Model $record): ?bool => $record->forceDelete());
 
                     if (! $result) {
                         $action->failure();
@@ -133,7 +155,7 @@ class AppServiceProvider extends ServiceProvider
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->action(function () use ($action): void {
                 try {
-                    $result = $action->process(static fn (Model $record): ?bool => $record->delete());
+                    $result = $action->process(static fn(Model $record): ?bool => $record->delete());
 
                     if (! $result) {
                         $action->failure();
@@ -142,7 +164,6 @@ class AppServiceProvider extends ServiceProvider
                     }
 
                     $action->success();
-
                 } catch (\Throwable $e) {
 
                     $errorRef = strtoupper(Str::random(8));
@@ -159,7 +180,6 @@ class AppServiceProvider extends ServiceProvider
                         ->send();
 
                     $action->failure();
-
                 }
             });
         });
@@ -183,7 +203,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         FilamentAsset::registerCssVariables([
-            'background-image' => 'url('.asset('images/background/header.png').')',
+            'background-image' => 'url(' . asset('images/background/header.png') . ')',
         ]);
     }
 }

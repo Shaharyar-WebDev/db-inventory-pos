@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 255)->unique();
             $table->string('contact', 255)->nullable();
             $table->text('address')->nullable();
+            $table->money('opening_balance');
             $table->timestamps();
             $table->softDeletes();
         });

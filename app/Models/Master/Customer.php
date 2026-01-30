@@ -49,33 +49,23 @@ class Customer extends Model
 
     public static function booted()
     {
-        static::created(function ($customer) {
-            self::syncOpeningBalance($customer);
+        static::saved(function ($customer) {
+            // if ($customer->opening_balance == 0) {
+            //     return;
+            // }
+            CustomerLedger::updateOrCreate(
+                [
+                    'customer_id' => $customer->id,
+                    'source_type' => Customer::class,
+                    'source_id' => $customer->id,
+                    'transaction_type' => TransactionType::OPENING_BALANCE->value,
+                ],
+                [
+                    'amount' => $customer->opening_balance,
+                    'remarks' => 'Opening balance synced',
+                    'outlet_id' => null,
+                ]
+            );
         });
-
-        static::updated(function ($customer) {
-            self::syncOpeningBalance($customer);
-        });
-    }
-
-    private static function syncOpeningBalance(Customer $customer)
-    {
-        if ($customer->opening_balance == 0) {
-            return;
-        }
-
-        CustomerLedger::updateOrCreate(
-            [
-                'customer_id' => $customer->id,
-                'source_type' => Customer::class,
-                'source_id' => $customer->id,
-                'transaction_type' => TransactionType::OPENING_BALANCE->value,
-            ],
-            [
-                'amount' => $customer->opening_balance,
-                'remarks' => 'Opening balance synced',
-                'outlet_id' => null,
-            ]
-        );
     }
 }

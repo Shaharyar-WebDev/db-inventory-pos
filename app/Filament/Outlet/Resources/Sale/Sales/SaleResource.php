@@ -9,7 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\EditSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ViewSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ListSales;
@@ -20,6 +20,8 @@ use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleInfolist;
 
 class SaleResource extends Resource
 {
+    use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Sale::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -58,11 +60,5 @@ class SaleResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
+
 }

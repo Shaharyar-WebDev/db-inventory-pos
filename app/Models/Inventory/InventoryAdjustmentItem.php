@@ -43,6 +43,8 @@ class InventoryAdjustmentItem extends Model
                     'source_id'   => $item->id,
                 ],
                 [
+                    'reference_type' => InventoryAdjustment::class,
+                    'reference_id'   =>  $item->inventory_adjustment_id,
                     'product_id'       => $item->product_id,
                     'unit_id'          => $item->product->unit_id,
                     'qty'              => $item->qty,

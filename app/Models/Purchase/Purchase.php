@@ -21,9 +21,9 @@ class Purchase extends Model
         'grand_total'
     ];
 
-    protected static string $documentNumberColumn = 'purchase_number';
+    public static string $documentNumberColumn = 'purchase_number';
 
-    protected static string $documentNumberPrefix = 'PO';
+    public static string $documentNumberPrefix = 'PO';
 
     public function items(): HasMany
     {

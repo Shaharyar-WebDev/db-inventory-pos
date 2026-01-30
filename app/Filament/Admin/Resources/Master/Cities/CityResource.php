@@ -9,7 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Admin\Resources\Master\Cities\Pages\EditCity;
 use App\Filament\Admin\Resources\Master\Cities\Pages\ViewCity;
 use App\Filament\Admin\Resources\Master\Cities\Pages\CreateCity;
@@ -20,6 +20,7 @@ use App\Filament\Admin\Resources\Master\Cities\Schemas\CityInfolist;
 
 class CityResource extends Resource
 {
+    use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = City::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -59,11 +60,5 @@ class CityResource extends Resource
     }
 
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
+
 }

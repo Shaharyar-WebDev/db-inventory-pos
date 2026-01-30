@@ -24,8 +24,12 @@ class SuppliersTable
                 TextColumn::make('contact')
                     ->disableNumericFormatting()
                     ->copyable(),
+                TextColumn::make('opening_balance')
+                    ->currency()
+                    ->copyable(),
                 TextColumn::make('current_balance')
                     ->currency()
+                    ->searchable(false)
                     ->copyable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -37,7 +41,7 @@ class SuppliersTable
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordActions([
+            ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),

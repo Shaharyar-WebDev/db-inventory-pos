@@ -17,8 +17,9 @@ class InventoryAdjustment extends Model
         'description',
     ];
 
-    protected static string $documentNumberColumn = 'adjustment_number';
-    protected static string $documentNumberPrefix = 'ADJ';
+    public static string $documentNumberColumn = 'adjustment_number';
+
+    public static string $documentNumberPrefix = 'ADJ';
 
     public function items()
     {

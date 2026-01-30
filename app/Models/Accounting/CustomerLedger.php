@@ -32,4 +32,10 @@ class CustomerLedger extends Model
     {
         return $this->morphTo();
     }
+
+    public static function getBalanceForCustomerId(int $customerId): float
+    {
+        return CustomerLedger::where('customer_id', $customerId)
+            ->sum('amount');
+    }
 }

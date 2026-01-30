@@ -35,6 +35,7 @@ class CustomersTable
                     ->copyable(),
                 TextColumn::make('current_balance')
                     ->currency()
+                    ->searchable(false)
                     ->copyable(),
                 TextColumn::make('address')
                     ->limit(30)
@@ -52,7 +53,7 @@ class CustomersTable
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordActions([
+            ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),

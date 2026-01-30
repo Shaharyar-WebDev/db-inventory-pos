@@ -2,21 +2,23 @@
 
 namespace App\Filament\Admin\Resources\Master\Products\Tables;
 
-use App\Filament\Admin\Resources\Master\Products\Actions\ViewProductStockByOutletAction;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Maatwebsite\Excel\Facades\Excel;
+use Filament\Actions\BulkActionGroup;
+use App\Exports\InventoryLedgerExport;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Admin\Resources\Master\Products\Actions\ViewProductStockByOutletAction;
 
 class ProductsTable
 {
@@ -50,7 +52,7 @@ class ProductsTable
                 TextColumn::make('current_stock')
                     ->default(0)
                     ->searchable(false)
-                    ->suffix(fn ($record) => ' '.($record->unit?->symbol ?? ''))
+                    ->suffix(fn($record) => ' ' . ($record->unit?->symbol ?? ''))
                     ->action(
                         ViewProductStockByOutletAction::make()
                     )
@@ -68,20 +70,14 @@ class ProductsTable
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordActions([
-                ActionGroup::make([
-                    EditAction::make(),
-                    ViewProductStockByOutletAction::make()
-                        ->icon('heroicon-o-eye')
-                        ->color('warning'),
-                    // Action::make('export_ledger')
-                    // ->action(function($record){
-                    //     return Excel::download(new InventoryLedgerExport($record->id), 'inventory_ledger_'.$record->code.'.xlsx');
-                    // })
-                    DeleteAction::make(),
-                    RestoreAction::make(),
-                    ForceDeleteAction::make(),
-                ]),
+            ->groupedRecordActions([
+                EditAction::make(),
+                ViewProductStockByOutletAction::make()
+                    ->icon('heroicon-o-eye')
+                    ->color('warning'),
+                DeleteAction::make(),
+                RestoreAction::make(),
+                ForceDeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

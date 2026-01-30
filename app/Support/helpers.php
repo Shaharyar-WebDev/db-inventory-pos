@@ -10,6 +10,13 @@ if (! function_exists('app_currency_symbol')) {
     }
 }
 
+if (! function_exists('currency_format')) {
+    function currency_format($value)
+    {
+        return app_currency_symbol() . number_format($value, 2);
+    }
+}
+
 if (! function_exists('app_date_format')) {
     function app_date_format()
     {
@@ -39,9 +46,8 @@ if (! function_exists('generateDocumentNumber')) {
         $sequencePart = str_pad($nextId, 3, '0', STR_PAD_LEFT);
 
         // Combine and return
-        return strtoupper($prefix).'-'.$datePart.'-'.$sequencePart;
+        return strtoupper($prefix) . '-' . $datePart . '-' . $sequencePart;
     }
-
 }
 
 if (! function_exists('default_number_format')) {
@@ -50,6 +56,3 @@ if (! function_exists('default_number_format')) {
         return number_format($value);
     }
 }
-
-
-

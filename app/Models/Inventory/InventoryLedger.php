@@ -21,7 +21,9 @@ class InventoryLedger extends Model
         'source_type',
         'reference_id',
         'reference_type',
-        'remarks'
+        'transaction_type',
+        'remarks',
+        'outlet_id'
     ];
 
     public function product()
@@ -35,6 +37,11 @@ class InventoryLedger extends Model
     }
 
     public function source()
+    {
+        return $this->morphTo();
+    }
+
+    public function reference()
     {
         return $this->morphTo();
     }

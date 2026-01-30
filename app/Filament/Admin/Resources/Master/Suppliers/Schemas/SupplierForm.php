@@ -24,6 +24,15 @@ class SupplierForm
                             ->nullable()
                             ->tel()
                             ->default(null),
+                        TextInput::make('opening_balance')
+                            ->numeric()
+                            ->columnSpanFull()
+                            ->default(0)
+                            ->required()
+                            ->hintIcon(
+                                'heroicon-m-question-mark-circle',
+                                tooltip: 'Enter 0 if there is no opening balance'
+                            ),
                         Textarea::make('address')
                             ->nullable()
                             ->default(null)

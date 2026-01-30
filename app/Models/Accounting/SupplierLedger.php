@@ -22,7 +22,7 @@ class SupplierLedger extends Model
         'outlet_id'
     ];
 
-    public function customer(): BelongsTo
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
@@ -30,5 +30,11 @@ class SupplierLedger extends Model
     public function source(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public static function getBalanceForSupplierId(int $supplierId): float
+    {
+        return SupplierLedger::where('supplier_id', $supplierId)
+            ->sum('amount');
     }
 }

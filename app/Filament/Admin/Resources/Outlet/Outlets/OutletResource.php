@@ -9,7 +9,7 @@ use App\Models\Outlet\Outlet;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Admin\Resources\Outlet\Outlets\Pages\EditOutlet;
 use App\Filament\Admin\Resources\Outlet\Outlets\Pages\ViewOutlet;
 use App\Filament\Admin\Resources\Outlet\Outlets\Pages\ListOutlets;
@@ -21,6 +21,7 @@ use App\Filament\Admin\Resources\Outlet\Outlets\RelationManagers\UsersRelationMa
 
 class OutletResource extends Resource
 {
+    use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Outlet::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -59,11 +60,5 @@ class OutletResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
+
 }

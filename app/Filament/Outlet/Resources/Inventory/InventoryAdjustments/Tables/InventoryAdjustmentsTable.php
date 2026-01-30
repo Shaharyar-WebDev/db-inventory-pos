@@ -26,13 +26,11 @@ class InventoryAdjustmentsTable
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordActions([
+            ->groupedRecordActions([
                 // ViewAction::make(),
-                ActionGroup::make([
-                    EditAction::make(),
-                    DeleteAction::make(),
-                    ForceDeleteAction::make(),
-                ]),
+                EditAction::make(),
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
