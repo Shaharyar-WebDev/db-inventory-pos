@@ -136,3 +136,7 @@
   cursor: pointer !important;
 }
 
+
+img.fi-logo {
+    @apply w-32 !h-16;
+}

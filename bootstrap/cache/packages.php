@@ -80,6 +80,13 @@
       0 => 'Filament\\Schemas\\SchemasServiceProvider',
     ),
   ),
+  'filament/spatie-laravel-settings-plugin' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Filament\\SpatieLaravelSettingsPluginServiceProvider',
+    ),
+  ),
   'filament/support' => 
   array (
     'providers' => 
@@ -188,6 +195,13 @@
     'providers' => 
     array (
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
+    ),
+  ),
+  'spatie/laravel-settings' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelSettings\\LaravelSettingsServiceProvider',
     ),
   ),
 );

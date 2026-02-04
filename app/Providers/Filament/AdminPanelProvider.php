@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return PanelConfiguration::apply($panel)
+        return PanelConfiguration::make($panel)
             ->id(PanelId::ADMIN->id())
             ->path(PanelId::ADMIN->path())
             ->login(Login::class)

@@ -26,7 +26,7 @@ class OutletPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return PanelConfiguration::apply($panel)
+        return PanelConfiguration::make($panel)
             ->id(PanelId::OUTLET->id())
             ->path(PanelId::OUTLET->path())
             ->login(Login::class)
@@ -39,8 +39,7 @@ class OutletPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Outlet/Widgets'), for: 'App\Filament\Outlet\Widgets')
-            ->widgets([
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -52,10 +51,8 @@ class OutletPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->plugins([
-            ])
-            ->tenantMiddleware([
-            ], isPersistent: true)
+            ->plugins([])
+            ->tenantMiddleware([], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
             ]);
