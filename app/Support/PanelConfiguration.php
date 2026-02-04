@@ -18,7 +18,7 @@ class PanelConfiguration
             ->font('Space Grotesk', provider: GoogleFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->profile()
-            // ->spa()
+            ->spa()
             ->databaseTransactions()
             ->simplePageMaxContentWidth(Width::Medium)
             ->globalSearch(false)

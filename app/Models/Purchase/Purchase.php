@@ -3,15 +3,20 @@
 namespace App\Models\Purchase;
 
 use App\BelongsToOutlet;
+use App\Enums\TransactionType;
 use App\Models\Master\Supplier;
-use App\Models\Traits\HasDocumentNumber;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Traits\HasDocumentNumber;
+use Filament\Notifications\Notification;
+use App\Models\Accounting\SupplierLedger;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Purchase extends Model
 {
-    use BelongsToOutlet, HasDocumentNumber, SoftDeletes;
+    use BelongsToOutlet, HasDocumentNumber, SoftDeletes, ResolvesDocumentNumber;
 
     protected $fillable = [
         'purchase_number',
@@ -35,12 +40,39 @@ class Purchase extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    public static function booted(){
-        static::saved(function($purchase){
-            $total = $purchase->items
-            ->sum(fn ($item) => ($item['qty'] ?? 0) * ($item['rate'] ?? 0));
+    public static function booted()
+    {
+        static::saved(function ($purchase) {
+
+            $total = $purchase->items->sum('total');
             $purchase->grand_total = $total;
             $purchase->saveQuietly();
+
+            // Supplier Ledger
+            SupplierLedger::updateOrCreate(
+                [
+                    'source_type' => self::class,
+                    'source_id' => $purchase->id,
+                ],
+                [
+                    'supplier_id' => $purchase->supplier_id,
+                    'amount' => $purchase->grand_total,
+                    'transaction_type' => class_basename(Purchase::class),
+                    'remarks' => 'Purchase Saved',
+                ]
+            );
+        });
+
+        static::deleting(function ($item) {
+            if ($item->ledger || $item->supplierLedger) {
+                Notification::make('record_deletion_error')
+                    ->danger()
+                    ->title('Error While Deleting Record')
+                    ->body('Cannot delete item with linked ledger entries')
+                    ->send();
+
+                throw new Halt();
+            }
         });
     }
 }

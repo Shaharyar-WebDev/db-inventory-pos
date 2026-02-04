@@ -84,8 +84,8 @@ class ProductForm
                                     ->searchable()
                                     ->columnSpanFull()
                                     ->preload()
-                                    // ->required()
-                                    ,
+                                // ->required()
+                                ,
                             ]),
                     ]),
                 Group::make()
@@ -98,19 +98,19 @@ class ProductForm
                                 Textarea::make('description')
                                     ->default(null)
                                     ->columnSpanFull(),
-                                FileUpload::make('attachments')
-                                    ->label('Attachments')
-                                    ->multiple()
-                                    ->directory('attachments/products')
-                                    ->disk('public')
-                                    ->visibility('public')
-                                    ->deleteUploadedFileUsing(function ($file) {
-                                        Storage::disk('public')->delete($file);
-                                    })
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->columnSpanFull()
-                                    ->openable(),
+                                // FileUpload::make('attachments')
+                                //     ->label('Attachments')
+                                //     ->multiple()
+                                //     ->directory('attachments/products')
+                                //     ->disk('public')
+                                //     ->visibility('public')
+                                //     ->deleteUploadedFileUsing(function ($file) {
+                                //         Storage::disk('public')->delete($file);
+                                //     })
+                                //     ->nullable()
+                                //     ->downloadable()
+                                //     ->columnSpanFull()
+                                //     ->openable(),
                             ]),
                         Section::make()
                             ->columnSpan(1)
@@ -130,23 +130,23 @@ class ProductForm
                                     ->downloadable()
                                     ->columnSpanFull()
                                     ->openable(),
-                                FileUpload::make('additional_images')
-                                    ->label('Additional Images')
-                                    ->multiple()
-                                    ->reorderable()
-                                    ->removeUploadedFileButtonPosition('right')
-                                    ->directory('images/products/additional-images')
-                                    ->disk('public')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->visibility('public')
-                                    ->deleteUploadedFileUsing(function ($file) {
-                                        Storage::disk('public')->delete($file);
-                                    })
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->columnSpanFull()
-                                    ->openable(),
+                            //     FileUpload::make('additional_images')
+                            //         ->label('Additional Images')
+                            //         ->multiple()
+                            //         ->reorderable()
+                            //         ->removeUploadedFileButtonPosition('right')
+                            //         ->directory('images/products/additional-images')
+                            //         ->disk('public')
+                            //         ->image()
+                            //         ->imageEditor()
+                            //         ->visibility('public')
+                            //         ->deleteUploadedFileUsing(function ($file) {
+                            //             Storage::disk('public')->delete($file);
+                            //         })
+                            //         ->nullable()
+                            //         ->downloadable()
+                            //         ->columnSpanFull()
+                            //         ->openable(),
                             ]),
                     ]),
             ]);

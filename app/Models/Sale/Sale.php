@@ -10,14 +10,14 @@ use App\Models\Master\Customer;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Accounting\CustomerLedger;
-use App\Models\Accounting\SupplierLedger;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Sale extends Model
 {
-    use SoftDeletes, BelongsToOutlet, HasDocumentNumber;
+    use SoftDeletes, BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
 
     public static string $documentNumberColumn = 'sale_number';
 
@@ -58,7 +58,7 @@ class Sale extends Model
     {
         static::saved(function ($sale) {
             $total = $sale->items->sum('total');
-            $grandTotal = $sale->items->sum('total');
+            $grandTotal = $total;
 
             if ($sale->discount_type === DiscountType::PERCENT->value) {
                 $grandTotal -= ($grandTotal * $sale->discount_value / 100);

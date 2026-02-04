@@ -2,24 +2,29 @@
 
 namespace App\Models\Inventory;
 
+use Exception;
 use App\Enums\TransactionType;
 use App\Models\Master\Product;
-use Exception;
-use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use App\Models\Traits\ResolvesDocumentNumber;
 
 class InventoryAdjustmentItem extends Model
 {
+    use ResolvesDocumentNumber;
+
     protected $fillable = [
         'inventory_adjustment_id',
         'product_id',
         'qty',
     ];
 
+    public static $parentRelation = 'adjustment';
+
     public function adjustment()
     {
-        return $this->belongsTo(InventoryAdjustment::class);
+        return $this->belongsTo(InventoryAdjustment::class, 'inventory_adjustment_id');
     }
 
     public function product()

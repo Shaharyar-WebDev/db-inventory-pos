@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('supplier_ledgers', function (Blueprint $table) {
+        Schema::create('deposits', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained()->restrictOnDelete();
-            $table->money('amount')->default(0);
-            $table->morphs('source');
-            // $table->morphs('reference');
-            $table->string('transaction_type', 255)->nullable();
+            $table->string('deposit_number', 255)->unique();
+            $table->foreignId('account_id')->constrained()->restrictOnDelete();
+            $table->money('amount'); // uses Blueprint::macro('money') from AppServiceProvider
             $table->text('remarks')->nullable();
-            $table->belongsToOutlet();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('supplier_ledgers');
+        Schema::dropIfExists('deposits');
     }
 };

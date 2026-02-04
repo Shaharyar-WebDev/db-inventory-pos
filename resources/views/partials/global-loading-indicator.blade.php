@@ -7,7 +7,7 @@
         </div>
         <x-filament::loading-indicator class="h-5 w-5" />
     </div>
-    <script>
+    <script type="module">
         document.addEventListener('alpine:init', () => Alpine.store('isLoading', {
             value: false,
             delayTimer: null,

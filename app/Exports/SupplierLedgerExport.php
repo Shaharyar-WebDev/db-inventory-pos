@@ -3,29 +3,28 @@
 namespace App\Exports;
 
 use Carbon\Carbon;
-use App\Models\Inventory\InventoryLedger;
+use App\Models\Accounting\SupplierLedger;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
+class SupplierLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
     protected float $runningBalance = 0;
 
     public function __construct(
-        protected int $productId,
+        protected int $supplierId,
         protected ?int $outletId = null,
     ) {}
 
     public function collection()
     {
-        return InventoryLedger::with([
-            'product',
-            'unit',
+        return SupplierLedger::with([
+            'supplier',
             'source',
         ])
-            ->where('product_id', $this->productId)
+            ->where('supplier_id', $this->supplierId)
             ->when($this->outletId, function ($q) {
                 return $q->where('outlet_id', $this->outletId);
             })
@@ -36,47 +35,39 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'Product',
-            'Unit',
-            'In',
-            'Out',
+            'Supplier',
+            'Debit',
+            'Credit',
             'Balance',
-            'Rate',
-            'Value',
             'Transaction Type',
-            // 'Reference',
             'Source',
             'Remarks',
             'Outlet',
             'Created',
-            'Updated'
+            'Updated',
         ];
     }
+
     public function map($ledger): array
     {
-        $in  = $ledger->qty > 0 ? $ledger->qty : null;
-        $out = $ledger->qty < 0 ? abs($ledger->qty) : null;
+        $debit  = $ledger->amount > 0 ? $ledger->amount : null;
+        $credit = $ledger->amount < 0 ? abs($ledger->amount) : null;
 
-        $this->runningBalance += $ledger->qty;
+        $this->runningBalance += $ledger->amount;
 
         return [
-            $ledger->product?->name,
-            $ledger->unit?->name,
-            $in ?: 0,
-            $out ?: 0,
+            $ledger->supplier?->name,
+            $debit ?: 0,
+            $credit ?: 0,
             $this->runningBalance,
-            $ledger->rate,
-            $ledger->value,
             $ledger->transaction_type,
-            // $ledger->reference?->{$ledger->reference::$documentNumberColumn},
-            // class_basename($ledger->source_type) . ' #' . $ledger->source_id,
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',
             $ledger->remarks,
-            $ledger->outlet->name,
+            $ledger->outlet?->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
-            Carbon::parse($ledger->updated)->format(app_date_time_format()),
+            Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
         ];
     }
 }

@@ -4,17 +4,22 @@ namespace App\Models\Inventory;
 
 use App\Enums\TransactionType;
 use App\Models\Master\Product;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 
 class StockTransferItem extends Model
 {
+    use ResolvesDocumentNumber;
+
     protected $fillable = [
         'stock_transfer_id',
         'product_id',
         'qty',
     ];
+
+    public static $parentRelation = 'stockTransfer';
 
     public function stockTransfer()
     {

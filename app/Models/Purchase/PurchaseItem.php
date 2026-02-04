@@ -3,16 +3,19 @@
 namespace App\Models\Purchase;
 
 use App\Enums\TransactionType;
-use App\Models\Accounting\SupplierLedger;
-use App\Models\Inventory\InventoryLedger;
 use App\Models\Master\Product;
-use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use App\Models\Accounting\SupplierLedger;
+use App\Models\Inventory\InventoryLedger;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchaseItem extends Model
 {
+    use ResolvesDocumentNumber;
+
     protected $fillable = [
         'purchase_id',
         'product_id',
@@ -20,6 +23,8 @@ class PurchaseItem extends Model
         'rate',
         'total'
     ];
+
+    public static $parentRelation = 'purchase';
 
     public function purchase(): BelongsTo
     {
@@ -44,11 +49,6 @@ class PurchaseItem extends Model
     public static function booted()
     {
         static::saved(function ($item) {
-            $value = $item->qty * $item->rate;
-            $item->total = $value;
-            $item->saveQuietly();
-
-            // Inventory Ledger
             InventoryLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
@@ -61,25 +61,17 @@ class PurchaseItem extends Model
                     'unit_id' => $item->product?->unit_id,
                     'qty' => $item->qty,
                     'rate' => $item->rate,
-                    'value' => $value,
+                    'value' => $item->total,
                     'transaction_type' => TransactionType::PURCHASE->value,
                     'remarks' => 'Purchase Saved',
                 ]
             );
+        });
 
-            // Supplier Ledger
-            SupplierLedger::updateOrCreate(
-                [
-                    'source_type' => self::class,
-                    'source_id' => $item->id,
-                ],
-                [
-                    'supplier_id' => $item->purchase->supplier_id,
-                    'amount' => $value,
-                    'transaction_type' => TransactionType::PURCHASE->value,
-                    'remarks' => 'Purchase Saved',
-                ]
-            );
+        static::saving(function ($item) {
+            $value = $item->qty * $item->rate;
+            $item->total = $value;
+            $item->saveQuietly();
         });
 
         static::deleting(function ($item) {

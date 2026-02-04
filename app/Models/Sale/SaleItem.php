@@ -11,10 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use App\Models\Accounting\SupplierLedger;
 use App\Models\Inventory\InventoryLedger;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaleItem extends Model
 {
+    use ResolvesDocumentNumber;
+
     protected $fillable = [
         'sale_id',
         'product_id',
@@ -24,6 +27,8 @@ class SaleItem extends Model
         'discount_value',
         'total'
     ];
+
+    public static $parentRelation = 'sale';
 
     public function sale(): BelongsTo
     {

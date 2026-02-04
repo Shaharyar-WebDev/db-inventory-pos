@@ -19,8 +19,8 @@ class InventoryLedger extends Model
         'value',
         'source_id',
         'source_type',
-        'reference_id',
-        'reference_type',
+        // 'reference_id',
+        // 'reference_type',
         'transaction_type',
         'remarks',
         'outlet_id'

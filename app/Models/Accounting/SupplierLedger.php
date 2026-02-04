@@ -4,6 +4,7 @@ namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
 use App\Models\Master\Supplier;
+use App\Models\Scopes\OutletScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,8 @@ class SupplierLedger extends Model
         'amount',
         'source_id',
         'source_type',
+        'reference_id',
+        'reference_type',
         'transaction_type',
         'remarks',
         'outlet_id'
@@ -32,9 +35,14 @@ class SupplierLedger extends Model
         return $this->morphTo();
     }
 
+    public function reference()
+    {
+        return $this->morphTo();
+    }
+
     public static function getBalanceForSupplierId(int $supplierId): float
     {
-        return SupplierLedger::where('supplier_id', $supplierId)
+        return SupplierLedger::withoutGlobalScope(OutletScope::class)->where('supplier_id', $supplierId)
             ->sum('amount');
     }
 }

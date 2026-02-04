@@ -2,9 +2,10 @@
 
 namespace App\Models\Master;
 
-use App\Models\Inventory\InventoryLedger;
+use App\Models\Outlet\Outlet;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Inventory\InventoryLedger;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -72,7 +73,7 @@ class Product extends Model
         $outletId = $outletId ?? Filament::getTenant()?->id;
 
         return $query->withSum([
-            'ledgers as current_outlet_stock' => fn ($q) => $q->where('outlet_id', $outletId),
+            'ledgers as current_outlet_stock' => fn($q) => $q->where('outlet_id', $outletId),
         ], 'qty');
     }
 
