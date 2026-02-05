@@ -19,6 +19,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Actions\ForceDeleteBulkAction;
 
@@ -28,6 +29,12 @@ class CustomersTable
     {
         return $table
             ->columns([
+                ImageColumn::make('photo')
+                    ->circular()
+                    ->imageSize(50)
+                    ->placeholder('---')
+                    ->disk('public')
+                    ->visibility('public'),
                 TextColumn::make('name')
                     ->copyable(),
                 TextColumn::make('contact')
