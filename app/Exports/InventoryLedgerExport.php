@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
     protected float $runningBalance = 0;
+    protected float $runningValuation = 0;
 
     public function __construct(
         protected int $productId,
@@ -43,6 +44,7 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             'Balance',
             'Rate',
             'Value',
+            'Valuation',
             'Transaction Type',
             // 'Reference',
             'Source',
@@ -52,12 +54,14 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             'Updated'
         ];
     }
+
     public function map($ledger): array
     {
         $in  = $ledger->qty > 0 ? $ledger->qty : null;
         $out = $ledger->qty < 0 ? abs($ledger->qty) : null;
 
         $this->runningBalance += $ledger->qty;
+        $this->runningValuation +=  $ledger->value;
 
         return [
             $ledger->product?->name,
@@ -67,6 +71,7 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             $this->runningBalance,
             $ledger->rate,
             $ledger->value,
+            $this->runningValuation,
             $ledger->transaction_type,
             // $ledger->reference?->{$ledger->reference::$documentNumberColumn},
             // class_basename($ledger->source_type) . ' #' . $ledger->source_id,
