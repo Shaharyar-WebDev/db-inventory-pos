@@ -27,7 +27,7 @@ class PurchaseForm
         return $schema
             ->components([
                 Hidden::make('products')
-                    ->default(fn () => $productsKeyedArray)
+                    ->default(fn() => $productsKeyedArray)
                     ->dehydrated(false),
                 Group::make()
                     ->columnSpanFull()
@@ -119,7 +119,7 @@ class PurchaseForm
                                 $set('../../grand_total', grandTotal);
                             JS)
                             ->default(0)
-                            ->minValue(1)
+                            ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
                             ->step(1),
                         TextInput::make('rate')
                             ->required()
@@ -138,7 +138,7 @@ class PurchaseForm
                                 $set('../../grand_total', grandTotal);
                             JS)
                             ->minValue(1)
-                            ->step(1),
+                            ->step(0.01),
                         TextInput::make('total')
                             ->numeric()
                             ->disabled()
