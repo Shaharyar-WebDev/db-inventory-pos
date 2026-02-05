@@ -16,6 +16,7 @@ class Customer extends Model
         'name',
         'city_id',
         'area_id',
+        'photo',
         'address',
         'contact',
         'opening_balance',
