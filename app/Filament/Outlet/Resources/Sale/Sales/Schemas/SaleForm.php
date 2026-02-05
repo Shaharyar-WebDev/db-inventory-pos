@@ -221,7 +221,7 @@ class SaleForm
                             ->currency()
                             ->afterStateUpdatedJs(self::calculateTotals())
                             ->minValue(1)
-                            ->step(1),
+                            ->step(0.01),
                         Select::make('discount_type')
                             ->options(options: [
                                 DiscountType::FIXED->value => ucfirst(DiscountType::FIXED->value),
