@@ -16,6 +16,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\Repeater\TableColumn;
+use App\Filament\Admin\Resources\Master\Customers\Schemas\CustomerForm;
 
 class SaleForm
 {
@@ -40,6 +41,7 @@ class SaleForm
                     ->schema([
                         Select::make('customer_id')
                             ->relationship('customer', 'name')
+                            ->manageOptionForm(CustomerForm::configure($schema)->getComponents())
                             ->columnSpanFull()
                             ->required(),
                     ]),
