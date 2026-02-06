@@ -42,11 +42,11 @@ class DatabaseSeeder extends Seeder
         $user->assignRole($superAdminRole);
 
         $this->call([
-            // OutletSeeder::class,
-            // BrandSeeder::class,
-            // CategorySeeder::class,
-            // UnitSeeder::class,
-            // ProductSeeder::class,
+            OutletSeeder::class,
+            BrandSeeder::class,
+            CategorySeeder::class,
+            UnitSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }

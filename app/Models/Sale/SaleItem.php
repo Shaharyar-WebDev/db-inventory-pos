@@ -22,6 +22,7 @@ class SaleItem extends Model
         'sale_id',
         'product_id',
         'qty',
+        'cost',
         'rate',
         'discount_type',
         'discount_value',
@@ -46,6 +47,10 @@ class SaleItem extends Model
             $qty   = $item->qty;
             $rate  = $item->rate;
 
+            $avgRate = InventoryLedger::where('product_id', $item->product_id)
+                ->selectRaw('SUM(value) / NULLIF(SUM(qty), 0) as avg_rate')
+                ->value('avg_rate') ?? 0;
+
             $total = $qty * $rate;
 
             if ($item->discount_type === DiscountType::PERCENT->value) {
@@ -56,10 +61,13 @@ class SaleItem extends Model
                 $total -= $item->discount_value;
             }
 
+            $item->cost = $avgRate;
+
             $item->total =  $total;
         });
 
         static::saved(function ($item) {
+            $avgRate = $item->cost;
             InventoryLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
@@ -71,8 +79,8 @@ class SaleItem extends Model
                     'product_id'       => $item->product_id,
                     'unit_id'          => $item->product->unit_id,
                     'qty'              => -$item->qty,
-                    'rate'             => $item->rate,
-                    'value'            => -$item->total,
+                    'rate'             => $avgRate,
+                    'value'            => -$avgRate * $item->qty,
                     'transaction_type' => TransactionType::SALE->value,
                     'remarks'          => 'Sale Saved',
                 ]

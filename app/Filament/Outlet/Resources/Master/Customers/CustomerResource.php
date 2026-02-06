@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\Master\Customers;
+namespace App\Filament\Outlet\Resources\Master\Customers;
 
 use BackedEnum;
 use Filament\Tables\Table;
@@ -9,20 +9,24 @@ use App\Models\Master\Customer;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
-use App\Filament\Admin\Resources\Master\Customers\Pages\EditCustomer;
-use App\Filament\Admin\Resources\Master\Customers\Pages\ViewCustomer;
-use App\Filament\Admin\Resources\Master\Customers\Pages\ListCustomers;
-use App\Filament\Admin\Resources\Master\Customers\Pages\CreateCustomer;
-use App\Filament\Admin\Resources\Master\Customers\Schemas\CustomerForm;
-use App\Filament\Admin\Resources\Master\Customers\Tables\CustomersTable;
-use App\Filament\Admin\Resources\Master\Customers\Schemas\CustomerInfolist;
+use App\Filament\Outlet\Resources\Master\Customers\Pages\EditCustomer;
+use App\Filament\Outlet\Resources\Master\Customers\Pages\ViewCustomer;
+use App\Filament\Outlet\Resources\Master\Customers\Pages\ListCustomers;
+use App\Filament\Outlet\Resources\Master\Customers\Pages\CreateCustomer;
+use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
+use App\Filament\Outlet\Resources\Master\Customers\Tables\CustomersTable;
+use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerInfolist;
 use App\Filament\Admin\Resources\Master\Customers\RelationManagers\ProductRatesRelationManager;
 
 class CustomerResource extends Resource
 {
     use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Customer::class;
+
+    protected static bool $isScopedToTenant = false;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -64,6 +68,4 @@ class CustomerResource extends Resource
     {
         return parent::getEloquentQuery()->withCustomerBalances();
     }
-
-
 }

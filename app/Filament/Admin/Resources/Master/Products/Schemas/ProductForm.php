@@ -65,6 +65,7 @@ class ProductForm
                                 Select::make('unit_id')
                                     ->relationship('unit', 'name')
                                     ->manageOptionForm(UnitForm::configure($schema)->getComponents())
+                                    ->required()
                                     ->searchable()
                                     ->columnSpanFull()
                                     ->preload()

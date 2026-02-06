@@ -2,11 +2,16 @@
 
 namespace App\Models\Master;
 
+use App\Models\Master\Unit;
+use App\Models\Master\Brand;
 use App\Models\Outlet\Outlet;
 use Filament\Facades\Filament;
+use App\Models\Master\Category;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Inventory\InventoryLedger;
+use App\Models\Master\CustomerProductRate;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -51,6 +56,11 @@ class Product extends Model
     public function ledgers()
     {
         return $this->hasMany(InventoryLedger::class);
+    }
+
+    public function customerRates(): HasMany
+    {
+        return $this->hasMany(CustomerProductRate::class);
     }
 
     // public function getCurrentStockAttribute()

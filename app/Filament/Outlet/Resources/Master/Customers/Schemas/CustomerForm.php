@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\Master\Customers\Schemas;
+namespace App\Filament\Outlet\Resources\Master\Customers\Schemas;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
@@ -54,13 +54,14 @@ class CustomerForm
                         Section::make()
                             ->columnSpan(1)
                             ->schema([
-                                TextInput::make('opening_balance')
-                                    ->currency()
-                                    ->required()
-                                    ->hintIcon(
-                                        'heroicon-m-question-mark-circle',
-                                        tooltip: 'Enter 0 if there is no opening balance'
-                                    ),
+                                // TextInput::make('opening_balance')
+                                //     ->numeric()
+                                //     ->default(0)
+                                //     ->required()
+                                //     ->hintIcon(
+                                //         'heroicon-m-question-mark-circle',
+                                //         tooltip: 'Enter 0 if there is no opening balance'
+                                //     ),
                                 TextInput::make('current_balance')
                                     ->currency()
                                     ->disabled()

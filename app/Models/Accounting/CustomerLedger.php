@@ -5,6 +5,7 @@ namespace App\Models\Accounting;
 use App\Models\User;
 use App\BelongsToOutlet;
 use App\Models\Master\Customer;
+use App\Models\Scopes\OutletScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,7 +36,7 @@ class CustomerLedger extends Model
 
     public static function getBalanceForCustomerId(int $customerId): float
     {
-        return CustomerLedger::where('customer_id', $customerId)
+        return CustomerLedger::withoutGlobalScope(OutletScope::class)->where('customer_id', $customerId)
             ->sum('amount');
     }
 }

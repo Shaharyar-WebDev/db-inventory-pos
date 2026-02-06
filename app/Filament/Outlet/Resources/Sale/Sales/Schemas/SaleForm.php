@@ -16,13 +16,13 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\Repeater\TableColumn;
-use App\Filament\Admin\Resources\Master\Customers\Schemas\CustomerForm;
+use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
 
 class SaleForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $products = Product::with('unit')->withOutletStock()->get(['id', 'name', 'cost_price', 'unit_id']);
+        $products = Product::with('unit', 'customerRates')->withOutletStock()->get(['id', 'name', 'selling_price', 'unit_id']);
 
         $productsKeyedArray = $products->keyBy('id')->toArray();
 
@@ -47,7 +47,7 @@ class SaleForm
                     ]),
                 Section::make()
                     ->columnSpanFull()
-                    ->columns(4)
+                    ->columns(3)
                     ->schema([
                         Select::make('discount_type')
                             ->options(options: [
@@ -55,31 +55,7 @@ class SaleForm
                                 DiscountType::PERCENT->value => ucfirst(DiscountType::PERCENT->value),
                             ])
                             ->default(DiscountType::FIXED->value)
-                            ->afterStateUpdatedJs(<<<'JS'
-                                const saleDiscountType  = $get('discount_type');
-                                const saleDiscountValue = parseFloat($get('discount_value')) || 0;
-
-                                const items = $get('items') ?? {};
-
-                                let grandTotal = Object.values(items).reduce((sum, item) => {
-                                    return sum + (parseFloat(item.total) || 0);
-                                }, 0);
-
-                                let saleGrandTotal = grandTotal;
-
-                                if (saleDiscountType === 'percent') {
-                                    saleGrandTotal -= (saleGrandTotal * saleDiscountValue / 100);
-                                }
-
-                                if (saleDiscountType === 'fixed') {
-                                    saleGrandTotal -= saleDiscountValue;
-                                }
-
-                                saleGrandTotal = Math.max(saleGrandTotal, 0);
-
-                                $set('total', grandTotal);
-                                $set('grand_total', saleGrandTotal);
-                            JS)
+                            ->afterStateUpdatedJs(self::calculateGrandTotal())
                             ->required(),
                         TextInput::make('discount_value')
                             ->required()
@@ -94,37 +70,21 @@ class SaleForm
 
                                 return null;
                             })
-                            ->afterStateUpdatedJs(<<<'JS'
-                                const saleDiscountType  = $get('discount_type');
-                                const saleDiscountValue = parseFloat($get('discount_value')) || 0;
-
-                                const items = $get('items') ?? {};
-
-                                let grandTotal = Object.values(items).reduce((sum, item) => {
-                                    return sum + (parseFloat(item.total) || 0);
-                                }, 0);
-
-                                let saleGrandTotal = grandTotal;
-
-                                if (saleDiscountType === 'percent') {
-                                    saleGrandTotal -= (saleGrandTotal * saleDiscountValue / 100);
-                                }
-
-                                if (saleDiscountType === 'fixed') {
-                                    saleGrandTotal -= saleDiscountValue;
-                                }
-
-                                saleGrandTotal = Math.max(saleGrandTotal, 0);
-
-                                $set('total', grandTotal);
-                                $set('grand_total', saleGrandTotal);
-                            JS)
+                            ->afterStateUpdatedJs(self::calculateGrandTotal())
                             ->numeric(),
                         TextInput::make('total')
                             ->label('Total Amount')
                             ->readonly()
                             ->dehydrated()
                             ->currency()
+                            ->required(),
+                        TextInput::make('delivery_charges')
+                            ->currency()
+                            ->afterStateUpdatedJs(self::calculateGrandTotal())
+                            ->required(),
+                        TextInput::make('tax_charges')
+                            ->currency()
+                            ->afterStateUpdatedJs(self::calculateGrandTotal())
                             ->required(),
                         TextInput::make('grand_total')
                             ->label('Grand Total')
@@ -162,10 +122,23 @@ class SaleForm
                                 return in_array($value, $selected) && $state != $value;
                             })
                             ->afterStateUpdatedJs(<<<'JS'
-                                const productId = $state;
+                                const productId = $get('product_id');
+                                const customerId = $get('../../customer_id');
                                 const products = $get('../../products') ?? {};
 
-                                const rate = parseFloat(products[productId]?.cost_price || 0);
+                                if (products[productId]) {
+                                const customerRateObj = (products[productId].customer_rates || []).find(
+                                    r => r.customer_id == customerId
+                                );
+
+                                if (customerRateObj) {
+                                    rate = parseFloat(customerRateObj.selling_price);
+                                } else {
+                                    rate = parseFloat(products[productId].selling_price || 0);
+                                }
+                                }
+
+                                // const rate = parseFloat(products[productId]?.selling_price || 0);
                                 $set('rate', rate);
 
                                 const qty = parseFloat($get('qty')) || 0;
@@ -191,12 +164,12 @@ class SaleForm
                             // })
                             ->afterStateUpdatedJs(self::calculateTotals())
                             ->default(0)
-                            ->minValue(1)
+                            ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
                             ->rules(function (Get $get) use ($productsKeyedArray) {
                                 return [
                                     'required',
                                     'numeric',
-                                    'min:1',
+                                    fn($operation) => $operation === "edit" ? 'min:0' : 'min:1',
                                     function (string $attribute, $value, Closure $fail) use ($get, $productsKeyedArray) {
                                         $productId = $get('product_id');
                                         $stock = $productsKeyedArray[$productId]['current_outlet_stock'] ?? 0;
@@ -295,6 +268,8 @@ class SaleForm
         // apply invoice-level discount
         const saleDiscountType  = $get('../../discount_type');
         const saleDiscountValue = parseFloat($get('../../discount_value')) || 0;
+        const deliveryCharges = parseFloat($get('../../delivery_charges')) || 0;
+        const taxCharges = parseFloat($get('../../tax_charges')) || 0;
 
         let saleGrandTotal = grandTotal;
 
@@ -306,11 +281,50 @@ class SaleForm
             saleGrandTotal -= saleDiscountValue;
         }
 
+        saleGrandTotal += deliveryCharges;
+        // saleGrandTotal += (saleGrandTotal * taxRate / 100);
+        saleGrandTotal += taxCharges;
+
         saleGrandTotal = Math.max(saleGrandTotal, 0);
 
         // set totals
         $set('../../total', grandTotal);
         $set('../../grand_total', saleGrandTotal);
     JS;
+    }
+
+    public static function calculateGrandTotal(): string
+    {
+        return <<<'JS'
+            const saleDiscountType  = $get('discount_type');
+            const saleDiscountValue = parseFloat($get('discount_value')) || 0;
+            const deliveryCharges = parseFloat($get('delivery_charges')) || 0;
+            const taxCharges = parseFloat($get('tax_charges')) || 0;
+
+            const items = $get('items') ?? {};
+
+            let grandTotal = Object.values(items).reduce((sum, item) => {
+                return sum + (parseFloat(item.total) || 0);
+            }, 0);
+
+            let saleGrandTotal = grandTotal;
+
+            if (saleDiscountType === 'percent') {
+                saleGrandTotal -= (saleGrandTotal * saleDiscountValue / 100);
+            }
+
+            if (saleDiscountType === 'fixed') {
+                saleGrandTotal -= saleDiscountValue;
+            }
+
+            saleGrandTotal += deliveryCharges;
+            // saleGrandTotal += (saleGrandTotal * taxRate / 100);
+            saleGrandTotal += taxCharges;
+
+            saleGrandTotal = Math.max(saleGrandTotal, 0);
+
+            $set('total', grandTotal);
+            $set('grand_total', saleGrandTotal);
+        JS;
     }
 }

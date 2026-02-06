@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountLedger;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Accounting\CustomerLedger;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Receipt extends Model
 {
-    use SoftDeletes, BelongsToOutlet, HasDocumentNumber;
+    use SoftDeletes, BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
 
     protected $fillable = [
         'receipt_number',
@@ -25,6 +26,7 @@ class Receipt extends Model
     ];
 
     public static string $documentNumberColumn = 'receipt_number';
+
     public static string $documentNumberPrefix = 'REC';
 
     public function customer()
@@ -50,7 +52,7 @@ class Receipt extends Model
                     'account_id' => $receipt->account_id,
                     'amount' => $receipt->amount,
                     'transaction_type' => class_basename(Receipt::class),
-                    'remarks' => "Receipt received from customer {$receipt->customer->name}",
+                    'remarks' => "Payment received from customer '{$receipt->customer->name}'",
                 ]
             );
 
@@ -64,7 +66,7 @@ class Receipt extends Model
                     'customer_id' => $receipt->customer_id,
                     'amount' => -$receipt->amount,
                     'transaction_type' => class_basename(Receipt::class),
-                    'remarks' => "Receipt received from customer {$receipt->customer->name}",
+                    'remarks' => "Payment received from customer '{$receipt->customer->name}'",
                 ]
             );
         });

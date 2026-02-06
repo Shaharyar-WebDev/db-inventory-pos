@@ -8,11 +8,12 @@ use App\Models\Accounting\Account;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountLedger;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
-    use SoftDeletes, BelongsToOutlet, HasDocumentNumber;
+    use SoftDeletes, BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
 
     protected $fillable = [
         'payment_number',
@@ -24,6 +25,7 @@ class Payment extends Model
     ];
 
     public static string $documentNumberColumn = 'payment_number';
+
     public static string $documentNumberPrefix = 'PAY';
 
     public function supplier()
@@ -48,7 +50,7 @@ class Payment extends Model
                     'account_id' => $payment->account_id,
                     'amount' => -$payment->amount,
                     'transaction_type' => class_basename(Payment::class),
-                    'remarks' => "Payment created for supplier {$payment->supplier->name}",
+                    'remarks' => "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
             SupplierLedger::updateOrCreate(
@@ -60,7 +62,7 @@ class Payment extends Model
                     'supplier_id' => $payment->supplier_id,
                     'amount' => -$payment->amount,
                     'transaction_type' => class_basename(Payment::class),
-                    'remarks' => "Payment created for supplier {$payment->supplier->name}",
+                    'remarks' => "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
         });

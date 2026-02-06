@@ -3,6 +3,7 @@
 namespace App\Models\Master;
 
 use App\Enums\TransactionType;
+use App\Models\Scopes\OutletScope;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\SupplierLedger;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,7 +35,7 @@ class Supplier extends Model
             // if ($supplier->opening_balance == 0) {
             //     return;
             // }
-            SupplierLedger::updateOrCreate(
+            SupplierLedger::withoutGlobalScope(OutletScope::class)->updateOrCreate(
                 [
                     'supplier_id' => $supplier->id,
                     'source_type' => Supplier::class,

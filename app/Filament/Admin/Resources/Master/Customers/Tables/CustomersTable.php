@@ -76,17 +76,17 @@ class CustomersTable
                 Action::make('export_ledger')
                     ->icon('heroicon-o-document-text')
                     ->color('info')
-                    ->schema([
-                        Select::make('outlet_id')
-                            ->label('Outlet')
-                            ->options(Outlet::options())
-                        // ->required(),
-                    ])
+                    // ->schema([
+                    //     Select::make('outlet_id')
+                    //         ->label('Outlet')
+                    //         ->options(Outlet::options())
+                    //     // ->required(),
+                    // ])
                     ->action(function (Model $record, array $data) {
-                        $outletId = $data['outlet_id'];
+                        $outletId = $data['outlet_id'] ?? null;
                         $outlet = Outlet::find($outletId);
                         $suffix = $outlet ? "-{$outlet->name}" : '';
-                        $fileName = "supplier_ledger_{$record->name}{$suffix}.xlsx";
+                        $fileName = "customer_ledger_{$record->name}{$suffix}.xlsx";
                         return Excel::download(new CustomerLedgerExport(
                             $record->id,
                             $outletId,

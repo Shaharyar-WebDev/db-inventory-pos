@@ -30,6 +30,8 @@ class Sale extends Model
         'total',
         'discount_type',
         'discount_value',
+        'delivery_charges',
+        'tax_charges',
         'grand_total',
         'outlet_id',
     ];
@@ -59,6 +61,8 @@ class Sale extends Model
         static::saved(function ($sale) {
             $total = $sale->items->sum('total');
             $grandTotal = $total;
+            $deliveryCharges = $sale->delivery_charges ?? 0;
+            $taxCharges = $sale->tax_charges ?? 0;
 
             if ($sale->discount_type === DiscountType::PERCENT->value) {
                 $grandTotal -= ($grandTotal * $sale->discount_value / 100);
@@ -69,7 +73,7 @@ class Sale extends Model
             }
 
             $sale->total = $total;
-            $sale->grand_total = $grandTotal;
+            $sale->grand_total = $grandTotal + $deliveryCharges + $taxCharges;
             $sale->saveQuietly();
 
             CustomerLedger::updateOrCreate(

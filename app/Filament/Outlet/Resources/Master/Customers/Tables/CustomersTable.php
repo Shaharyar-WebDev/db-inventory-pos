@@ -1,43 +1,55 @@
 <?php
 
-namespace App\Filament\Admin\Resources\Master\Suppliers\Tables;
+namespace App\Filament\Outlet\Resources\Master\Customers\Tables;
 
 use Filament\Tables\Table;
-use Filament\Actions\Action;
-use App\Models\Outlet\Outlet;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\SupplierLedgerExport;
+use Filament\Actions\RestoreAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Forms\Components\Select;
-use App\Exports\InventoryLedgerExport;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Actions\ForceDeleteBulkAction;
 
-class SuppliersTable
+class CustomersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
+                ImageColumn::make('photo')
+                    ->circular()
+                    ->imageSize(50)
+                    ->placeholder('---')
+                    ->disk('public')
+                    ->visibility('public'),
                 TextColumn::make('name')
                     ->copyable(),
                 TextColumn::make('contact')
                     ->disableNumericFormatting()
                     ->copyable(),
-                TextColumn::make('opening_balance')
-                    ->currency()
+                TextColumn::make('city.name')
                     ->copyable(),
+                TextColumn::make('area.name')
+                    ->copyable(),
+                // TextColumn::make('opening_balance')
+                //     ->currency()
+                //     ->copyable(),
                 TextColumn::make('current_balance')
                     ->currency()
                     ->searchable(false)
                     ->copyable(),
+                TextColumn::make('address')
+                    ->limit(30)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -49,28 +61,10 @@ class SuppliersTable
                 TrashedFilter::make(),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
-                Action::make('export_ledger')
-                    ->icon('heroicon-o-document-text')
-                    ->color('info')
-                    // ->schema([
-                    //     Select::make('outlet_id')
-                    //         ->label('Outlet')
-                    //         ->options(Outlet::options())
-                    //     // ->required(),
-                    // ])
-                    ->action(function (Model $record, array $data) {
-                        $outletId = $data['outlet_id'] ?? 0;
-                        $outlet = Outlet::find($outletId);
-                        $suffix = $outlet ? "-{$outlet->name}" : '';
-                        $fileName = "supplier_ledger_{$record->name}{$suffix}.xlsx";
-                        return Excel::download(new SupplierLedgerExport(
-                            $record->id,
-                            $outletId,
-                        ), $fileName);
-                    }),
+                RestoreAction::make(),
+                ForceDeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

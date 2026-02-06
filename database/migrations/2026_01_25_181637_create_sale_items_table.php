@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('sale_id')->constrained()->restrictOnDelete();
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->quantity('qty');
+            $table->money('cost');
             $table->money('rate');
             $table->enum('discount_type', array_map(fn ($case) => $case->value, DiscountType::cases()));
             $table->decimal('discount_value', 15, 4);

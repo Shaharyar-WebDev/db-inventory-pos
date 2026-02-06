@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Resources\Master\Customers\Pages;
+namespace App\Filament\Outlet\Resources\Master\Customers\Pages;
 
-use Filament\Actions\ViewAction;
+use App\Filament\Outlet\Resources\Master\Customers\CustomerResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\RestoreAction;
 use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Admin\Resources\Master\Customers\CustomerResource;
 
 class EditCustomer extends EditRecord
 {

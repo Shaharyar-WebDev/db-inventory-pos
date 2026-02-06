@@ -2,11 +2,16 @@
 
 namespace App\Models\Master;
 
+use App\Models\Master\Area;
+use App\Models\Master\City;
 use App\Enums\TransactionType;
-use App\Models\Accounting\CustomerLedger;
+use App\Models\Scopes\OutletScope;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Accounting\CustomerLedger;
+use App\Models\Master\CustomerProductRate;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer extends Model
 {
@@ -42,11 +47,24 @@ class Customer extends Model
         return $this->hasMany(CustomerLedger::class);
     }
 
-    public function scopeWithCustomerBalances($query)
+    public function productRates(): HasMany
     {
-        return $query->withSum('ledgers as current_balance', 'amount');
+        return $this->hasMany(CustomerProductRate::class);
     }
 
+    // public function scopeWithCustomerBalances($query)
+    // {
+    //     return $query->withSum('ledgers as current_balance', 'amount');
+    // }
+
+    public function scopeWithCustomerBalances($query)
+    {
+        return $query->withSum([
+            'ledgers as current_balance' => function ($q) {
+                $q->withoutGlobalScope(OutletScope::class);
+            }
+        ], 'amount');
+    }
 
     public static function booted()
     {
@@ -54,7 +72,7 @@ class Customer extends Model
             // if ($customer->opening_balance == 0) {
             //     return;
             // }
-            CustomerLedger::updateOrCreate(
+            CustomerLedger::withoutGlobalScope(OutletScope::class)->updateOrCreate(
                 [
                     'customer_id' => $customer->id,
                     'source_type' => Customer::class,
@@ -62,7 +80,7 @@ class Customer extends Model
                     'transaction_type' => TransactionType::OPENING_BALANCE->value,
                 ],
                 [
-                    'amount' => $customer->opening_balance,
+                    'amount' => $customer->opening_balance ?? 0,
                     'remarks' => 'Opening balance synced',
                     'outlet_id' => null,
                 ]

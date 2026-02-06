@@ -21,6 +21,7 @@ use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 class ProductResource extends Resource
 {
     use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Product::class;
 
     protected static bool $isScopedToTenant = false;
