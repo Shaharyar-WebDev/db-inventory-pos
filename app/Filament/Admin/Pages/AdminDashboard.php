@@ -3,16 +3,18 @@
 namespace App\Filament\Admin\Pages;
 
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
-class Dashboard extends BaseDashboard
+class AdminDashboard extends BaseDashboard
 {
+    use HasPageShield;
     // protected string $view = 'filament.admin.pages.dashboard';
 
-    protected static ?string $title = null;
+    protected static ?string $title = 'Admin Dashboard';
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home';
 

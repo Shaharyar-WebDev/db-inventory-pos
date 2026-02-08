@@ -22,9 +22,11 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Pages\Enums\SubNavigationPosition;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class Settings extends SettingsPage
 {
+    use HasPageShield;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;

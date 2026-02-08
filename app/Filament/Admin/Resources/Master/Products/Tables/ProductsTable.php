@@ -22,6 +22,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Actions\ForceDeleteBulkAction;
 use App\Filament\Admin\Resources\Master\Products\Actions\ViewProductStockByOutletAction;
+use App\Filament\Admin\Resources\Master\Products\Actions\ViewProductValueByOutletAction;
 
 class ProductsTable
 {
@@ -60,6 +61,13 @@ class ProductsTable
                         ViewProductStockByOutletAction::make()
                     )
                     ->sortable(false),
+                TextColumn::make('current_value')
+                    ->currency()
+                    ->searchable(false)
+                    ->action(
+                        ViewProductValueByOutletAction::make()
+                    )
+                    ->sortable(false),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -78,6 +86,9 @@ class ProductsTable
                 ViewProductStockByOutletAction::make()
                     ->icon('heroicon-o-eye')
                     ->color('warning'),
+                ViewProductValueByOutletAction::make()
+                    ->icon('heroicon-o-eye')
+                    ->color('success'),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),

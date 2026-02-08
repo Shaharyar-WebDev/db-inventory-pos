@@ -63,21 +63,15 @@ class Product extends Model
         return $this->hasMany(CustomerProductRate::class);
     }
 
-    // public function getCurrentStockAttribute()
-    // {
-    //     return $this->ledgers()->sum('qty');
-    // }
-
-    // public function getCurrentOutletStockAttribute()
-    // {
-    //     return $this->ledgers()->where('outlet_id', Filament::getTenant()->id)->sum('qty');
-    // }
-
     public function scopeWithStockCounts($query)
     {
         return $query->withSum('ledgers as current_stock', 'qty');
     }
 
+    public function scopeWithStockValue($query)
+    {
+        return $query->withSum('ledgers as current_value', 'value');
+    }
     public function scopeWithOutletStock($query, $outletId = null)
     {
         $outletId = $outletId ?? Filament::getTenant()?->id;
@@ -91,6 +85,14 @@ class Product extends Model
     {
         return $this->hasMany(InventoryLedger::class, 'product_id')
             ->selectRaw('product_id, outlet_id, SUM(qty) as stock')
+            ->groupBy('product_id', 'outlet_id')
+            ->with('outlet');
+    }
+
+    public function valueByOutlet()
+    {
+        return $this->hasMany(InventoryLedger::class, 'product_id')
+            ->selectRaw('product_id, outlet_id, SUM(value) as value')
             ->groupBy('product_id', 'outlet_id')
             ->with('outlet');
     }

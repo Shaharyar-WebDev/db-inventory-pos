@@ -2,16 +2,19 @@
 
 namespace App\Filament\Outlet\Resources\Purchase\Purchases\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ForceDeleteBulkAction;
+use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\PurchaseReturnResource;
 
 class PurchasesTable
 {
@@ -43,6 +46,11 @@ class PurchasesTable
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                Action::make('purchase_return')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->url(function (Model $record) {
+                        return PurchaseReturnResource::getUrl('create',  ['purchase_id' => $record->id]);
+                    }, true),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

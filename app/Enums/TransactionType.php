@@ -17,4 +17,8 @@ enum TransactionType: string
     case STOCK_TRANSFER_IN = 'stock_transfer_in';
 
     case STOCK_TRANSFER_OUT = 'stock_transfer_out';
+
+    case REFUND_OR_ADJUSTMENT = 'refund_or_adjustment';
+
+    case PAYMENT = 'payment';
 }

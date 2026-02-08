@@ -28,6 +28,10 @@ class PaymentsTable
                     ->copyable(),
                 TextColumn::make('amount')
                     ->currency(),
+                TextColumn::make('remarks')
+                    ->copyable()
+                    ->limit('60')
+                    ->tooltip(fn($state) => $state),
                 // TextColumn::make('outlet.name')
                 //     ->searchable(),
                 TextColumn::make('created_at')

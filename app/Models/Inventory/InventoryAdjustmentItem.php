@@ -40,7 +40,18 @@ class InventoryAdjustmentItem extends Model
     public static function booted()
     {
         static::saved(function ($item) {
-            $value = $item->qty * $item->product->cost_price;
+
+            $avgRate = InventoryLedger::where('product_id', $item->product_id)
+                ->selectRaw('SUM(value) / NULLIF(SUM(qty), 0) as avg_rate')
+                ->value('avg_rate') ?? 0;
+
+            // $value = $item->qty * $item->product->cost_price;
+            $rate = ($avgRate && $avgRate != 0)
+                ? $avgRate
+                : $item->product->cost_price;
+
+            $value = $item->qty * $rate;
+
 
             InventoryLedger::updateOrCreate(
                 [
@@ -53,7 +64,7 @@ class InventoryAdjustmentItem extends Model
                     'product_id'       => $item->product_id,
                     'unit_id'          => $item->product->unit_id,
                     'qty'              => $item->qty,
-                    'rate'             => $item->product->cost_price,
+                    'rate'             => $rate,
                     'value'            => $value,
                     'transaction_type' => TransactionType::INVENTORY_ADJUSTMENT->value,
                     'remarks'          => 'Inventory Adjustment Saved',

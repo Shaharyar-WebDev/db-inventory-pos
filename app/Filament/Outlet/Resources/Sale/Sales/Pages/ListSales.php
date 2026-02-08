@@ -3,6 +3,7 @@
 namespace App\Filament\Outlet\Resources\Sale\Sales\Pages;
 
 use App\Filament\Outlet\Resources\Sale\Sales\SaleResource;
+use App\Filament\Outlet\Resources\Sale\Sales\Widgets\SaleStats;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -16,4 +17,11 @@ class ListSales extends ListRecords
             CreateAction::make(),
         ];
     }
+
+    // protected function getHeaderWidgets(): array
+    // {
+    //     return [
+    //         SaleStats::class,
+    //     ];
+    // }
 }

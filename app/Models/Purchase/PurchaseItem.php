@@ -55,8 +55,6 @@ class PurchaseItem extends Model
                     'source_id' => $item->id,
                 ],
                 [
-                    'reference_type' => Purchase::class,
-                    'reference_id'   => $item->purchase_id,
                     'product_id' => $item->product_id,
                     'unit_id' => $item->product?->unit_id,
                     'qty' => $item->qty,

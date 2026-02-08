@@ -5,6 +5,7 @@ namespace App\Models\Purchase;
 use App\BelongsToOutlet;
 use App\Enums\TransactionType;
 use App\Models\Master\Supplier;
+use App\Models\Accounting\Payment;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasDocumentNumber;
@@ -38,6 +39,16 @@ class Purchase extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function purchaseReturns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
     }
 
     public static function booted()

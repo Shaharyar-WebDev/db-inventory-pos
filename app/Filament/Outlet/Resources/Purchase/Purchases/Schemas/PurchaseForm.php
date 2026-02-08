@@ -27,7 +27,7 @@ class PurchaseForm
         return $schema
             ->components([
                 Hidden::make('products')
-                    ->default(fn() => $productsKeyedArray)
+                    ->afterStateHydrated(fn(Set $set) => $set('products', $productsKeyedArray))
                     ->dehydrated(false),
                 Group::make()
                     ->columnSpanFull()
@@ -68,7 +68,6 @@ class PurchaseForm
                     ->schema([
                         Select::make('product_id')
                             ->relationship('product', 'name')
-                            // ->options($productsPluckedArray)
                             ->disableOptionWhen(function ($value, $state, $get) {
                                 $selected = collect($get('../../items'))
                                     ->pluck('product_id')
@@ -77,8 +76,6 @@ class PurchaseForm
 
                                 return in_array($value, $selected) && $state != $value;
                             })
-                            // ->disableOptionsWhenSelectedInSiblingRepeaterItems() // disabled cause causing rerender
-                            // ->reactive()
                             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $state;
                                 const products = $get('../../products') ?? {};
@@ -105,38 +102,14 @@ class PurchaseForm
                             //     $productId = $get('product_id');
                             //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
                             // })
-                            ->afterStateUpdatedJs(<<<'JS'
-                                const qty  = parseFloat($get('qty')) || 0;
-                                const rate = parseFloat($get('rate')) || 0;
-
-                                $set('total', qty * rate);
-
-                                const items = $get('../../items') ?? {};
-                                const grandTotal = Object.values(items).reduce((sum, item) => {
-                                    return sum + (parseFloat(item.total) || 0);
-                                }, 0);
-
-                                $set('../../grand_total', grandTotal);
-                            JS)
+                            ->afterStateUpdatedJs(self::updateGrandTotals())
                             ->default(0)
                             ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
                             ->step(1),
                         TextInput::make('rate')
                             ->required()
                             ->currency()
-                            ->afterStateUpdatedJs(<<<'JS'
-                                const qty  = parseFloat($get('qty')) || 0;
-                                const rate = parseFloat($get('rate')) || 0;
-
-                                $set('total', qty * rate);
-
-                                const items = $get('../../items') ?? {};
-                                const grandTotal = Object.values(items).reduce((sum, item) => {
-                                    return sum + (parseFloat(item.total) || 0);
-                                }, 0);
-
-                                $set('../../grand_total', grandTotal);
-                            JS)
+                            ->afterStateUpdatedJs(self::updateGrandTotals())
                             ->minValue(1)
                             ->step(0.01),
                         TextInput::make('total')
@@ -155,5 +128,22 @@ class PurchaseForm
                             ->columnSpanFull(),
                     ]),
             ]);
+    }
+
+    public static function updateGrandTotals(): string
+    {
+        return <<<'JS'
+                const qty  = parseFloat($get('qty')) || 0;
+                const rate = parseFloat($get('rate')) || 0;
+
+                $set('total', qty * rate);
+
+                const items = $get('../../items') ?? {};
+                const grandTotal = Object.values(items).reduce((sum, item) => {
+                    return sum + (parseFloat(item.total) || 0);
+                }, 0);
+
+                $set('../../grand_total', grandTotal);
+            JS;
     }
 }

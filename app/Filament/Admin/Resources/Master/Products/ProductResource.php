@@ -2,21 +2,22 @@
 
 namespace App\Filament\Admin\Resources\Master\Products;
 
-use App\Filament\Admin\Resources\Master\Products\Pages\CreateProduct;
-use App\Filament\Admin\Resources\Master\Products\Pages\EditProduct;
-use App\Filament\Admin\Resources\Master\Products\Pages\ListProducts;
-use App\Filament\Admin\Resources\Master\Products\Pages\ViewProduct;
-use App\Filament\Admin\Resources\Master\Products\Schemas\ProductForm;
-use App\Filament\Admin\Resources\Master\Products\Schemas\ProductInfolist;
-use App\Filament\Admin\Resources\Master\Products\Tables\ProductsTable;
-use App\Models\Master\Product;
 use BackedEnum;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use App\Models\Master\Product;
+use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
+use App\Filament\Admin\Resources\Master\Products\Pages\EditProduct;
+use App\Filament\Admin\Resources\Master\Products\Pages\ViewProduct;
+use App\Filament\Admin\Resources\Master\Products\Pages\ListProducts;
+use App\Filament\Admin\Resources\Master\Products\Pages\CreateProduct;
+use App\Filament\Admin\Resources\Master\Products\Schemas\ProductForm;
+use App\Filament\Admin\Resources\Master\Products\Tables\ProductsTable;
+use App\Filament\Admin\Resources\Master\Products\Widgets\ProductStats;
+use App\Filament\Admin\Resources\Master\Products\Schemas\ProductInfolist;
 
 class ProductResource extends Resource
 {
@@ -61,7 +62,6 @@ class ProductResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withStockCounts();
+        return parent::getEloquentQuery()->withStockCounts()->withStockValue();
     }
-
 }

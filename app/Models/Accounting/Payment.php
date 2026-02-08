@@ -3,7 +3,10 @@
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
+use Illuminate\Support\Str;
+use App\Enums\TransactionType;
 use App\Models\Master\Supplier;
+use App\Models\Purchase\Purchase;
 use App\Models\Accounting\Account;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountLedger;
@@ -19,6 +22,7 @@ class Payment extends Model
         'payment_number',
         'supplier_id',
         'account_id',
+        'purchase_id',
         'amount',
         'remarks',
         'outlet_id',
@@ -38,9 +42,16 @@ class Payment extends Model
         return $this->belongsTo(Account::class);
     }
 
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class);
+    }
+
     public static function booted()
     {
         static::saved(function ($payment) {
+            $transactionType = $payment->amount < 0 ? Str::upper(TransactionType::REFUND_OR_ADJUSTMENT->value) : TransactionType::PAYMENT->value;
+
             AccountLedger::updateOrCreate(
                 [
                     'source_type' => Payment::class,
@@ -49,8 +60,8 @@ class Payment extends Model
                 [
                     'account_id' => $payment->account_id,
                     'amount' => -$payment->amount,
-                    'transaction_type' => class_basename(Payment::class),
-                    'remarks' => "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
+                    'transaction_type' => $transactionType,
+                    'remarks' => $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
             SupplierLedger::updateOrCreate(
@@ -61,8 +72,8 @@ class Payment extends Model
                 [
                     'supplier_id' => $payment->supplier_id,
                     'amount' => -$payment->amount,
-                    'transaction_type' => class_basename(Payment::class),
-                    'remarks' => "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
+                    'transaction_type' => $transactionType,
+                    'remarks' =>  $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
         });

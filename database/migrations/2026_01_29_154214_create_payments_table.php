@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('payment_number', 255)->unique();
             $table->foreignId('supplier_id')->constrained()->restrictOnDelete();
+            $table->foreignId('purchase_id')->nullable()->constrained()->restrictOnDelete();
             $table->foreignId('account_id')->constrained()->restrictOnDelete();
             $table->decimal('amount', 15, 2);
             $table->text('remarks')->nullable();

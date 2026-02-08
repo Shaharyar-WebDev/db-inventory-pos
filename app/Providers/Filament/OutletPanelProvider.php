@@ -5,16 +5,17 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use App\Enums\PanelId;
 use Filament\PanelProvider;
+use Filament\Actions\Action;
 use App\Models\Outlet\Outlet;
-use Filament\Support\Colors\Color;
 use App\Support\PanelConfiguration;
 use App\Filament\Outlet\Pages\Login;
-use App\Filament\Outlet\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
+use App\Filament\Outlet\Pages\OutletDashboard;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Facades\Filament;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -36,7 +37,13 @@ class OutletPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Outlet/Resources'), for: 'App\Filament\Outlet\Resources')
             ->discoverPages(in: app_path('Filament/Outlet/Pages'), for: 'App\Filament\Outlet\Pages')
             ->pages([
-                Dashboard::class,
+                OutletDashboard::class,
+            ])
+            ->userMenuItems([
+                Action::make('go_to_admin_panel')
+                    ->url(fn(): string => url(Filament::getPanel(PanelId::ADMIN->id())->getPath()))
+                    ->visible(fn(Panel $filament) => $filament->auth()->user()->hasRole('super_admin'))
+                    ->icon('heroicon-o-arrow-right'),
             ])
             ->discoverWidgets(in: app_path('Filament/Outlet/Widgets'), for: 'App\Filament\Outlet\Widgets')
             ->widgets([])
@@ -50,6 +57,9 @@ class OutletPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                // FilamentShieldPlugin::make(),
             ])
             ->plugins([])
             ->tenantMiddleware([], isPersistent: true)
