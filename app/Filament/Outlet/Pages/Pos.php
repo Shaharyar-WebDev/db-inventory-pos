@@ -49,6 +49,14 @@ class Pos extends Page implements HasTable, HasSchemas
 {
     use InteractsWithTable, InteractsWithSchemas, HasPageShield;
 
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
+
     protected string $view = 'filament.outlet.pages.pos';
 
     protected static ?string $title = null;
