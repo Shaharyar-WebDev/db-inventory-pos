@@ -78,10 +78,10 @@ class PanelConfiguration
                 'danger' => Color::Rose,
             ]);
 
-        // if ($this->generalSettings->background_type === 'pattern') {
-        //     $panel->renderHook(PanelsRenderHook::CONTENT_BEFORE, fn(): View => view('partials.background-pattern'))
-        //         ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.background-pattern'));
-        // }
+        if ($this->generalSettings->background_type === 'pattern') {
+            $panel->renderHook(PanelsRenderHook::CONTENT_BEFORE, fn(): View => view('partials.background-pattern'))
+                ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.background-pattern'));
+        }
 
         return $panel;
     }
