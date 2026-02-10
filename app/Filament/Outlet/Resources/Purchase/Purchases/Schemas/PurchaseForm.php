@@ -58,6 +58,7 @@ class PurchaseForm
                     ->minItems(1)
                     ->columnSpanFull()
                     ->columns(4)
+                    ->afterStateUpdatedJs(self::updateGrandTotals())
                     ->table([
                         TableColumn::make('Product'),
                         TableColumn::make('Quantity'),

@@ -10,6 +10,7 @@ use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Route;
 use Filament\FontProviders\GoogleFontProvider;
+use Illuminate\Http\Request;
 
 class PanelConfiguration
 {
@@ -24,7 +25,7 @@ class PanelConfiguration
     {
         $this->generalSettings = app(GeneralSettings::class);
 
-        return $panel
+        $panel
             ->font('Space Grotesk', provider: GoogleFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandName($this->generalSettings->site_name)
@@ -37,7 +38,8 @@ class PanelConfiguration
             ->databaseTransactions()
             ->globalSearch(false)
             ->topbar(false)
-            ->sidebarCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop(fn() => request()->route()->getName() !== 'filament.outlet.pages.pos')
+            ->sidebarFullyCollapsibleOnDesktop(fn() => request()->route()->getName() === 'filament.outlet.pages.pos')
             ->renderHook(
                 PanelsRenderHook::FOOTER,
                 fn(): View => view('partials.global-loading-indicator'),
@@ -58,8 +60,6 @@ class PanelConfiguration
                 PanelsRenderHook::STYLES_AFTER,
                 hook: fn(): View => view('partials.bprogress')
             )
-            ->renderHook(PanelsRenderHook::CONTENT_BEFORE, fn(): View => view('partials.background-pattern'))
-            ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.background-pattern'))
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.copyright-label'))
             ->colors([
                 'primary' => [
@@ -77,5 +77,12 @@ class PanelConfiguration
                 ],
                 'danger' => Color::Rose,
             ]);
+
+        if ($this->generalSettings->background_type === 'pattern') {
+            $panel->renderHook(PanelsRenderHook::CONTENT_BEFORE, fn(): View => view('partials.background-pattern'))
+                ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.background-pattern'));
+        }
+
+        return $panel;
     }
 }

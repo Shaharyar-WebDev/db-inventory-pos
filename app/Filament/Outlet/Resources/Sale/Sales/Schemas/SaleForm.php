@@ -100,6 +100,7 @@ class SaleForm
                     ->minItems(1)
                     ->columnSpanFull()
                     ->columns(6)
+                    ->afterStateUpdatedJs(self::calculateGrandTotal())
                     ->table([
                         TableColumn::make('Product'),
                         TableColumn::make('Quantity'),

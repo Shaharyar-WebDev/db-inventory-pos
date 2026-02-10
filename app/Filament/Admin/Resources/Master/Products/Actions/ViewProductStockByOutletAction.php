@@ -3,15 +3,16 @@
 namespace App\Filament\Admin\Resources\Master\Products\Actions;
 
 use Filament\Actions\Action;
-use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Schemas\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 
 class ViewProductStockByOutletAction
 {
     public static function make()
     {
         return Action::make('view_outlet_stock')
-            ->modalHeading('Stock by Outlet')
+            ->modalHeading(fn(Model $record) => $record->name . ' Stock Value by Outlet')
             ->modalSubmitAction(false)
             ->modalWidth('lg')
             ->schema(function ($record) {

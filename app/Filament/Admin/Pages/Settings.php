@@ -86,6 +86,15 @@ class Settings extends SettingsPage
                             ->downloadable()
                             ->openable(),
                     ]),
+                    Tab::make('Appearance')->schema([
+                        Select::make('background_type')
+                            ->required()
+                            ->searchable(false)
+                            ->options([
+                                'solid' => 'Solid',
+                                'pattern' => 'Pattern',
+                            ]),
+                    ]),
                     // Tab::make('Application')->schema([
                     //     // Select::make('navigation_type')
                     //     //     ->required()

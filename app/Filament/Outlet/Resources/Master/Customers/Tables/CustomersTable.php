@@ -24,7 +24,7 @@ class CustomersTable
             ->columns([
                 ImageColumn::make('photo')
                     ->circular()
-                    ->imageSize(50)
+                    ->imageSize(80)
                     ->placeholder('---')
                     ->disk('public')
                     ->visibility('public'),

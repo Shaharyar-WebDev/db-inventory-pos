@@ -32,7 +32,7 @@ class ProductsTable
             ->columns([
                 ImageColumn::make('thumbnail')
                     ->circular()
-                    ->imageSize(50)
+                    ->imageSize(80)
                     ->placeholder('---')
                     ->disk('public')
                     ->visibility('public'),

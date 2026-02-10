@@ -99,23 +99,23 @@ class CustomerForm
                                     ->downloadable()
                                     ->columnSpanFull()
                                     ->openable(),
-                                FileUpload::make('attachments')
-                                    ->label('Attachments')
-                                    ->multiple()
-                                    ->reorderable()
-                                    ->removeUploadedFileButtonPosition('right')
-                                    ->directory('images/customer/attachments')
-                                    ->disk('public')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->visibility('public')
-                                    ->deleteUploadedFileUsing(function ($file) {
-                                        Storage::disk('public')->delete($file);
-                                    })
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->columnSpanFull()
-                                    ->openable(),
+                                // FileUpload::make('attachments')
+                                //     ->label('Attachments')
+                                //     ->multiple()
+                                //     ->reorderable()
+                                //     ->removeUploadedFileButtonPosition('right')
+                                //     ->directory('images/customer/attachments')
+                                //     ->disk('public')
+                                //     ->image()
+                                //     ->imageEditor()
+                                //     ->visibility('public')
+                                //     ->deleteUploadedFileUsing(function ($file) {
+                                //         Storage::disk('public')->delete($file);
+                                //     })
+                                //     ->nullable()
+                                //     ->downloadable()
+                                //     ->columnSpanFull()
+                                //     ->openable(),
                             ]),
                     ]),
             ]);

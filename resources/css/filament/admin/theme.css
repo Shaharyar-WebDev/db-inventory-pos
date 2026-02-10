@@ -3,6 +3,8 @@
 @source '../../../../app/Filament/Admin/**/*';
 @source '../../../../resources/views/filament/admin/**/*';
 
+@import '../outlet/pos.css';
+
 .table-song-card img {
     /* width: 100% !important; */
     @apply !rounded-md;
@@ -139,4 +141,34 @@
 
 img.fi-logo {
     @apply w-32 !h-16;
+}
+
+/* .pos-table {
+    @apply w-5/10 p-4 overflow-auto;
+}
+
+.pos-form {
+    @apply w-5/10 p-4 overflow-auto;
+}
+
+.pos-container {
+    @apply flex w-full h-screen;
+} */
+
+
+.pos-container {
+    @apply flex flex-col lg:flex-row w-full min-h-screen;
+}
+
+.pos-form {
+    @apply w-full lg:w-5/10 p-4 overflow-auto;
+}
+
+.pos-table {
+    @apply w-full lg:w-5/10 p-4 overflow-auto;
+}
+
+.pos-form,
+.pos-table {
+    @apply max-h-screen lg:max-h-none;
 }

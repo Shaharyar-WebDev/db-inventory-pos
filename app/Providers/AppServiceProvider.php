@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use Filament\Panel;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Select;
@@ -39,6 +42,17 @@ class AppServiceProvider extends ServiceProvider
         //           return $action->extraAttributes(['style' => 'color:white']);
         //     }
         // });
+
+        Filament::serving(function () {
+            $width = request()->route()->getName() === 'filament.outlet.pages.pos' ?  Width::Full : null;
+            $topbar = request()->route()->getName() === 'filament.outlet.pages.pos' ?  true : false;
+
+            filament()
+                ->getCurrentPanel()
+                ->maxContentWidth($width)
+                // ->topbar($topbar)
+            ;
+        });
 
         TextColumn::macro('disableNumericFormatting', function (): static {
             $this->extraAttributes(['data-disable-numeric' => true]);
@@ -133,16 +147,22 @@ class AppServiceProvider extends ServiceProvider
                     // Handle exception if process or forceDelete fails
                     $errorRef = strtoupper(Str::random(8));
 
-                    Notification::make('record_deletion_error')
-                        ->danger()
-                        ->title('Error While Deleting Record')
-                        ->body(sprintf(
-                            'Database error while deleting record. SQLSTATE: %s | Code: %s | Ref: %s',
-                            $e->errorInfo[0] ?? 'N/A',
-                            $e->errorInfo[1] ?? $e->getCode(),
-                            $errorRef
-                        ))
-                        ->send();
+                    $errorInfo = $e->errorInfo ?? null;
+
+                    $errorMessage = sprintf(
+                        'Database error while deleting record. SQLSTATE: %s | Code: %s | Ref: %s',
+                        $e->errorInfo[0] ?? 'N/A',
+                        $e->errorInfo[1] ?? $e->getCode(),
+                        $errorRef
+                    );
+
+                    if ($errorInfo) {
+                        Notification::make('record_deletion_error')
+                            ->danger()
+                            ->title('Error While Deleting Record')
+                            ->body($errorMessage)
+                            ->send();
+                    }
 
                     $action->failure();
 
@@ -168,16 +188,23 @@ class AppServiceProvider extends ServiceProvider
 
                     $errorRef = strtoupper(Str::random(8));
 
-                    Notification::make('record_deletion_error')
-                        ->danger()
-                        ->title('Error While Deleting Record')
-                        ->body(sprintf(
-                            'Database error while deleting record. SQLSTATE: %s | Code: %s | Ref: %s',
-                            $e->errorInfo[0] ?? 'N/A',
-                            $e->errorInfo[1] ?? $e->getCode(),
-                            $errorRef
-                        ))
-                        ->send();
+                    $errorInfo = $e->errorInfo ?? null;
+
+                    $errorMessage = sprintf(
+                        'Database error while deleting record. SQLSTATE: %s | Code: %s | Ref: %s',
+                        $e->errorInfo[0] ?? 'N/A',
+                        $e->errorInfo[1] ?? $e->getCode(),
+                        $errorRef
+                    );
+
+                    if ($errorInfo) {
+                        Notification::make('record_deletion_error')
+                            ->danger()
+                            ->title('Error While Deleting Record')
+                            ->body($errorMessage)
+                            ->send();
+                    }
+
 
                     $action->failure();
                 }

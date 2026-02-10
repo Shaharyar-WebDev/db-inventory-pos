@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CustomerType;
 use Illuminate\Support\Facades\Schema;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('contact', 255)->nullable();
             $table->money('opening_balance');
+            $table->enum('customer_type', [CustomerType::WALK_IN->value, CustomerType::REGISTERED->value])->default(CustomerType::REGISTERED->value);
             $table->json('attachments')->nullable();
             $table->softDeletes();
             $table->timestamps();

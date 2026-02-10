@@ -2,11 +2,14 @@
 
 namespace App\Models\Master;
 
+use App\Enums\CustomerType;
 use App\Models\Master\Area;
 use App\Models\Master\City;
 use App\Enums\TransactionType;
 use App\Models\Scopes\OutletScope;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use App\Models\Accounting\CustomerLedger;
 use App\Models\Master\CustomerProductRate;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +27,7 @@ class Customer extends Model
         'photo',
         'address',
         'contact',
+        'customer_type',
         'opening_balance',
         'attachments',
     ];
@@ -85,6 +89,18 @@ class Customer extends Model
                     'outlet_id' => null,
                 ]
             );
+        });
+
+        static::deleting(function ($customer) {
+            if ($customer->customer_type === CustomerType::WALK_IN->value) {
+                Notification::make('record_deletion_error')
+                    ->danger()
+                    ->title('Error While Deleting Record')
+                    ->body('Walk-in customer cannot be deleted')
+                    ->send();
+
+                throw new Halt();
+            }
         });
     }
 }

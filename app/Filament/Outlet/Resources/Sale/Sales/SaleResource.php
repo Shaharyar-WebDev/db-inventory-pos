@@ -5,11 +5,13 @@ namespace App\Filament\Outlet\Resources\Sale\Sales;
 use BackedEnum;
 use App\Models\Sale\Sale;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
+use App\Filament\Outlet\Resources\Sale\Sales\Pages\Pos;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\EditSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ViewSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ListSales;
@@ -59,6 +61,4 @@ class SaleResource extends Resource
             'edit' => EditSale::route('/{record}/edit'),
         ];
     }
-
-
 }

@@ -7,15 +7,17 @@ use App\Enums\PanelId;
 use Filament\PanelProvider;
 use Filament\Actions\Action;
 use App\Models\Outlet\Outlet;
+use Filament\Facades\Filament;
+use App\Filament\Outlet\Pages\Pos;
 use App\Support\PanelConfiguration;
 use App\Filament\Outlet\Pages\Login;
+use Illuminate\Support\Facades\Route;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Outlet\Pages\OutletDashboard;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use Filament\Facades\Filament;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -65,6 +67,9 @@ class OutletPanelProvider extends PanelProvider
             ->tenantMiddleware([], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->tenantRoutes(function () {
+                Route::get('/pos/bootstrap', [Pos::class, 'bootstrap'])->name('pos.bootstrap');
+            });
     }
 }
