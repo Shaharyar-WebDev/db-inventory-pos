@@ -12,7 +12,7 @@ class GeneralSettings extends Settings
 
     public string $navigation_type;
 
-    public string $background_type;
+    // public string $background_type;
 
     public bool $spa_mode;
 
