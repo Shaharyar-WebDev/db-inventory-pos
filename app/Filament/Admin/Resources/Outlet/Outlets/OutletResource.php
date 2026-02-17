@@ -8,7 +8,6 @@ use Filament\Schemas\Schema;
 use App\Models\Outlet\Outlet;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Admin\Resources\Outlet\Outlets\Pages\EditOutlet;
 use App\Filament\Admin\Resources\Outlet\Outlets\Pages\ViewOutlet;
@@ -24,7 +23,7 @@ class OutletResource extends Resource
     use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Outlet::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::HomeModern;
 
     protected static ?string $recordTitleAttribute = 'name';
 

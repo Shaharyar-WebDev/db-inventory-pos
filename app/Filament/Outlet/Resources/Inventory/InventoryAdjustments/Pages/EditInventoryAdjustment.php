@@ -18,8 +18,8 @@ class EditInventoryAdjustment extends EditRecord
         return [
             // ViewAction::make(),
             DeleteAction::make(),
-            ForceDeleteAction::make(),
-            RestoreAction::make(),
+            // ForceDeleteAction::make(),
+            // RestoreAction::make(),
         ];
     }
 }

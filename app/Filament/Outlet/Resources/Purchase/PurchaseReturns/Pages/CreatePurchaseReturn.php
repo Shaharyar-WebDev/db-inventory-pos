@@ -22,9 +22,15 @@ class CreatePurchaseReturn extends CreateRecord
             abort(404, 'Purchase not found');
         }
 
+        $saleTotal = $purchase->grand_total;
+
+        $returnedTotal = $purchase->purchaseReturns->sum('grand_total');
+
+        $netTotal = $saleTotal - $returnedTotal;
+
         $this->form->fill([
-            'purchase_id' => $purchase->id,
-            'grand_total' => $purchase->items->sum('total'),
+            'purchase_id'     => $purchase->id,
+            // 'grand_total' => $netTotal,
         ]);
     }
 

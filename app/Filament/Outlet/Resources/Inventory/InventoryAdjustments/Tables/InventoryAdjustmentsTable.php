@@ -21,22 +21,23 @@ class InventoryAdjustmentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('adjustment_number'),
+                TextColumn::make('adjustment_number')
+                    ->copyable(),
             ])
-            ->filters([
-                TrashedFilter::make(),
+            ->moreFilters([
+                // TrashedFilter::make(),
             ])
             ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
-                ForceDeleteAction::make(),
+                // ForceDeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
                 ]),
             ]);
     }

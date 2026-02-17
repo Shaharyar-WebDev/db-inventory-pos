@@ -2,12 +2,14 @@
 
 namespace App\Models\Accounting;
 
+use App\Enums\TransactionType;
+use App\Models\Accounting\AccountLedger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Account extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -36,7 +38,7 @@ class Account extends Model
                 [
                     'account_id' => $account->id,
                     'amount' => $account->opening_balance,
-                    'transaction_type' => class_basename(Account::class),
+                    'transaction_type' => TransactionType::OPENING_BALANCE,
                     'remarks' => "Account Created",
                 ]
             );

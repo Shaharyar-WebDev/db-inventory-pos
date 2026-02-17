@@ -2,28 +2,30 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Panel;
 use App\Enums\PanelId;
-use Filament\PanelProvider;
-use Filament\Actions\Action;
-use App\Models\Outlet\Outlet;
-use Filament\Facades\Filament;
-use App\Filament\Outlet\Pages\Pos;
-use App\Support\PanelConfiguration;
 use App\Filament\Outlet\Pages\Login;
-use Illuminate\Support\Facades\Route;
-use Filament\Http\Middleware\Authenticate;
 use App\Filament\Outlet\Pages\OutletDashboard;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Outlet\Pages\Pos;
+use App\Filament\Outlet\Resources\Sale\Sales\Pages\SalesReport;
+use App\Filament\Outlet\Resources\Sale\Sales\Widgets\OutletSaleStats;
+use App\Models\Outlet\Outlet;
+use App\Support\PanelConfiguration;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Filament\Panel;
+use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class OutletPanelProvider extends PanelProvider
 {
@@ -48,7 +50,9 @@ class OutletPanelProvider extends PanelProvider
                     ->icon('heroicon-o-arrow-right'),
             ])
             ->discoverWidgets(in: app_path('Filament/Outlet/Widgets'), for: 'App\Filament\Outlet\Widgets')
-            ->widgets([])
+            ->widgets([
+                OutletSaleStats::class
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -69,7 +73,7 @@ class OutletPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->tenantRoutes(function () {
-                Route::get('/pos/bootstrap', [Pos::class, 'bootstrap'])->name('pos.bootstrap');
+                // Route::get('/pos/bootstrap', [Pos::class, 'bootstrap'])->name('pos.bootstrap');
             });
     }
 }

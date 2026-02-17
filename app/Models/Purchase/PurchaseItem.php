@@ -7,7 +7,6 @@ use App\Models\Master\Product;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
-use App\Models\Accounting\SupplierLedger;
 use App\Models\Inventory\InventoryLedger;
 use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,11 +40,6 @@ class PurchaseItem extends Model
         return $this->morphOne(InventoryLedger::class, 'source');
     }
 
-    public function supplierLedger()
-    {
-        return $this->morphOne(SupplierLedger::class, 'source');
-    }
-
     public static function booted()
     {
         static::saved(function ($item) {
@@ -73,15 +67,17 @@ class PurchaseItem extends Model
         });
 
         static::deleting(function ($item) {
-            if ($item->ledger || $item->supplierLedger) {
-                Notification::make('record_deletion_error')
+            if ($item->purchase->purchaseReturns()->exists()) {
+                Notification::make()
+                    ->title('Cannot Delete')
+                    ->body('This record cannot be deleted because the purchase has been returned.')
                     ->danger()
-                    ->title('Error While Deleting Record')
-                    ->body('Cannot delete item with linked ledger entries')
                     ->send();
 
-                throw new Halt;
+                throw new Halt("This record cannot be deleted because the purchase has been returned.");
             }
+
+            $item->ledger()->delete();
         });
     }
 }

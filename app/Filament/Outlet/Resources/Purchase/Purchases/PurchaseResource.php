@@ -20,10 +20,11 @@ use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class PurchaseResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Purchase::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Truck;
 
     protected static ?string $recordTitleAttribute = 'purchase_number';
 
@@ -58,6 +59,4 @@ class PurchaseResource extends Resource
             'edit' => EditPurchase::route('/{record}/edit'),
         ];
     }
-
-
 }

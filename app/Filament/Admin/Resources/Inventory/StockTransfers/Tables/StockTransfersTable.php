@@ -36,7 +36,7 @@ class StockTransfersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TrashedFilter::make(),
+                // TrashedFilter::make(),
             ])
             ->groupedRecordActions([
                 // ViewAction::make(),
@@ -46,8 +46,8 @@ class StockTransfersTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
                 ]),
             ]);
     }

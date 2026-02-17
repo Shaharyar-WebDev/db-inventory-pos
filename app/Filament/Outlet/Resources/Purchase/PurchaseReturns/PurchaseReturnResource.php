@@ -10,21 +10,19 @@ use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Schemas\PurchaseRetur
 use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Schemas\PurchaseReturnInfolist;
 use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Tables\PurchaseReturnsTable;
 use App\Models\Purchase\PurchaseReturn;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PurchaseReturnResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = PurchaseReturn::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowUturnLeft;
 
     protected static ?string $recordTitleAttribute = 'return_number';
 
@@ -59,5 +57,4 @@ class PurchaseReturnResource extends Resource
             'edit' => EditPurchaseReturn::route('/{record}/edit'),
         ];
     }
-
 }

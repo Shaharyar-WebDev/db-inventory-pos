@@ -4,22 +4,14 @@ namespace App\Filament\Outlet\Pages;
 
 use Closure;
 use BackedEnum;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use App\Enums\DiscountType;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use App\Models\Outlet\Outlet;
 use App\Models\Master\Product;
 use App\Models\Master\Customer;
-use Filament\Actions\EditAction;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\RestoreAction;
 use Filament\Support\Icons\Heroicon;
-use Maatwebsite\Excel\Facades\Excel;
-use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Flex;
@@ -55,7 +47,6 @@ class Pos extends Page implements HasTable, HasSchemas
     {
         return false;
     }
-
 
     protected string $view = 'filament.outlet.pages.pos';
 

@@ -2,22 +2,23 @@
 
 namespace App\Models\Purchase;
 
-use App\BelongsToOutlet;
-use App\Models\Purchase\Purchase;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasDocumentNumber;
-use Filament\Notifications\Notification;
+use App\Enums\TransactionType;
 use App\Models\Accounting\SupplierLedger;
+use App\Models\Purchase\Purchase;
 use App\Models\Purchase\PurchaseReturnItem;
+use App\Models\Traits\BelongsToOutlet;
+use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Exception;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PurchaseReturn extends Model
 {
-    use BelongsToOutlet, HasDocumentNumber, SoftDeletes, ResolvesDocumentNumber;
+    use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
+    // SoftDeletes,
 
     protected $fillable = [
         'return_number',
@@ -41,6 +42,11 @@ class PurchaseReturn extends Model
         return $this->hasMany(PurchaseReturnItem::class);
     }
 
+    public function ledger()
+    {
+        return $this->morphOne(SupplierLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saved(function ($return) {
@@ -56,22 +62,24 @@ class PurchaseReturn extends Model
                 [
                     'supplier_id' => $return->purchase->supplier_id,
                     'amount' => -$return->grand_total,
-                    'transaction_type' => class_basename(self::class),
+                    'transaction_type' => TransactionType::PURCHASE_RETURN->value,
                     'remarks' => 'Purchase Return Saved',
                 ]
             );
         });
 
-        static::deleting(function ($item) {
-            if ($item->ledger || $item->supplierLedger) {
-                Notification::make('record_deletion_error')
-                    ->danger()
-                    ->title('Error While Deleting Record')
-                    ->body('Cannot delete item with linked ledger entries')
-                    ->send();
+        static::deleting(function ($return) {
+            $return->ledger()->delete();
+            $return->items->each->delete();
+            // if ($return->ledger) {
+            //     Notification::make('record_deletion_error')
+            //         ->danger()
+            //         ->title('Error While Deleting Record')
+            //         ->body('Cannot delete item with linked ledger entries')
+            //         ->send();
 
-                throw new Halt();
-            }
+            //     throw new Exception();
+            // }
         });
     }
 }

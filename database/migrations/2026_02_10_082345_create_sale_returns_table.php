@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('sale_returns', function (Blueprint $table) {
             $table->id();
+            $table->string('return_number', 255)->unique();
+            $table->foreignId('sale_id')->constrained()->restrictOnDelete();
+            $table->text('description')->nullable();
+            $table->money('total');
+            $table->discountType();
+            $table->discountValue();
+            $table->money('grand_total');
+            $table->money('discount_amount');
+            $table->belongsToOutlet();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

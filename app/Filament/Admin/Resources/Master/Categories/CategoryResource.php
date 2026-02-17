@@ -20,10 +20,10 @@ use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class CategoryResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Square3Stack3d;
 
     protected static ?string $recordTitleAttribute = 'name';
 

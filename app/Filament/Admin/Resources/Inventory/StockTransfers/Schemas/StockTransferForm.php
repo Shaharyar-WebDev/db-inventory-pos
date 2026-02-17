@@ -2,15 +2,16 @@
 
 namespace App\Filament\Admin\Resources\Inventory\StockTransfers\Schemas;
 
+use App\Models\Inventory\InventoryLedger;
 use Closure;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use App\Models\Inventory\InventoryLedger;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class StockTransferForm
 {
@@ -66,13 +67,17 @@ class StockTransferForm
                         TextInput::make('qty')
                             ->required()
                             ->numeric()
-                            ->rules(fn(Get $get) => [
+                            ->rules(fn(Get $get, ?Model $record) => [
                                 'min:0',
                                 'required',
-                                function (string $attribute, $value, Closure $fail) use ($get, $products) {
+                                function (string $attribute, $value, Closure $fail) use ($get, $products, $record) {
                                     $productId = $get('product_id');
                                     $outletId = $get('../../from_outlet_id');
                                     $stock = $products[$productId][$outletId]['qty'] ?? 0;
+
+                                    if ($record) {
+                                        $stock += $record->qty;
+                                    }
 
                                     if ($value > $stock) {
                                         $fail("Low stock — only {$stock} available");

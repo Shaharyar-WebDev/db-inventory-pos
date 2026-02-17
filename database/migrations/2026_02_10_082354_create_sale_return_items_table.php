@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('sale_return_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sale_return_id')->constrained('sale_returns')->restrictOnDelete();
+            $table->foreignId('product_id')->constrained()->restrictOnDelete();
+            $table->foreignId('unit_id')->constrained('units', 'id')->restrictOnDelete();
+            $table->quantity('qty');
+            $table->money('cost');
+            $table->money('rate');
+            $table->money('grand_total');
+            $table->money('total');
             $table->timestamps();
         });
     }

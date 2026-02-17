@@ -5,9 +5,7 @@ namespace App\Models\Inventory;
 use App\Enums\TransactionType;
 use App\Models\Master\Product;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
 
 class StockTransferItem extends Model
 {
@@ -31,6 +29,11 @@ class StockTransferItem extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function ledgers()
+    {
+        return $this->morphMany(InventoryLedger::class, 'source');
+    }
+    
     public static function booted()
     {
         static::saved(function ($item) {
@@ -38,16 +41,7 @@ class StockTransferItem extends Model
             $fromOutletId = $transfer->from_outlet_id;
             $toOutletId   = $transfer->to_outlet_id;
 
-            $avgRate = InventoryLedger::where('product_id', $item->product_id)
-                ->where('outlet_id', $fromOutletId)
-                ->lockForUpdate()
-                ->selectRaw('
-                    CASE
-                        WHEN SUM(qty) = 0 THEN 0
-                        ELSE SUM(qty * rate) / SUM(qty)
-                    END as avg_rate
-                ')
-                ->value('avg_rate');
+            $avgRate =  $item->product->getAvgRateAsOf($item->created_at) ?: (float) $item->product->cost_price;
 
             $value = $item->qty * $avgRate;
 
@@ -55,7 +49,7 @@ class StockTransferItem extends Model
                 [
                     'source_type' => StockTransferItem::class,
                     'source_id'   => $item->id,
-                    'transaction_type' => TransactionType::STOCK_TRANSFER_OUT->value,
+                    'transaction_type' => TransactionType::STOCK_TRANSFER_OUT,
                 ],
                 [
                     'reference_type' => StockTransfer::class,
@@ -75,7 +69,7 @@ class StockTransferItem extends Model
                 [
                     'source_type' => StockTransferItem::class,
                     'source_id'   => $item->id,
-                    'transaction_type' =>  TransactionType::STOCK_TRANSFER_IN->value,
+                    'transaction_type' =>  TransactionType::STOCK_TRANSFER_IN,
                 ],
                 [
                     'reference_type' => StockTransfer::class,
@@ -92,14 +86,7 @@ class StockTransferItem extends Model
         });
 
         static::deleting(function ($item) {
-            if ($item->ledger) {
-                Notification::make('record_deletion_error')
-                    ->danger()
-                    ->title('Error While Deleting Record')
-                    ->body('Cannot remove linked record')
-                    ->send();
-                throw new Halt();
-            }
+            $item->ledgers()->delete();
         });
     }
 }

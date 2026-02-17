@@ -2,15 +2,19 @@
 
 namespace App\Models\Master;
 
+use App\Models\Sale\Sale;
 use App\Enums\CustomerType;
 use App\Models\Master\Area;
 use App\Models\Master\City;
 use App\Enums\TransactionType;
 use App\Models\Scopes\OutletScope;
+use App\Models\Traits\HasStatus;
+use Illuminate\Support\Facades\DB;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use App\Models\Accounting\CustomerLedger;
+use App\Models\Accounting\Receipt;
 use App\Models\Master\CustomerProductRate;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
+    use HasStatus;
 
     protected $fillable = [
         'name',
@@ -51,15 +56,25 @@ class Customer extends Model
         return $this->hasMany(CustomerLedger::class);
     }
 
+    public function ledger()
+    {
+        return $this->morphOne(CustomerLedger::class, 'source');
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    public function receipts()
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
     public function productRates(): HasMany
     {
         return $this->hasMany(CustomerProductRate::class);
     }
-
-    // public function scopeWithCustomerBalances($query)
-    // {
-    //     return $query->withSum('ledgers as current_balance', 'amount');
-    // }
 
     public function scopeWithCustomerBalances($query)
     {
@@ -70,16 +85,18 @@ class Customer extends Model
         ], 'amount');
     }
 
+    public static function options()
+    {
+        return Customer::get()->pluck('name', 'id');
+    }
+
     public static function booted()
     {
         static::saved(function ($customer) {
-            // if ($customer->opening_balance == 0) {
-            //     return;
-            // }
             CustomerLedger::withoutGlobalScope(OutletScope::class)->updateOrCreate(
                 [
                     'customer_id' => $customer->id,
-                    'source_type' => Customer::class,
+                    'source_type' => self::class,
                     'source_id' => $customer->id,
                     'transaction_type' => TransactionType::OPENING_BALANCE->value,
                 ],
@@ -89,6 +106,19 @@ class Customer extends Model
                     'outlet_id' => null,
                 ]
             );
+
+            // if ($customer->opening_balance == 0) {
+            //     $openingBalanceLedger = $customer->ledger;
+
+            //     if (
+            //         $openingBalanceLedger
+            //         && !$customer->receipts()->exists()
+            //         && !$customer->sales()->exists()
+            //         && $openingBalanceLedger->amount == 0
+            //     ) {
+            //         $openingBalanceLedger->delete();
+            //     }
+            // }
         });
 
         static::deleting(function ($customer) {
@@ -99,7 +129,16 @@ class Customer extends Model
                     ->body('Walk-in customer cannot be deleted')
                     ->send();
 
-                throw new Halt();
+                throw new \Exception('Walk-in customer cannot be deleted');
+            }
+
+            if (!$customer->receipts()->exists() && !$customer->sales()->exists()) {
+                if ($customer->ledger && $customer->amount === 0) {
+                    $customer->ledger->customer_id = null;
+                    $customer->ledger->save();
+
+                    // $customer->ledger()->delete();
+                }
             }
         });
     }

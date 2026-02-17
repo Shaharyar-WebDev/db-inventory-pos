@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Outlet\Outlets\Tables;
 
+use App\Enums\Status;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -14,6 +15,8 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Panel;
@@ -56,18 +59,24 @@ class OutletsTable
                             ->label('Address')
                             ->copyable()
                             ->limit('60')
-                            ->tooltip(fn ($state) => $state)
+                            ->tooltip(fn($state) => $state)
                             ->toggleable(false)
                             ->extraAttributes(['class' => 'text-center text-sm text-gray-500 mt-1']),
-                        IconColumn::make('is_active')
-                            ->label('Active')
-                            ->boolean()
+                        IconColumn::make('status')
+                            ->label('Status')
+                            ->icon(fn(Status $state): Heroicon => match ($state) {
+                                Status::ACTIVE => Heroicon::CheckCircle,
+                                Status::IN_ACTIVE => Heroicon::XCircle,
+                            })
+                            ->color(fn(Status $state): string => match ($state) {
+                                Status::ACTIVE => 'success',
+                                Status::IN_ACTIVE => 'danger',
+                            })
                             ->sortable()
                             ->action(function ($record, $livewire) {
-                                $record->update(['is_active' => ! $record->is_active]);
+                                $record->update(['status' =>  $record->status === Status::ACTIVE ? Status::IN_ACTIVE : Status::ACTIVE]);
                                 $livewire->resetTable();
                             })
-                            ->tooltip(fn ($state) => $state ? 'Active' : 'InActive')
                             ->toggleable(false)
                             ->extraAttributes(['class' => 'text-center text-sm text-gray-500 mt-1 icon-column']),
                         TextColumn::make('created_at')
@@ -82,7 +91,7 @@ class OutletsTable
                 // ->columnSpanFull(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                // TrashedFilter::make(),
             ])
             ->contentGrid([
                 'md' => 2,
@@ -95,21 +104,22 @@ class OutletsTable
                     Action::make('enter_outlet')
                         ->color('warning')
                         ->icon('heroicon-o-arrow-left-end-on-rectangle')
-                        ->hidden(fn ($record) => $record->deleted_at || ! $record->is_active)
+                        ->hidden(fn($record) => $record->deleted_at || ! $record->status === Status::ACTIVE->value)
                         ->url(function ($record) {
                             return Filament::getPanel('outlet')->getUrl($record);
                         }, true),
                     DeleteAction::make(),
-                    RestoreAction::make(),
-                    ForceDeleteAction::make(),
+                    // RestoreAction::make(),
+                    // ForceDeleteAction::make(),
                 ])
                     ->buttonGroup(),
             ])
+            ->columnManager(false)
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
                 ]),
             ]);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Support\Enums\Width;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class extends SettingsMigration
@@ -11,8 +12,11 @@ return new class extends SettingsMigration
 
         $this->migrator->add('general.background_type', 'solid');
 
-        $this->migrator->add('general.content_width', 'full');
+        $this->migrator->add('general.content_width', Width::SevenExtraLarge);
         $this->migrator->add('general.navigation_type', 'sidebar');
         $this->migrator->add('general.spa_mode', false);
+
+        $this->migrator->add('general.address', 'Karachi');
+        $this->migrator->add('general.contact', '03154573767');
     }
 };

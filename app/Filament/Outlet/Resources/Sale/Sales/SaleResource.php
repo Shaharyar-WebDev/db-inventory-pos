@@ -16,17 +16,18 @@ use App\Filament\Outlet\Resources\Sale\Sales\Pages\EditSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ViewSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ListSales;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\CreateSale;
+use App\Filament\Outlet\Resources\Sale\Sales\Pages\SalesReport;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleForm;
 use App\Filament\Outlet\Resources\Sale\Sales\Tables\SalesTable;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleInfolist;
 
 class SaleResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = Sale::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::CurrencyDollar;
 
     protected static ?string $recordTitleAttribute = 'sale_number';
 

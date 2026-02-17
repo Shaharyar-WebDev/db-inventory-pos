@@ -16,11 +16,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sale_id')->constrained()->restrictOnDelete();
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
+            $table->foreignId('unit_id')->constrained('units', 'id')->restrictOnDelete();
             $table->quantity('qty');
             $table->money('cost');
             $table->money('rate');
-            $table->enum('discount_type', array_map(fn ($case) => $case->value, DiscountType::cases()));
-            $table->decimal('discount_value', 15, 4);
+            $table->discountType();
+            $table->discountValue();
             $table->money('total');
             $table->timestamps();
         });

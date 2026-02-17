@@ -3,14 +3,16 @@
 namespace App\Models\Master;
 
 use App\Enums\TransactionType;
-use App\Models\Scopes\OutletScope;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\SupplierLedger;
+use App\Models\Scopes\OutletScope;
+use App\Models\Traits\HasStatus;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Supplier extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
+    use HasStatus;
 
     protected $fillable = [
         'name',
@@ -38,7 +40,7 @@ class Supplier extends Model
             SupplierLedger::withoutGlobalScope(OutletScope::class)->updateOrCreate(
                 [
                     'supplier_id' => $supplier->id,
-                    'source_type' => Supplier::class,
+                    'source_type' => self::class,
                     'source_id' => $supplier->id,
                     'transaction_type' => TransactionType::OPENING_BALANCE->value,
                 ],

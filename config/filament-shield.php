@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Filament\Outlet\Pages\Pos;
+
 return [
 
     /*
@@ -16,7 +18,7 @@ return [
     */
 
     'shield_resource' => [
-        'slug' => 'shield/roles',
+        'slug' => 'roles',
         'show_model_path' => false,
         'cluster' => null,
         'tabs' => [
@@ -203,6 +205,7 @@ return [
         'prefix' => 'view',
         'exclude' => [
             \Filament\Pages\Dashboard::class,
+            Pos::class,
         ],
     ],
 

@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Accounting\Deposits\Schemas\DepositForm;
 use App\Filament\Admin\Resources\Accounting\Deposits\Schemas\DepositInfolist;
 use App\Filament\Admin\Resources\Accounting\Deposits\Tables\DepositsTable;
 use App\Models\Accounting\Deposit;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -20,9 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DepositResource extends Resource
 {
+    // use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Deposit::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::CurrencyDollar;
 
     protected static ?string $recordTitleAttribute = 'deposit_number';
 
@@ -56,13 +58,5 @@ class DepositResource extends Resource
             // 'view' => ViewDeposit::route('/{record}'),
             // 'edit' => EditDeposit::route('/{record}/edit'),
         ];
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }

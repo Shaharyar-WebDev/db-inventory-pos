@@ -2,6 +2,7 @@
 
 namespace App\Filament\Outlet\Resources\Sale\Sales\Pages;
 
+use App\Filament\Admin\Resources\Master\Products\Widgets\ProductStats;
 use App\Filament\Outlet\Resources\Sale\Sales\SaleResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;

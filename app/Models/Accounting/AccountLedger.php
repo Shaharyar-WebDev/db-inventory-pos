@@ -3,16 +3,16 @@
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
-use App\Models\Master\Supplier;
+use App\Models\Accounting\Account;
 use App\Models\Scopes\OutletScope;
+use App\Models\Traits\HasTransactionType;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Accounting\SupplierLedger;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AccountLedger extends Model
 {
-    use BelongsToOutlet;
+    use BelongsToOutlet, HasTransactionType;
 
     protected $fillable = [
         'account_id',
@@ -34,9 +34,9 @@ class AccountLedger extends Model
         return $this->morphTo();
     }
 
-    public static function getBalanceForAccountId(int $supplierId): float
+    public static function getBalanceForAccountId(int $accountId): float
     {
-        return AccountLedger::withoutGlobalScope(OutletScope::class)->where('account_id', $supplierId)
+        return AccountLedger::withoutGlobalScope(OutletScope::class)->where('account_id', $accountId)
             ->sum('amount');
     }
 }

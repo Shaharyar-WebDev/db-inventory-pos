@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PurchaseReturnItem extends Model
 {
     use ResolvesDocumentNumber;
+    
     protected $fillable = [
         'purchase_return_id',
         'product_id',
@@ -34,6 +35,11 @@ class PurchaseReturnItem extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function ledger()
+    {
+        return $this->morphOne(InventoryLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saved(function ($item) {
@@ -48,7 +54,7 @@ class PurchaseReturnItem extends Model
                     'qty' => -$item->qty,
                     'rate' => $item->rate,
                     'value' => -$item->total,
-                    'transaction_type' => class_basename(PurchaseReturn::class),
+                    'transaction_type' => TransactionType::PURCHASE_RETURN->value,
                     'remarks' => 'Purchase Return Saved',
                 ]
             );
@@ -61,15 +67,16 @@ class PurchaseReturnItem extends Model
         });
 
         static::deleting(function ($item) {
-            if ($item->ledger || $item->supplierLedger) {
-                Notification::make('record_deletion_error')
-                    ->danger()
-                    ->title('Error While Deleting Record')
-                    ->body('Cannot delete item with linked ledger entries')
-                    ->send();
+            $item->ledger()->delete();
+            // if ($item->ledger) {
+            //     Notification::make('record_deletion_error')
+            //         ->danger()
+            //         ->title('Error While Deleting Record')
+            //         ->body('Cannot delete item with linked ledger entries')
+            //         ->send();
 
-                throw new Halt();
-            }
+            //     throw new Halt();
+            // }
         });
     }
 }

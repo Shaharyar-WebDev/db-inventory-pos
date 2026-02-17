@@ -32,7 +32,7 @@
 @media (min-width: 768px) {
     ::-webkit-scrollbar {
         height: 5px;
-        width: 5px
+        width: 5px;
     }
 
     ::-webkit-scrollbar-track {
@@ -171,4 +171,14 @@ img.fi-logo {
 .pos-form,
 .pos-table {
     @apply max-h-screen lg:max-h-none;
+}
+
+.fi-btn.fi-color-primary:is([class*="fi-bg-color-"]) {
+    --bg: var(--color-600) !important;
+    --text: white !important;
+}
+
+.fi-btn.fi-color-primary:hover:is([class*="fi-bg-color-"]) {
+    --hover-bg: var(--color-500) !important;
+    --hover-text: white !important;
 }

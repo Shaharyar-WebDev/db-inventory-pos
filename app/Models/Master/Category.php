@@ -2,13 +2,13 @@
 
 namespace App\Models\Master;
 
+use App\Models\Traits\HasOptions;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use SoftDeletes;
-
+    // use SoftDeletes;
+    use HasOptions;
     protected $fillable = [
         'name',
         'description',

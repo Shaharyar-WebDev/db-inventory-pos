@@ -20,10 +20,10 @@ use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class SupplierResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Supplier::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Truck;
 
     protected static ?string $recordTitleAttribute = 'name';
 

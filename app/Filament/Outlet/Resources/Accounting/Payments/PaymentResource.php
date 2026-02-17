@@ -21,11 +21,11 @@ use App\Filament\Outlet\Resources\Accounting\Payments\Schemas\PaymentInfolist;
 
 class PaymentResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = Payment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::CreditCard;
 
     protected static ?string $recordTitleAttribute = 'payment_number';
 

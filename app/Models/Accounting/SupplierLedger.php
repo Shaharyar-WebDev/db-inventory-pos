@@ -5,13 +5,14 @@ namespace App\Models\Accounting;
 use App\BelongsToOutlet;
 use App\Models\Master\Supplier;
 use App\Models\Scopes\OutletScope;
+use App\Models\Traits\HasTransactionType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SupplierLedger extends Model
 {
-    use BelongsToOutlet;
+    use BelongsToOutlet, HasTransactionType;
 
     protected $fillable = [
         'supplier_id',

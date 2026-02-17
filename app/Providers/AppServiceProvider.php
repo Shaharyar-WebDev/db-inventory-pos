@@ -2,25 +2,36 @@
 
 namespace App\Providers;
 
-use Filament\Panel;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
+use App\Enums\DiscountType;
+use App\Enums\Status;
+use Carbon\Carbon;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
-use Filament\Tables\Columns\Column;
-use Filament\Forms\Components\Select;
 use Filament\Actions\ForceDeleteAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\ServiceProvider;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Enums\FiltersLayout;
-use Illuminate\Database\Schema\Blueprint;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,11 +58,12 @@ class AppServiceProvider extends ServiceProvider
             $width = request()->route()->getName() === 'filament.outlet.pages.pos' ?  Width::Full : null;
             $topbar = request()->route()->getName() === 'filament.outlet.pages.pos' ?  true : false;
 
-            filament()
+            request()->route()->getName() === 'filament.outlet.pages.pos' ? filament()
                 ->getCurrentPanel()
-                ->maxContentWidth($width)
+                ->sidebarCollapsibleOnDesktop(false)
+                ->sidebarFullyCollapsibleOnDesktop()
                 // ->topbar($topbar)
-            ;
+                ->maxContentWidth($width) : null;
         });
 
         TextColumn::macro('disableNumericFormatting', function (): static {
@@ -60,17 +72,68 @@ class AppServiceProvider extends ServiceProvider
             return $this;
         });
 
+        TextColumn::macro('quantity', function () {
+            $this->prefix(app_currency_symbol())
+                ->default(0)
+                ->numeric(2);
+
+            return $this;
+        });
+
         TextColumn::macro('currency', function () {
             $this->prefix(app_currency_symbol())
+                ->color(function ($state) {
+                    if ($state < 0) {
+                        return 'danger';
+                    }
+
+                    if ($state > 0) {
+                        return 'success';
+                    }
+
+                    return 'gray';
+                })
                 ->default(0);
 
             return $this;
         });
 
+
+        // TextColumn::macro('balanceTooltip', function () {
+        //     $this->tooltip(function ($state) {
+        //         if ($state < 0) {
+        //             return " Debit";
+        //         }
+
+        //         if ($state > 0) {
+        //             return " Credit";
+        //         }
+
+        //         return null;
+        //     });
+
+        //     return $this;
+        // });
+
         TextInput::macro('currency', function () {
             $this->prefix(app_currency_symbol())
                 ->numeric()
+                ->formatStateUsing(fn($state) => blank($state) ? 0 : $state)
                 ->default(0);
+
+            return $this;
+        });
+
+        TextColumn::macro('desc', function () {
+            $this->copyable()
+                ->limit('60')
+                ->tooltip(fn($state) => $state);
+
+            return $this;
+        });
+
+        TextColumn::macro('sumCurrency', function () {
+            $this->summarize(Sum::make()->formatStateUsing(fn($state) => currency_format($state)));
 
             return $this;
         });
@@ -97,24 +160,138 @@ class AppServiceProvider extends ServiceProvider
 
         Table::configureUsing(function (Table $table): void {
             $table
-                ->deferFilters(false)
+                // ->deferFilters(false)
                 ->persistFiltersInSession()
                 ->reorderableColumns()
                 ->defaultDateDisplayFormat(app_date_format())
                 ->defaultDateTimeDisplayFormat(app_date_time_format())
-                ->deferColumnManager(false)
-                ->striped()
-                // ->filters([], layout: FiltersLayout::Modal)
+                ->defaultSort('created_at', 'desc')
+                ->filtersFormColumns(2)
+                ->paginated([5, 10, 25, 50, 100, 'all'])
+                ->extremePaginationLinks();
+                // ->deferColumnManager(false)
+                // ->striped()
+                // ->filters([], layout: FiltersLayout::AboveContentCollapsible)
                 // ->filtersTriggerAction(
                 //     fn(Action $action) => $action
                 //         ->slideOver() // This makes the filter panel a slide-over
                 // )
-                // ->recordActions([
-                //     ActionGroup::make([
-                //         ...$table->getRecordActions(),
-                //     ]),
-                // ]) Configured in vendor/filament/tables/src/Table/Concerns/HasRecordActions.php;
             ;
+        });
+
+        Table::macro('moreFilters', function (array|null $beforeDefault = [], array|null $afterDefault = []) {
+            return $this->filters([
+                ...$beforeDefault,
+                Filter::make('created_at')
+                    ->schema([
+                        Fieldset::make()
+                            ->label('Created')
+                            ->columnSpanFull()
+                            ->columns(1)
+                            ->schema([
+                                DatePicker::make('from')
+                                    ->displayFormat(app_date_format())
+                                    ->maxDate(fn(Get $get, Set $set) => $get('until') ?: now())
+                                    ->label('From'),
+                                DatePicker::make('until')
+                                    ->displayFormat(app_date_format())
+                                    ->minDate(fn(Get $get) => $get('from') ?: now())
+                                    ->maxDate(now())
+                                    ->label('Until'),
+                            ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn(Builder $query, $date): Builder =>
+                                $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'],
+                                fn(Builder $query, $date): Builder =>
+                                $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (!$data['from'] && !$data['until']) {
+                            return null;
+                        }
+
+                        $from = $data['from']
+                            ? Carbon::parse($data['from'])->format(app_date_format())
+                            : null;
+
+                        $until = $data['until']
+                            ? Carbon::parse($data['until'])->format(app_date_format())
+                            : null;
+
+                        if ($from && $until) {
+                            return "From {$from} to {$until}";
+                        }
+
+                        if ($from) {
+                            return "From {$from}";
+                        }
+
+                        return "Until {$until}";
+                    }),
+                Filter::make('updated_at')
+                    ->schema([
+                        Fieldset::make()
+                            ->label('Updated')
+                            ->columnSpanFull()
+                            ->columns(1)
+                            ->schema([
+                                DatePicker::make('updated_from')
+                                    ->displayFormat(app_date_format())
+                                    ->maxDate(fn(Get $get) => $get('updated_until') ?: now())
+                                    ->label('From'),
+                                DatePicker::make('updated_until')
+                                    ->displayFormat(app_date_format())
+                                    ->minDate(fn(Get $get) => $get('updated_from'))
+                                    ->maxDate(now())
+                                    ->label('Until'),
+                            ])
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['updated_from'],
+                                fn(Builder $query, $date): Builder =>
+                                $query->whereDate('updated_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['updated_until'],
+                                fn(Builder $query, $date): Builder =>
+                                $query->whereDate('updated_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (!$data['updated_from'] && !$data['updated_until']) {
+                            return null;
+                        }
+
+                        $from = $data['updated_from']
+                            ? Carbon::parse($data['updated_from'])->format(app_date_format())
+                            : null;
+
+                        $until = $data['updated_until']
+                            ? Carbon::parse($data['updated_until'])->format(app_date_format())
+                            : null;
+
+                        if ($from && $until) {
+                            return "Updated: {$from} to {$until}";
+                        }
+
+                        if ($from) {
+                            return "Updated from {$from}";
+                        }
+
+                        return "Updated until {$until}";
+                    }),
+                ...$afterDefault
+            ]);
         });
 
         Table::macro('groupedRecordActions', function (array $actions) {
@@ -144,32 +321,34 @@ class AppServiceProvider extends ServiceProvider
 
                     $action->success();
                 } catch (\Throwable $e) {
-                    // Handle exception if process or forceDelete fails
                     $errorRef = strtoupper(Str::random(8));
 
-                    $errorInfo = $e->errorInfo ?? null;
+                    $isForeignKey = isset($e->errorInfo) &&
+                        $e->errorInfo[0] === '23000' &&
+                        ($e->errorInfo[1] ?? null) === 1451;
 
-                    $errorMessage = sprintf(
-                        'Database error while deleting record. SQLSTATE: %s | Code: %s | Ref: %s',
-                        $e->errorInfo[0] ?? 'N/A',
-                        $e->errorInfo[1] ?? $e->getCode(),
-                        $errorRef
-                    );
+                    $errorMessage = match (true) {
+                        $isForeignKey => 'Cannot delete this record because it has linked ledger entries or related data.',
+                        default => $e->getMessage() ?: "An unknown error occurred while deleting the record. Error Ref: {$e->getMessage()}",
+                    };
 
-                    if ($errorInfo) {
-                        Notification::make('record_deletion_error')
-                            ->danger()
-                            ->title('Error While Deleting Record')
-                            ->body($errorMessage)
-                            ->send();
-                    }
+                    Notification::make('record_deletion_error')
+                        ->danger()
+                        ->title('Error While Deleting Record')
+                        ->body($errorMessage)
+                        ->send();
+
+                    logger($e);
 
                     $action->failure();
-
-                    // Optional: log the exception
-                    // logger()->error('Deletion failed: '.$e->getMessage());
                 }
             });
+        });
+
+        SelectFilter::configureUsing(function (SelectFilter $selectFilter) {
+            $selectFilter->preload()
+                ->optionsLimit(10)
+                ->searchable();
         });
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
@@ -188,25 +367,24 @@ class AppServiceProvider extends ServiceProvider
 
                     $errorRef = strtoupper(Str::random(8));
 
-                    $errorInfo = $e->errorInfo ?? null;
+                    $isForeignKey = isset($e->errorInfo) &&
+                        $e->errorInfo[0] === '23000' &&
+                        ($e->errorInfo[1] ?? null) === 1451;
 
-                    $errorMessage = sprintf(
-                        'Database error while deleting record. SQLSTATE: %s | Code: %s | Ref: %s',
-                        $e->errorInfo[0] ?? 'N/A',
-                        $e->errorInfo[1] ?? $e->getCode(),
-                        $errorRef
-                    );
+                    $errorMessage = match (true) {
+                        $isForeignKey => 'Cannot delete this record because it has linked ledger entries or related data.',
+                        default => $e->getMessage() ?: "An unknown error occurred while deleting the record.",
+                    };
 
-                    if ($errorInfo) {
-                        Notification::make('record_deletion_error')
-                            ->danger()
-                            ->title('Error While Deleting Record')
-                            ->body($errorMessage)
-                            ->send();
-                    }
-
+                    Notification::make('record_deletion_error')
+                        ->danger()
+                        ->title('Error While Deleting Record')
+                        ->body($errorMessage)
+                        ->send();
 
                     $action->failure();
+
+                    logger($e);
                 }
             });
         });
@@ -227,6 +405,30 @@ class AppServiceProvider extends ServiceProvider
 
         Blueprint::macro('quantity', function (string $column) {
             return $this->decimal($column, 15, 3)->default(0);
+        });
+
+        Blueprint::macro('status', function () {
+            return $this->string('status')->default(Status::ACTIVE->value);
+        });
+
+        Blueprint::macro('discountType', function () {
+            return $this->enum('discount_type', array_map(fn($case) => $case->value, DiscountType::cases()));
+        });
+
+        Blueprint::macro('discountValue', function () {
+            return $this->decimal('discount_value', 15, 4)->default(0);
+        });
+
+        Blueprint::macro('auditUsers', function () {
+            $this->foreignId('creator_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+
+            $this->foreignId('updater_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
         });
 
         FilamentAsset::registerCssVariables([

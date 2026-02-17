@@ -12,13 +12,29 @@ enum TransactionType: string
 
     case PURCHASE = 'purchase';
 
+    case PURCHASE_RETURN = 'purchase_return';
+
     case SALE = 'sale';
+    case SALE_RETURN = 'sale_return';
 
     case STOCK_TRANSFER_IN = 'stock_transfer_in';
 
     case STOCK_TRANSFER_OUT = 'stock_transfer_out';
 
-    case REFUND_OR_ADJUSTMENT = 'refund_or_adjustment';
+    case PAYMENT_REFUND_OR_ADJUSTMENT = 'payment_refund_or_adjustment';
+
+    case RECEIPT_REFUND_OR_ADJUSTMENT = 'receipt_refund_or_adjustment';
 
     case PAYMENT = 'payment';
+
+    case RECEIPT = 'receipt';
+
+    case DEPOSIT = 'deposit';
+
+    case EXPENSE = 'expense';
+
+    public function label(): string
+    {
+        return str($this->value)->replace('_', ' ')->title()->toString();
+    }
 }

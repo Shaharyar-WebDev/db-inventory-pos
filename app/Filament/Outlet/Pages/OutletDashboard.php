@@ -2,20 +2,21 @@
 
 namespace App\Filament\Outlet\Pages;
 
+use App\Filament\Outlet\Widgets\Stats;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Filament\Actions\Action;
-use Filament\Schemas\Schema;
-use Filament\Widgets\AccountWidget;
-use Filament\Forms\Components\Select;
-use App\Filament\Outlet\Widgets\Stats;
-use Filament\Schemas\Components\Section;
-use Filament\Widgets\FilamentInfoWidget;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
-use Filament\Schemas\Components\Utilities\Get;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\FilamentInfoWidget;
 
 class OutletDashboard extends BaseDashboard
 {
@@ -24,7 +25,7 @@ class OutletDashboard extends BaseDashboard
 
     protected static ?string $title = 'Outlet Dashboard';
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home';
+    protected static string|BackedEnum|null $navigationIcon =  Heroicon::Home;
 
     public function getColumns(): int|array
     {

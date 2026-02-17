@@ -10,8 +10,8 @@
     } from 'https://unpkg.com/@bprogress/core/dist/index.js';
 
     BProgress.configure({
-         speed: 120,
-         showSpinner: false,
+        speed: 180,
+        showSpinner: false,
     });
 
     Livewire.hook('commit', ({
@@ -33,4 +33,19 @@
             });
         });
     });
+
+    window.onbeforeunload = function() {
+        BProgress.configure({
+            showSpinner: true,
+        });
+        BProgress.start();
+    };
+
+    // Hide loader after page loads
+    window.addEventListener('load', function() {
+        BProgress.start();
+        BProgress.done();
+    });
 </script>
+
+

@@ -2,20 +2,21 @@
 
 namespace App\Filament\Outlet\Resources\Master\Products\Tables;
 
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Maatwebsite\Excel\Facades\Excel;
-use Filament\Actions\BulkActionGroup;
 use App\Exports\InventoryLedgerExport;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsTable
 {
@@ -31,8 +32,12 @@ class ProductsTable
                     ->visibility('public'),
                 TextColumn::make('name')
                     ->copyable(),
-                TextColumn::make('code')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                // TextColumn::make('code')
+                //     ->toggleable(isToggledHiddenByDefault: true)
+                //     ->copyable(),
+                TextColumn::make('category.name')
+                    ->copyable(),
+                TextColumn::make('brand.name')
                     ->copyable(),
                 TextColumn::make('unit.name')
                     ->copyable(),
@@ -44,8 +49,13 @@ class ProductsTable
                     ->copyable(),
                 TextColumn::make('current_outlet_stock')
                     ->searchable(false)
-                    ->default(0)
+                    ->quantity()
                     ->suffix(fn($record) => ' ' . ($record->unit?->symbol ?? ''))
+                    ->sortable(false),
+                TextColumn::make('current_outlet_stock_value')
+                    ->searchable(false)
+                    ->currency()
+                    ->sumCurrency()
                     ->sortable(false),
                 TextColumn::make('deleted_at')
                     ->dateTime()
@@ -57,8 +67,15 @@ class ProductsTable
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
+            ->moreFilters([
                 // TrashedFilter::make(),
+            ], [
+                SelectFilter::make('category')
+                    ->relationship('category', 'name'),
+                SelectFilter::make('brand')
+                    ->relationship('brand', 'name'),
+                SelectFilter::make('unit')
+                    ->relationship('unit', 'name'),
             ])
             ->recordActions([
                 // ViewAction::make(),

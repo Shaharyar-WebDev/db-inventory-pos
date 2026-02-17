@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name', 255)->unique();
             $table->text('address')->nullable();
             $table->string('phone_number', 50)->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->status();
             $table->string('attachments')->nullable();
             $table->softDeletes();
             $table->timestamps();

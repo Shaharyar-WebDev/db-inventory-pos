@@ -21,11 +21,12 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
 
     public function collection()
     {
-        return InventoryLedger::with([
-            'product',
-            'unit',
-            'source',
-        ])
+        return InventoryLedger::withCasts(default_ledger_casts())
+            ->with([
+                'product',
+                'unit',
+                'source',
+            ])
             ->where('product_id', $this->productId)
             ->when($this->outletId, function ($q) {
                 return $q->where('outlet_id', $this->outletId);
@@ -72,7 +73,7 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             $ledger->rate,
             $ledger->value,
             $this->runningValuation,
-            $ledger->transaction_type,
+            $ledger->transaction_type->label(),
             // $ledger->reference?->{$ledger->reference::$documentNumberColumn},
             // class_basename($ledger->source_type) . ' #' . $ledger->source_id,
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')

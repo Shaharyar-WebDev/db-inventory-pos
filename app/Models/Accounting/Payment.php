@@ -2,27 +2,33 @@
 
 namespace App\Models\Accounting;
 
-use App\BelongsToOutlet;
-use Illuminate\Support\Str;
 use App\Enums\TransactionType;
+use App\Models\Accounting\Account;
+use App\Models\Accounting\AccountLedger;
+use App\Models\Accounting\PaymentMethod;
+use App\Models\Accounting\SupplierLedger;
 use App\Models\Master\Supplier;
 use App\Models\Purchase\Purchase;
-use App\Models\Accounting\Account;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Accounting\AccountLedger;
+use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\HasTransactionType;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    use SoftDeletes, BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
+    use BelongsToOutlet,
+        // SoftDeletes,
+        HasDocumentNumber,
+        HasTransactionType,
+        ResolvesDocumentNumber;
 
     protected $fillable = [
         'payment_number',
         'supplier_id',
         'account_id',
         'purchase_id',
+        'payment_method_id',
         'amount',
         'remarks',
         'outlet_id',
@@ -47,10 +53,25 @@ class Payment extends Model
         return $this->belongsTo(Purchase::class);
     }
 
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function accountLedger()
+    {
+        return $this->morphOne(AccountLedger::class, 'source');
+    }
+
+    public function supplierLedger()
+    {
+        return $this->morphOne(SupplierLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saved(function ($payment) {
-            $transactionType = $payment->amount < 0 ? Str::upper(TransactionType::REFUND_OR_ADJUSTMENT->value) : TransactionType::PAYMENT->value;
+            $transactionType = $payment->amount < 0 ? TransactionType::PAYMENT_REFUND_OR_ADJUSTMENT->value : TransactionType::PAYMENT->value;
 
             AccountLedger::updateOrCreate(
                 [
@@ -76,6 +97,12 @@ class Payment extends Model
                     'remarks' =>  $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
+        });
+
+
+        static::deleting(function ($receipt) {
+            $receipt->accountLedger()->delete();
+            $receipt->supplierLedger()->delete();
         });
     }
 }

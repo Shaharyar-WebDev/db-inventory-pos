@@ -60,7 +60,7 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
             $debit ?: 0,
             $credit ?: 0,
             $this->runningBalance,
-            $ledger->transaction_type,
+            $ledger->transaction_type->label(),
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',

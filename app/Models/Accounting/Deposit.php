@@ -2,6 +2,7 @@
 
 namespace App\Models\Accounting;
 
+use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountLedger;
 use App\Models\Traits\HasDocumentNumber;
@@ -10,7 +11,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Deposit extends Model
 {
-    use SoftDeletes, HasDocumentNumber, ResolvesDocumentNumber;
+    use
+        //  SoftDeletes
+        HasDocumentNumber,
+        ResolvesDocumentNumber;
 
     protected $fillable = [
         'deposit_number',
@@ -37,7 +41,7 @@ class Deposit extends Model
             ], [
                 'account_id' => $deposit->account_id,
                 'amount' => $deposit->amount,
-                'transaction_type' => class_basename(Deposit::class),
+                'transaction_type' => TransactionType::DEPOSIT->value,
                 'remarks' => 'Deposit created',
                 'outlet_id' => null
             ]);

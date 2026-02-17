@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('receipt_number', 255)->unique();
             $table->foreignId('customer_id')->constrained()->restrictOnDelete();
             $table->foreignId('account_id')->constrained()->restrictOnDelete();
-            $table->decimal('amount', 15, 2);
+            $table->foreignId('payment_method_id')->nullable()->constrained()->restrictOnDelete();
+            $table->money('amount');
             $table->text('remarks')->nullable();
+            $table->foreignId('rider_id')->nullable()->constrained('users', 'id')->restrictOnDelete();
             $table->belongsToOutlet();
             $table->timestamps();
             $table->softDeletes();

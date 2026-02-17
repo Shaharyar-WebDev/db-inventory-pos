@@ -21,11 +21,11 @@ use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas\Invento
 
 class InventoryAdjustmentResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = InventoryAdjustment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowsPointingIn;
 
     protected static ?string $recordTitleAttribute = 'adjustment_number';
 

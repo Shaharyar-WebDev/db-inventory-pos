@@ -2,14 +2,13 @@
 
 namespace App\Models\Inventory;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Outlet\Outlet;
 use App\Models\Traits\HasDocumentNumber;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 
 class StockTransfer extends Model
 {
-    use HasDocumentNumber, SoftDeletes;
+    use HasDocumentNumber;
 
     public static string $documentNumberColumn = 'transfer_number';
 
@@ -37,4 +36,10 @@ class StockTransfer extends Model
         return $this->hasMany(StockTransferItem::class);
     }
 
+    public static function booted()
+    {
+        static::deleting(function ($str) {
+            $str->items->each->delete();
+        });
+    }
 }

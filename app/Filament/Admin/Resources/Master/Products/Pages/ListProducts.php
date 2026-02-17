@@ -2,15 +2,16 @@
 
 namespace App\Filament\Admin\Resources\Master\Products\Pages;
 
-use Livewire\Livewire;
-use Filament\Actions\CreateAction;
-use App\Support\Actions\RefreshAction;
-use Filament\Resources\Pages\ListRecords;
 use App\Filament\Admin\Resources\Master\Products\ProductResource;
 use App\Filament\Admin\Resources\Master\Products\Widgets\ProductStats;
+use App\Support\Actions\RefreshAction;
+use Filament\Actions\CreateAction;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
+use Filament\Resources\Pages\ListRecords;
 
 class ListProducts extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = ProductResource::class;
 
     protected function getHeaderActions(): array

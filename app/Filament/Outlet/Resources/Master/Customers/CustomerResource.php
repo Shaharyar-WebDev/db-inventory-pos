@@ -22,13 +22,13 @@ use App\Filament\Admin\Resources\Master\Customers\RelationManagers\ProductRatesR
 
 class CustomerResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = Customer::class;
 
     protected static bool $isScopedToTenant = false;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -59,7 +59,7 @@ class CustomerResource extends Resource
         return [
             'index' => ListCustomers::route('/'),
             'create' => CreateCustomer::route('/create'),
-            // 'view' => ViewCustomer::route('/{record}'),
+            'view' => ViewCustomer::route('/{record}'),
             'edit' => EditCustomer::route('/{record}/edit'),
         ];
     }

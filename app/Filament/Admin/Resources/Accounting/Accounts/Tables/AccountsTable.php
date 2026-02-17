@@ -3,19 +3,16 @@
 namespace App\Filament\Admin\Resources\Accounting\Accounts\Tables;
 
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use App\Models\Outlet\Outlet;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\RestoreAction;
 use App\Exports\AccountLedgerExport;
-use Maatwebsite\Excel\Facades\Excel;
 use Filament\Actions\BulkActionGroup;
-use Filament\Forms\Components\Select;
-use App\Exports\InventoryLedgerExport;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteAction;
+use App\Support\Actions\LedgerExportAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +31,7 @@ class AccountsTable
                     ->currency(),
                 TextColumn::make('current_balance')
                     ->currency()
+                    ->sumCurrency()
                     ->searchable(false)
                     ->copyable(),
                 TextColumn::make('created_at')
@@ -49,40 +47,29 @@ class AccountsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                TrashedFilter::make(),
+            ->moreFilters([
+                // TrashedFilter::make(),
             ])
             ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
-                ForceDeleteAction::make(),
-                RestoreAction::make(),
-                Action::make('export_ledger')
-                    ->icon('heroicon-o-document-text')
-                    ->color('info')
-                    // ->schema([
-                    //     Select::make('outlet_id')
-                    //         ->label('Outlet')
-                    //         ->options(Outlet::options())
-                    //     // ->required(),
-                    // ])
-                    ->action(function (Model $record, array $data) {
-                        $outletId = $data['outlet_id'] ?? null;
-                        $outlet = Outlet::find($outletId);
+                // ForceDeleteAction::make(),
+                // RestoreAction::make(),
+                LedgerExportAction::configure(AccountLedgerExport::class)
+                    ->fileName(function (Model $record, ?Outlet $outlet) {
                         $suffix = $outlet ? "-{$outlet->name}" : '';
-                        $fileName = "account_ledger_{$record->name}{$suffix}.xlsx";
-                        return Excel::download(new AccountLedgerExport(
-                            $record->id,
-                            $outletId,
-                        ), $fileName);
-                    }),
+                        return "account_ledger_{$record->name}{$suffix}";
+                    })
+                    ->isOutletRequired(false)
+                    ->hasOutletSelectionSchema(false)
+                    ->make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
                 ]),
             ]);
     }

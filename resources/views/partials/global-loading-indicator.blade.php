@@ -1,4 +1,4 @@
-<div x-cloak x-show="$store.isLoading.value" class="global-loading-indicator">
+<div x-cloak x-show="$store.isLoading.value" class="global-loading-indicator" style="bottom: 0 !important;">
     <div class="flex gap-2" style="
              display: flex;
     gap: 6px;">

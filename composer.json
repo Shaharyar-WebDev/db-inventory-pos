@@ -10,6 +10,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "asosick/filament-layout-manager": "^2.1",
+        "barryvdh/laravel-dompdf": "^3.1",
         "bezhansalleh/filament-shield": "^4.1",
         "filament/filament": "^4.0",
         "filament/spatie-laravel-settings-plugin": "^4.0",

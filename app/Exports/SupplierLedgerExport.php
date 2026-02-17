@@ -50,8 +50,8 @@ class SupplierLedgerExport implements FromCollection, WithHeadings, WithMapping,
 
     public function map($ledger): array
     {
-        $debit  = $ledger->amount > 0 ? $ledger->amount : null;
-        $credit = $ledger->amount < 0 ? abs($ledger->amount) : null;
+        $debit = $ledger->amount < 0 ? abs($ledger->amount) : null;
+        $credit  = $ledger->amount > 0 ? $ledger->amount : null;
 
         $this->runningBalance += $ledger->amount;
 
@@ -60,7 +60,7 @@ class SupplierLedgerExport implements FromCollection, WithHeadings, WithMapping,
             $debit ?: 0,
             $credit ?: 0,
             $this->runningBalance,
-            $ledger->transaction_type,
+            $ledger->transaction_type->label(),
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',

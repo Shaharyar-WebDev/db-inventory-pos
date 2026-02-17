@@ -4,20 +4,23 @@ namespace App\Models\Purchase;
 
 use App\BelongsToOutlet;
 use App\Enums\TransactionType;
-use App\Models\Master\Supplier;
 use App\Models\Accounting\Payment;
+use App\Models\Accounting\SupplierLedger;
+use App\Models\Master\Supplier;
+use App\Models\Purchase\PurchaseItem;
+use App\Models\Purchase\PurchaseReturn;
+use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\ResolvesDocumentNumber;
+use Exception;
+use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasDocumentNumber;
-use Filament\Notifications\Notification;
-use App\Models\Accounting\SupplierLedger;
-use App\Models\Traits\ResolvesDocumentNumber;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Purchase extends Model
 {
-    use BelongsToOutlet, HasDocumentNumber, SoftDeletes, ResolvesDocumentNumber;
+    use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
+    // SoftDeletes,
 
     protected $fillable = [
         'purchase_number',
@@ -51,31 +54,30 @@ class Purchase extends Model
         return $this->hasMany(PurchaseReturn::class);
     }
 
+    public function ledger()
+    {
+        return $this->morphOne(SupplierLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saved(function ($purchase) {
-
-            $total = $purchase->items->sum('total');
-            $purchase->grand_total = $total;
-            $purchase->saveQuietly();
-
-            // Supplier Ledger
             SupplierLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
-                    'source_id' => $purchase->id,
+                    'source_id'   => $purchase->id,
                 ],
                 [
-                    'supplier_id' => $purchase->supplier_id,
-                    'amount' => $purchase->grand_total,
-                    'transaction_type' => class_basename(Purchase::class),
-                    'remarks' => 'Purchase Saved',
+                    'supplier_id'     => $purchase->supplier_id,
+                    'amount'          => $purchase->grand_total,
+                    'transaction_type' => TransactionType::PURCHASE,
+                    'remarks'         => 'Purchase Saved',
                 ]
             );
         });
 
-        static::deleting(function ($item) {
-            if ($item->ledger || $item->supplierLedger) {
+        static::deleting(function ($purchase) {
+            if ($purchase->purchaseReturns()->exists()) {
                 Notification::make('record_deletion_error')
                     ->danger()
                     ->title('Error While Deleting Record')
@@ -84,6 +86,29 @@ class Purchase extends Model
 
                 throw new Halt();
             }
+            $purchase->ledger()->delete();
+            $purchase->items->each->delete();
+            // if ($purchase->ledger) {
+            //     Notification::make('record_deletion_error')
+            //         ->danger()
+            //         ->title('Error While Deleting Record')
+            //         ->body('Cannot delete item with linked ledger entries')
+            //         ->send();
+
+            //     throw new Exception();
+            // }
+
+
+            // $ledgerExists = $purchase->ledger()->exists();
+
+            // if (should_prevent_record_deletion_if_record_exists($purchase) && $ledgerExists) {
+            //     throw new \RuntimeException('Cannot delete purchase with linked ledger entries.');
+            // }
+
+            // if ($ledgerExists) {
+            //     $purchase->ledger()->delete();
+            // }
+
         });
     }
 }

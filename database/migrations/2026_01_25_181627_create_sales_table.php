@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\DiscountType;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -18,8 +17,9 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained()->restrictOnDelete();
             $table->text('description')->nullable();
             $table->money('total');
-            $table->enum('discount_type', array_map(fn ($case) => $case->value, DiscountType::cases()));
-            $table->decimal('discount_value', 15, 4);
+            $table->discountType();
+            $table->discountValue();
+            $table->money('discount_amount');
             $table->money('grand_total');
             $table->belongsToOutlet();
             $table->timestamps();

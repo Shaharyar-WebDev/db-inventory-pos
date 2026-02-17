@@ -3,19 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Filament\Panel;
 use App\Enums\PanelId;
+use App\Enums\Status;
 use App\Enums\UserRole;
 use App\Models\Outlet\Outlet;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\HasTenants;
-use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
@@ -63,7 +64,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function outlets(): BelongsToMany
     {
-        return $this->belongsToMany(Outlet::class)->where('is_active', true);
+        return $this->belongsToMany(Outlet::class)->where('status', Status::ACTIVE->value);
     }
 
     public function getTenants(Panel $panel): Collection
@@ -87,7 +88,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if($panel->getId() === PanelId::ADMIN->id()){
+        if ($panel->getId() === PanelId::ADMIN->id()) {
             return $this->isSuperAdmin();
         };
 

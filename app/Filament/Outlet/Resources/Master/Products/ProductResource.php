@@ -16,17 +16,16 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class ProductResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = Product::class;
 
     protected static bool $isScopedToTenant = false;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Cube;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -65,8 +64,7 @@ class ProductResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withOutletStock();
+            ->withOutletStock()
+            ->withOutletStockValue();
     }
-
-
 }

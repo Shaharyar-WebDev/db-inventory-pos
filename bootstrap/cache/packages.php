@@ -6,6 +6,17 @@
       'EloquentSerialize' => 'AnourValar\\EloquentSerialize\\Facades\\EloquentSerializeFacade',
     ),
   ),
+  'asosick/filament-layout-manager' => 
+  array (
+    'aliases' => 
+    array (
+      'FilamentLayoutManager' => 'Asosick\\FilamentLayoutManager\\FilamentLayoutManager',
+    ),
+    'providers' => 
+    array (
+      0 => 'Asosick\\FilamentLayoutManager\\FilamentLayoutManagerServiceProvider',
+    ),
+  ),
   'barryvdh/laravel-debugbar' => 
   array (
     'aliases' => 
@@ -15,6 +26,18 @@
     'providers' => 
     array (
       0 => 'Barryvdh\\Debugbar\\ServiceProvider',
+    ),
+  ),
+  'barryvdh/laravel-dompdf' => 
+  array (
+    'aliases' => 
+    array (
+      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+    ),
+    'providers' => 
+    array (
+      0 => 'Barryvdh\\DomPDF\\ServiceProvider',
     ),
   ),
   'bezhansalleh/filament-plugin-essentials' => 

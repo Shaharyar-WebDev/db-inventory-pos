@@ -2,12 +2,14 @@
 
 namespace App\Filament\Admin\Resources\Master\Customers\Pages;
 
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Admin\Resources\Master\Customers\Actions\CustomerLedgerExport;
+use App\Filament\Admin\Resources\Master\Customers\Actions\CustomerLedgerExportAction;
 use App\Filament\Admin\Resources\Master\Customers\CustomerResource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\EditRecord;
 
 class EditCustomer extends EditRecord
 {
@@ -17,9 +19,10 @@ class EditCustomer extends EditRecord
     {
         return [
             // ViewAction::make(),
+            // ForceDeleteAction::make(),
+            // RestoreAction::make(),
             DeleteAction::make(),
-            ForceDeleteAction::make(),
-            RestoreAction::make(),
+            CustomerLedgerExportAction::make(),
         ];
     }
 }

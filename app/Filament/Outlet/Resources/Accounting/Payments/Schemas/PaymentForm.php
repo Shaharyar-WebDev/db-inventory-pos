@@ -23,25 +23,38 @@ class PaymentForm
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
-                        // Group::make()
-                        //     ->columnSpanFull()
-                        //     ->columns(3)
-                        //     ->schema([
-                        Select::make('supplier_id')
-                            ->relationship('supplier', 'name')
-                            ->live()
-                            ->partiallyRenderComponentsAfterStateUpdated(['amount'])
-                            ->required(),
-                        Select::make('account_id')
-                            ->relationship('account', 'name')
-                            ->live()
-                            ->partiallyRenderComponentsAfterStateUpdated(['amount'])
-                            ->required(),
-                        // Select::make('purchase_id')
-                        //     ->relationship('purchase', 'purchase_number')
-                        //     ->disabled()
-                        //     ->live(),
-                        // ]),
+                        Group::make()
+                            ->columnSpanFull()
+                            ->columns(3)
+                            ->schema([
+                                Select::make('supplier_id')
+                                    ->relationship('supplier', 'name')
+                                    ->live()
+                                    ->partiallyRenderComponentsAfterStateUpdated(['amount'])
+                                    ->required(),
+                                Select::make('account_id')
+                                    ->relationship('account', 'name')
+                                    ->live()
+                                    ->partiallyRenderComponentsAfterStateUpdated(['amount'])
+                                    ->required(),
+                                // Select::make('purchase_id')
+                                //     ->relationship('purchase', 'purchase_number')
+                                //     ->disabled()
+                                //     ->live(),
+                                Select::make('payment_method_id')
+                                    ->relationship('paymentMethod', 'name')
+                                    ->manageOptionForm([
+                                        Section::make()
+                                            ->columnSpanFull()
+                                            ->columns(2)
+                                            ->schema([
+                                                TextInput::make('name')
+                                                    ->required()
+                                                    ->columnSpanFull(),
+                                            ]),
+                                    ])
+                                    ->required(),
+                            ]),
                         TextInput::make('amount')
                             ->columnSpanFull()
                             ->required()

@@ -2,20 +2,21 @@
 
 namespace App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Schemas;
 
-use Closure;
-use Filament\Schemas\Schema;
 use App\Models\Master\Product;
 use App\Models\Purchase\Purchase;
+use Closure;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class PurchaseReturnForm
 {
@@ -58,11 +59,26 @@ class PurchaseReturnForm
                 Repeater::make('items')
                     ->relationship('items')
                     ->statePath('items')
-                    ->minItems(1)
+                    ->minItems(fn($operation) => $operation == 'edit' ? 0 : 1)
                     ->columnSpanFull()
                     ->addable(false)
-                    ->deletable(false)
+                    ->deletable()
                     ->columns(4)
+                    ->afterStateUpdatedJs(<<<'JS'
+                        const items = $get('items') ?? {};
+                        let grandTotal = 0;
+
+                        Object.keys(items).forEach(key => {
+                            const item = items[key];
+                            const qty  = parseFloat(item.qty) || 0;
+                            const rate = parseFloat(item.rate) || 0;
+                            item.total = qty * rate;
+                            grandTotal += item.total;
+                        });
+
+                        $set('items', items);
+                        $set('grand_total', grandTotal);
+                    JS)
                     ->table([
                         TableColumn::make('Product'),
                         TableColumn::make('Quantity'),
@@ -112,9 +128,9 @@ class PurchaseReturnForm
                             // })
                             ->afterStateUpdatedJs(self::updateGrandTotals())
                             ->default(0)
-                            ->rules(function (Get $get) {
+                            ->rules(function (Get $get, ?Model $record) {
                                 return [
-                                    function (string $attribute, $value, Closure $fail) use ($get) {
+                                    function (string $attribute, $value, Closure $fail) use ($get, $record) {
 
                                         $productId  = $get('product_id');
                                         $purchaseId = $get('../../purchase_id');
@@ -146,6 +162,10 @@ class PurchaseReturnForm
                                             ->sum('qty');
 
                                         $remainingQty = $purchaseItem->qty - $alreadyReturnedQty;
+
+                                        if ($record) {
+                                            $remainingQty += $record->qty;
+                                        }
 
                                         if ($value > $remainingQty) {
                                             $fail(
@@ -201,24 +221,6 @@ class PurchaseReturnForm
             JS;
     }
 
-    // public static function getDefaultRepeaterData()
-    // {
-    //     $purchaseeId = request()->query('purchase_id');
-    //     $purchase = Purchase::with('items')->find($purchaseeId);
-    //     if (!$purchase) {
-    //         return [];
-    //     }
-
-    //     return $purchase->items->map(function ($item) {
-    //         return [
-    //             'product_id' => $item->product_id,
-    //             'qty' => (float) $item->qty,
-    //             'rate' => (float) $item->rate,
-    //             'total' => (float) $item->total,
-    //         ];
-    //     });
-    // }
-
     public static function getDefaultRepeaterData()
     {
         $purchaseId = request()->query('purchase_id');
@@ -249,9 +251,11 @@ class PurchaseReturnForm
 
                 return [
                     'product_id' => $item->product_id,
-                    'qty'        => (float) $remainingQty, // 👈 important
+                    // 'qty'        => (float) $remainingQty, // 👈 important
+                    'qty'        => (float) 0, // 👈 important
                     'rate'       => (float) $item->rate,
-                    'total'      => (float) ($remainingQty * $item->rate),
+                    // 'total'      => (float) ($remainingQty * $item->rate),
+                    'total'      => (float) (0 * $item->rate),
                 ];
             })
             ->filter()

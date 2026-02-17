@@ -24,8 +24,6 @@ class Stats extends StatsOverviewWidget
             Carbon::parse($this->pageFilters['endDate']) :
             now();
 
-
-
         return [
             Stat::make('Total Products', Product::count()),
             Stat::make('Bounce rate', '21%'),

@@ -26,7 +26,7 @@ class CustomerForm
                     ->columns(3)
                     ->schema([
                         Section::make()
-                            ->columnSpan(2)
+                            ->columnSpan(fn($operation) => $operation === 'edit' ?  2 : 'full')
                             ->columns(2)
                             ->schema([
                                 TextInput::make('name')
@@ -53,6 +53,7 @@ class CustomerForm
                             ]),
                         Section::make()
                             ->columnSpan(1)
+                            ->visibleOn('edit')
                             ->schema([
                                 // TextInput::make('opening_balance')
                                 //     ->numeric()
@@ -66,8 +67,7 @@ class CustomerForm
                                     ->currency()
                                     ->disabled()
                                     ->visibleOn('edit')
-                                    ->dehydrated(false)
-                                    ->required(),
+                                // ->dehydrated(false),
                             ]),
                     ]),
                 Group::make()

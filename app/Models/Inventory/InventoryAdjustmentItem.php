@@ -41,17 +41,9 @@ class InventoryAdjustmentItem extends Model
     {
         static::saved(function ($item) {
 
-            $avgRate = InventoryLedger::where('product_id', $item->product_id)
-                ->selectRaw('SUM(value) / NULLIF(SUM(qty), 0) as avg_rate')
-                ->value('avg_rate') ?? 0;
+            $avgRate =  $item->product->getAvgRateAsOf($item->created_at) ?: (float) $item->product->cost_price;
 
-            // $value = $item->qty * $item->product->cost_price;
-            $rate = ($avgRate && $avgRate != 0)
-                ? $avgRate
-                : $item->product->cost_price;
-
-            $value = $item->qty * $rate;
-
+            $value = $item->qty * $avgRate;
 
             InventoryLedger::updateOrCreate(
                 [
@@ -59,28 +51,19 @@ class InventoryAdjustmentItem extends Model
                     'source_id'   => $item->id,
                 ],
                 [
-                    'reference_type' => InventoryAdjustment::class,
-                    'reference_id'   =>  $item->inventory_adjustment_id,
                     'product_id'       => $item->product_id,
                     'unit_id'          => $item->product->unit_id,
                     'qty'              => $item->qty,
-                    'rate'             => $rate,
+                    'rate'             => $avgRate,
                     'value'            => $value,
-                    'transaction_type' => TransactionType::INVENTORY_ADJUSTMENT->value,
+                    'transaction_type' => TransactionType::INVENTORY_ADJUSTMENT,
                     'remarks'          => 'Inventory Adjustment Saved',
                 ]
             );
         });
 
         static::deleting(function ($item) {
-            if ($item->ledger) {
-                Notification::make('record_deletion_error')
-                    ->danger()
-                    ->title('Error While Deleting Record')
-                    ->body('Cannot remove linked record')
-                    ->send();
-                throw new Halt();
-            }
+            $item->ledger()->delete();
         });
     }
 }

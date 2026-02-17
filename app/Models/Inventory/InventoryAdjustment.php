@@ -4,12 +4,15 @@ namespace App\Models\Inventory;
 
 use App\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InventoryAdjustment extends Model
 {
-    use SoftDeletes, BelongsToOutlet, HasDocumentNumber;
+    use BelongsToOutlet,
+        // SoftDeletes,
+        HasDocumentNumber;
 
     protected $fillable = [
         'adjustment_number',
@@ -24,5 +27,12 @@ class InventoryAdjustment extends Model
     public function items()
     {
         return $this->hasMany(InventoryAdjustmentItem::class);
+    }
+
+    public static function booted()
+    {
+        static::deleting(function ($adjustment) {
+            $adjustment->items->each->delete();
+        });
     }
 }

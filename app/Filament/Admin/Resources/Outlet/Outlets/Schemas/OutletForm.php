@@ -2,10 +2,13 @@
 
 namespace App\Filament\Admin\Resources\Outlet\Outlets\Schemas;
 
+use App\Enums\Status;
+use App\Support\Components\StatusToggleButtons;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -35,13 +38,10 @@ class OutletForm
                                     ->default(null)
                                     ->columnSpanFull(),
                             ]),
-
                         Section::make()
                             ->columnSpan(1)
                             ->schema([
-                                Toggle::make('is_active')
-                                    ->default(true)
-                                    ->required(),
+                                StatusToggleButtons::make(),
                                 FileUpload::make('attachments')
                                     ->label('Attachments')
                                     ->multiple()

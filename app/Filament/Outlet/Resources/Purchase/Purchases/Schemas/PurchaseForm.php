@@ -2,18 +2,22 @@
 
 namespace App\Filament\Outlet\Resources\Purchase\Purchases\Schemas;
 
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use App\Models\Master\Product;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Support\Exceptions\Halt;
 use Filament\Schemas\Components\Group;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\Repeater\TableColumn;
 
 class PurchaseForm
 {
@@ -48,17 +52,42 @@ class PurchaseForm
                                     ->label('Total Amount')
                                     ->numeric()
                                     ->readonly()
-                                    ->dehydrated()
+                                    ->saved()
+                                    ->dehydrateStateUsing(function (Get $get) {
+                                        $items = $get('items') ?? [];
+                                        $total = 0;
+                                        foreach ($items as $item) {
+                                            $qty = $item['qty'] ?? 0;
+                                            $rate = $item['rate'] ?? 0;
+
+                                            $total += ($qty * $rate);
+                                        }
+                                        return $total;
+                                    })
                                     ->currency(),
                             ]),
                     ]),
                 Repeater::make('items')
                     ->relationship('items')
                     ->statePath('items')
-                    ->minItems(1)
+                    ->minItems(fn($operation) => $operation == 'edit' ? 0 : 1)
                     ->columnSpanFull()
                     ->columns(4)
-                    ->afterStateUpdatedJs(self::updateGrandTotals())
+                    ->afterStateUpdatedJs(<<<'JS'
+                        const items = $get('items') ?? {};
+                        let grandTotal = 0;
+
+                        Object.keys(items).forEach(key => {
+                            const item = items[key];
+                            const qty  = parseFloat(item.qty) || 0;
+                            const rate = parseFloat(item.rate) || 0;
+                            item.total = qty * rate;
+                            grandTotal += item.total;
+                        });
+
+                        $set('items', items);
+                        $set('grand_total', grandTotal);
+                    JS)
                     ->table([
                         TableColumn::make('Product'),
                         TableColumn::make('Quantity'),
@@ -117,6 +146,12 @@ class PurchaseForm
                             ->numeric()
                             ->disabled()
                             ->dehydrated()
+                            ->dehydrateStateUsing(function (Get $get) {
+                                $rate = (float) $get('rate');
+                                $qty = (float) $get('qty');
+
+                                return ($qty * $rate);
+                            })
                             ->currency(),
                     ]),
                 Section::make()

@@ -19,12 +19,13 @@ return new class extends Migration
             $table->text('description')->nullable()->default(null);
             $table->json('additional_images')->nullable()->default(null);
             $table->json('attachments')->nullable()->default(null);
-            $table->foreignId('unit_id')->nullable()->constrained('units')->restrictOnDelete();
+            $table->foreignId('unit_id')->nullable()->constrained('units', 'id')->restrictOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->restrictOnDelete();
             $table->foreignId('brand_id')->nullable()->constrained('brands')->restrictOnDelete();
             $table->money('cost_price');
             $table->money('selling_price');
             $table->json('tags')->nullable()->default(null);
+            $table->status();
             $table->softDeletes();
             $table->timestamps();
         });

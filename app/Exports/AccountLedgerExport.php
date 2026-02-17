@@ -2,15 +2,12 @@
 
 namespace App\Exports;
 
-use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\{
-    FromCollection,
-    WithHeadings,
-    WithMapping,
-    WithStrictNullComparison
-};
-
 use App\Models\Accounting\AccountLedger;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 class AccountLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
@@ -62,7 +59,7 @@ class AccountLedgerExport implements FromCollection, WithHeadings, WithMapping, 
             $debit ?: 0,
             $credit ?: 0,
             $this->runningBalance,
-            $ledger->transaction_type,
+            $ledger->transaction_type->label(),
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',

@@ -7,12 +7,13 @@ use App\BelongsToOutlet;
 use App\Models\Master\Customer;
 use App\Models\Scopes\OutletScope;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\HasTransactionType;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CustomerLedger extends Model
 {
-    use BelongsToOutlet;
+    use BelongsToOutlet, HasTransactionType;
 
     protected $fillable = [
         'customer_id',

@@ -8,9 +8,6 @@ use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use App\Models\Accounting\Receipt;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\EditReceipt;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ViewReceipt;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ListReceipts;
@@ -21,10 +18,11 @@ use App\Filament\Outlet\Resources\Accounting\Receipts\Schemas\ReceiptInfolist;
 
 class ReceiptResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Receipt::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Document;
 
     protected static ?string $recordTitleAttribute = 'receipt_number';
 

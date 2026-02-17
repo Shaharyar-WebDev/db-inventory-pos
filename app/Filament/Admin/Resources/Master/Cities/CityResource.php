@@ -20,10 +20,10 @@ use App\Filament\Admin\Resources\Master\Cities\Schemas\CityInfolist;
 
 class CityResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = City::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingLibrary;
 
     protected static ?string $recordTitleAttribute = 'name';
 

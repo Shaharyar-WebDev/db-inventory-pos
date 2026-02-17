@@ -27,7 +27,7 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 class Settings extends SettingsPage
 {
     use HasPageShield;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Cog6Tooth;
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 
@@ -94,22 +94,19 @@ class Settings extends SettingsPage
                                 'solid' => 'Solid',
                                 'pattern' => 'Pattern',
                             ]),
+                        Select::make('navigation_type')
+                            ->required()
+                            ->searchable(false)
+                            ->options([
+                                'sidebar' => 'Sidebar',
+                                'topbar' => 'Topbar',
+                            ]),
+                        Select::make('content_width')
+                            ->required()
+                            ->searchable(false)
+                            ->options(Width::class),
                     ]),
-                    // Tab::make('Application')->schema([
-                    //     // Select::make('navigation_type')
-                    //     //     ->required()
-                    //     //     ->options([
-                    //     //         'sidebar' => 'Sidebar',
-                    //     //         'topbar' => 'Topbar',
-                    //     //     ]),
-                    //     // Select::make('content_width')
-                    //     //     ->required()
-                    //     //     ->options([
-                    //     //         Width::ExtraLarge->value => Str::upper(Width::ExtraLarge->value),
-                    //     //         Width::Full->value => Str::upper(Width::Full->value),
-                    //     //     ]),
-
-                    // ]),
+                    // Tab::make('Application')->schema([]),
                 ])->columnSpanFull()
                     ->columns(2)
                     ->persistTabInQueryString()

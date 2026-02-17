@@ -15,9 +15,9 @@ class ViewCustomer extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            RestoreAction::make(),
-            ForceDeleteAction::make(),
             EditAction::make(),
+            // RestoreAction::make(),
+            // ForceDeleteAction::make(),
         ];
     }
 }

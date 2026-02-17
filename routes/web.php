@@ -1,11 +1,13 @@
 <?php
 
 use App\Enums\PanelId;
-use Filament\Facades\Filament;
+use App\Filament\Admin\Resources\Inventory\StockTransfers\Pages\EditStockTransfer;
 use App\Filament\Outlet\Pages\Pos;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
 use App\Models\Inventory\InventoryLedger;
+use App\Models\Inventory\StockTransfer;
+use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -23,7 +25,3 @@ Route::get('/optimize/clear', function () {
 
     return back();
 })->name('optimize:clear');
-
-// dd(Filament::getUrl(), Filament::getTenant());
-
-// Route::get( . '/pos/bootstrap', [Pos::class, 'bootstrap'])->name('pos.bootstrap');

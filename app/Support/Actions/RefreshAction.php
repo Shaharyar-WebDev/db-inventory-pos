@@ -10,7 +10,9 @@ class RefreshAction
     {
         return Action::make('refresh')
             ->color('info')
-            ->action(fn($livewire) =>  $livewire->refresh())
+            ->action(function ($livewire) {
+                $livewire->dispatch('refresh');
+            })
             ->icon('heroicon-o-arrow-path');
     }
 }

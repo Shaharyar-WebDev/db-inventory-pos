@@ -20,10 +20,11 @@ use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class AreaResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Area::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Map;
 
     protected static ?string $recordTitleAttribute = 'name';
 

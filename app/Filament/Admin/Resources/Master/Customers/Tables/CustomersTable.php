@@ -2,26 +2,21 @@
 
 namespace App\Filament\Admin\Resources\Master\Customers\Tables;
 
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use App\Models\Outlet\Outlet;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\RestoreAction;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CustomerLedgerExport;
-use App\Exports\SupplierLedgerExport;
+use App\Filament\Admin\Resources\Master\Customers\Actions\CustomerLedgerExportAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Forms\Components\Select;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
 
 class CustomersTable
 {
@@ -49,6 +44,18 @@ class CustomersTable
                     ->copyable(),
                 TextColumn::make('current_balance')
                     ->currency()
+                    ->sumCurrency()
+                    ->tooltip(function ($state) {
+                        if ($state < 0) {
+                            return " Credit";
+                        }
+
+                        if ($state > 0) {
+                            return " Debit";
+                        }
+
+                        return null;
+                    })
                     ->searchable(false)
                     ->copyable(),
                 TextColumn::make('address')
@@ -64,40 +71,34 @@ class CustomersTable
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                TrashedFilter::make(),
+            ->moreFilters([
+                // TrashedFilter::make(),
+            ], [
+                SelectFilter::make('city')
+                    ->relationship('city', 'name')
+                    ->searchable()
+                    ->preload(10)
+                    ->optionsLimit(10),
+                SelectFilter::make('area')
+                    ->relationship('area', 'name')
+                    ->searchable()
+                    ->preload(10)
+                    ->optionsLimit(10),
             ])
             ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
-                Action::make('export_ledger')
-                    ->icon('heroicon-o-document-text')
-                    ->color('info')
-                    // ->schema([
-                    //     Select::make('outlet_id')
-                    //         ->label('Outlet')
-                    //         ->options(Outlet::options())
-                    //     // ->required(),
-                    // ])
-                    ->action(function (Model $record, array $data) {
-                        $outletId = $data['outlet_id'] ?? null;
-                        $outlet = Outlet::find($outletId);
-                        $suffix = $outlet ? "-{$outlet->name}" : '';
-                        $fileName = "customer_ledger_{$record->name}{$suffix}.xlsx";
-                        return Excel::download(new CustomerLedgerExport(
-                            $record->id,
-                            $outletId,
-                        ), $fileName);
-                    }),
+                // RestoreAction::make(),
+                // ForceDeleteAction::make(),
+                CustomerLedgerExportAction::make(),
+
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
                 ]),
             ]);
     }

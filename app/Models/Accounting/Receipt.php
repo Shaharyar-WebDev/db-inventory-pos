@@ -3,18 +3,25 @@
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
-use App\Models\Master\Customer;
+use App\Enums\TransactionType;
 use App\Models\Accounting\Account;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountLedger;
-use App\Models\Traits\HasDocumentNumber;
 use App\Models\Accounting\CustomerLedger;
+use App\Models\Accounting\PaymentMethod;
+use App\Models\Master\Customer;
+use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Receipt extends Model
 {
-    use SoftDeletes, BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
+    use
+        // SoftDeletes,
+        BelongsToOutlet,
+        HasDocumentNumber,
+        ResolvesDocumentNumber;
 
     protected $fillable = [
         'receipt_number',
@@ -39,10 +46,31 @@ class Receipt extends Model
         return $this->belongsTo(Account::class);
     }
 
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function rider()
+    {
+        return $this->belongsTo(User::class, 'rider_id');
+    }
+
+    public function accountLedger()
+    {
+        return $this->morphOne(AccountLedger::class, 'source');
+    }
+
+    public function customerLedger()
+    {
+        return $this->morphOne(CustomerLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saved(function ($receipt) {
-            // Update account ledger (money coming in, so positive)
+            $transactionType = $receipt->amount < 0 ? TransactionType::RECEIPT_REFUND_OR_ADJUSTMENT : TransactionType::RECEIPT;
+
             AccountLedger::updateOrCreate(
                 [
                     'source_type' => Receipt::class,
@@ -51,7 +79,7 @@ class Receipt extends Model
                 [
                     'account_id' => $receipt->account_id,
                     'amount' => $receipt->amount,
-                    'transaction_type' => class_basename(Receipt::class),
+                    'transaction_type' => $transactionType,
                     'remarks' => "Payment received from customer '{$receipt->customer->name}'",
                 ]
             );
@@ -65,10 +93,15 @@ class Receipt extends Model
                 [
                     'customer_id' => $receipt->customer_id,
                     'amount' => -$receipt->amount,
-                    'transaction_type' => class_basename(Receipt::class),
+                    'transaction_type' => $transactionType,
                     'remarks' => "Payment received from customer '{$receipt->customer->name}'",
                 ]
             );
+        });
+
+        static::deleting(function($receipt){
+            $receipt->accountLedger()->delete();
+            $receipt->customerLedger()->delete();
         });
     }
 }

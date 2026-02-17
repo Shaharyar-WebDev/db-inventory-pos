@@ -2,31 +2,37 @@
 
 namespace App\Models\Sale;
 
-use App\Models\Sale\Sale;
 use App\Enums\DiscountType;
 use App\Enums\TransactionType;
+use App\Models\Inventory\InventoryLedger;
 use App\Models\Master\Product;
+use App\Models\Master\Unit;
+use App\Models\Sale\Sale;
+use App\Models\Traits\HasTransactionType;
+use App\Models\Traits\ResolvesDocumentNumber;
+use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
-use App\Models\Accounting\SupplierLedger;
-use App\Models\Inventory\InventoryLedger;
-use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaleItem extends Model
 {
-    use ResolvesDocumentNumber;
+    use ResolvesDocumentNumber, HasTransactionType;
 
     protected $fillable = [
         'sale_id',
         'product_id',
+        'unit_id',
         'qty',
         'cost',
         'rate',
         'discount_type',
         'discount_value',
         'total'
+    ];
+
+    protected $casts = [
+        'discount_type' => DiscountType::class,
     ];
 
     public static $parentRelation = 'sale';
@@ -41,50 +47,80 @@ class SaleItem extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function ledger()
+    {
+        return $this->morphOne(InventoryLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saving(function ($item) {
-            $qty   = $item->qty;
-            $rate  = $item->rate;
+            // $qty   = $item->qty;
+            // $rate  = $item->rate;
 
-            $avgRate = InventoryLedger::where('product_id', $item->product_id)
-                ->selectRaw('SUM(value) / NULLIF(SUM(qty), 0) as avg_rate')
-                ->value('avg_rate') ?? 0;
+            // dd($item->total, $qty, $rate);
 
-            $total = $qty * $rate;
+            // $total = $qty * $rate;
 
-            if ($item->discount_type === DiscountType::PERCENT->value) {
-                $total -= ($total * $item->discount_value / 100);
+            if (!$item->discount_type) {
+                $item->discount_type = DiscountType::FIXED;
+                $item->discount_value = 0;
             }
 
-            if ($item->discount_type === DiscountType::FIXED->value) {
-                $total -= $item->discount_value;
-            }
+            // if ($item->discount_type === DiscountType::PERCENT) {
+            //     $total -= ($total * $item->discount_value / 100);
+            // }
 
-            $item->cost = $avgRate;
+            // if ($item->discount_type === DiscountType::FIXED) {
+            //     $total -= $item->discount_value;
+            // }
 
-            $item->total =  $total;
+            $item->cost = $item->product->getAvgRateOfUnitAsOf($item->created_at, $item->unit_id);
+
+            // dd($item->product->getAvgRateOfUnitAsOf($item->created_at, $item->unit_id));
+
+            // $item->total =  $total;
         });
 
         static::saved(function ($item) {
             $avgRate = $item->cost;
+            $product = $item->product;
+
+            $baseQty = $item->product->toBaseQty($item->qty, $item->unit_id);
+
             InventoryLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
                     'source_id'   => $item->id,
                 ],
                 [
-                    'reference_type' => Sale::class,
-                    'reference_id'   => $item->sale_id,
-                    'product_id'       => $item->product_id,
-                    'unit_id'          => $item->product->unit_id,
-                    'qty'              => -$item->qty,
-                    'rate'             => $avgRate,
-                    'value'            => -$avgRate * $item->qty,
-                    'transaction_type' => TransactionType::SALE->value,
-                    'remarks'          => 'Sale Saved',
+                    'product_id'     => $item->product_id,
+                    'unit_id'        => $product->unit_id, // base unit
+                    'qty'            => -$baseQty,
+                    'rate'           => $avgRate,
+                    'value'          => - ($avgRate * $baseQty),
+                    'transaction_type' => TransactionType::SALE,
+                    'remarks'        => 'Sale Saved',
                 ]
             );
+        });
+
+        static::deleting(function ($item) {
+            $item->ledger()->delete();
+            // if ($item->ledger || $item->supplierLedger) {
+            //     Notification::make('record_deletion_error')
+            //         ->danger()
+            //         ->title('Error While Deleting Record')
+            //         ->body('Cannot delete item with linked ledger entries')
+            //         ->send();
+
+            //     throw new Halt;
+            // }
         });
     }
 }

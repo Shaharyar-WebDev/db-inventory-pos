@@ -9,22 +9,21 @@ use App\Models\Master\Product;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Admin\Resources\Master\Products\Pages\EditProduct;
 use App\Filament\Admin\Resources\Master\Products\Pages\ViewProduct;
 use App\Filament\Admin\Resources\Master\Products\Pages\ListProducts;
 use App\Filament\Admin\Resources\Master\Products\Pages\CreateProduct;
 use App\Filament\Admin\Resources\Master\Products\Schemas\ProductForm;
 use App\Filament\Admin\Resources\Master\Products\Tables\ProductsTable;
-use App\Filament\Admin\Resources\Master\Products\Widgets\ProductStats;
 use App\Filament\Admin\Resources\Master\Products\Schemas\ProductInfolist;
 
 class ProductResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
+
     protected static ?string $model = Product::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Cube;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -62,6 +61,6 @@ class ProductResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withStockCounts()->withStockValue();
+        return parent::getEloquentQuery()->withStockCounts()->withStockValue()->withStockAvgRate();
     }
 }

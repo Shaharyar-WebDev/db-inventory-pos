@@ -20,10 +20,10 @@ use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class BrandResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
     protected static ?string $model = Brand::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Tag;
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -20,11 +20,11 @@ use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountInfolist;
 
 class AccountResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = Account::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Banknotes;
 
     protected static ?string $recordTitleAttribute = 'name';
 

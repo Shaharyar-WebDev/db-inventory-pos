@@ -10,7 +10,6 @@ use App\Filament\Admin\Resources\Inventory\StockTransfers\Schemas\StockTransferF
 use App\Filament\Admin\Resources\Inventory\StockTransfers\Schemas\StockTransferInfolist;
 use App\Filament\Admin\Resources\Inventory\StockTransfers\Tables\StockTransfersTable;
 use App\Models\Inventory\StockTransfer;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -19,11 +18,11 @@ use Filament\Tables\Table;
 
 class StockTransferResource extends Resource
 {
-    use IgnoresSoftDeleteRouteBinding;
+    // use IgnoresSoftDeleteRouteBinding;
 
     protected static ?string $model = StockTransfer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowsPointingIn;
 
     protected static ?string $recordTitleAttribute = 'transfer_number';
 

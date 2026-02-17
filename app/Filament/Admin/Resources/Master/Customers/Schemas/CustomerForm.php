@@ -2,18 +2,22 @@
 
 namespace App\Filament\Admin\Resources\Master\Customers\Schemas;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Group;
-use Filament\Forms\Components\Textarea;
-use Illuminate\Support\Facades\Storage;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use App\Filament\Admin\Resources\Master\Areas\Schemas\AreaForm;
 use App\Filament\Admin\Resources\Master\Cities\Schemas\CityForm;
+use App\Models\Master\Area;
+use App\Support\Components\StatusToggleButtons;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\FusedGroup;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerForm
 {
@@ -37,23 +41,32 @@ class CustomerForm
                                     ->nullable()
                                     ->tel(),
 
-                                Select::make('city_id')
-                                    ->relationship('city', 'name')
-                                    ->manageOptionForm(CityForm::configure($schema)->getComponents())
-                                    ->reactive()
-                                    ->afterStateUpdated(fn(Set $set) => $set('area_id', null)),
+                                Fieldset::make('Location')
+                                    ->schema([
+                                        Select::make('city_id')
+                                            ->relationship('city', 'name')
+                                            ->manageOptionForm(CityForm::configure($schema)->getComponents())
+                                            ->reactive()
+                                            ->afterStateUpdated(fn(Set $set) => $set('area_id', null)),
 
-                                Select::make('area_id')
-                                    ->relationship(
-                                        'area',
-                                        'name',
-                                        fn($query, Get $get) => $query->where('city_id', $get('city_id'))
-                                    )
-                                    ->manageOptionForm(AreaForm::configure($schema)->getComponents()),
+                                        Select::make('area_id')
+                                            ->relationship(
+                                                'area',
+                                                'name',
+                                                fn($query, Get $get) => $query->where('city_id', $get('city_id'))
+                                            )
+                                            ->manageOptionForm(AreaForm::configure($schema)->getComponents())
+                                            ->createOptionUsing(function ($data) {
+                                                Area::create($data);
+                                            }),
+                                    ])
+                                    ->columns(2)
+                                    ->columnSpanFull(),
                             ]),
                         Section::make()
                             ->columnSpan(1)
                             ->schema([
+                                // StatusToggleButtons::make(),
                                 TextInput::make('opening_balance')
                                     ->currency()
                                     ->required()
@@ -65,8 +78,7 @@ class CustomerForm
                                     ->currency()
                                     ->disabled()
                                     ->visibleOn('edit')
-                                    ->dehydrated(false)
-                                    ->required(),
+                                    ->dehydrated(false),
                             ]),
                     ]),
                 Group::make()

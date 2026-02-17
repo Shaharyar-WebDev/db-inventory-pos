@@ -2,15 +2,17 @@
 
 namespace App\Support;
 
-use Filament\Panel;
-use Illuminate\View\View;
 use App\Settings\GeneralSettings;
-use Filament\Support\Enums\Width;
-use Filament\Support\Colors\Color;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Route;
+use App\Support\Components\Topbar;
 use Filament\FontProviders\GoogleFontProvider;
+use Filament\Panel;
+use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\HtmlString;
+use Illuminate\View\View;
 
 class PanelConfiguration
 {
@@ -31,15 +33,15 @@ class PanelConfiguration
             ->brandName($this->generalSettings->site_name)
             ->brandLogo(fn() => $this->generalSettings->site_logo ? asset('storage/' . $this->generalSettings->site_logo) : null)
             ->spa(fn() => $this->generalSettings->spa_mode)
-            // ->maxContentWidth($this->generalSettings->content_width ?? '7xl')
+            ->maxContentWidth($this->generalSettings->content_width ?? Width::Full)
             // ->topNavigation(fn() => $this->generalSettings->navigation_type === 'topbar')
+            // ->topbar(fn() => $this->generalSettings->navigation_type === 'topbar')
+            ->topbar(false)
             ->simplePageMaxContentWidth(Width::Medium)
             ->profile()
             ->databaseTransactions()
             ->globalSearch(false)
-            ->topbar(false)
-            ->sidebarCollapsibleOnDesktop(fn() => request()->route()->getName() !== 'filament.outlet.pages.pos')
-            ->sidebarFullyCollapsibleOnDesktop(fn() => request()->route()->getName() === 'filament.outlet.pages.pos')
+            ->sidebarCollapsibleOnDesktop()
             ->renderHook(
                 PanelsRenderHook::FOOTER,
                 fn(): View => view('partials.global-loading-indicator'),
@@ -59,6 +61,10 @@ class PanelConfiguration
             ->renderHook(
                 PanelsRenderHook::STYLES_AFTER,
                 hook: fn(): View => view('partials.bprogress')
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn() => new HtmlString('<script src="' . asset('js/pdf-print.js') . '"></script>'),
             )
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.copyright-label'))
             ->colors([

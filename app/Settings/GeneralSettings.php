@@ -3,6 +3,7 @@
 namespace App\Settings;
 
 use Spatie\LaravelSettings\Settings;
+use Filament\Support\Enums\Width;
 
 class GeneralSettings extends Settings
 {
@@ -16,7 +17,11 @@ class GeneralSettings extends Settings
 
     public bool $spa_mode;
 
-    public string $content_width;
+    // public string $address;
+
+    // public string $contact;
+
+    public string|Width|null $content_width;
 
     public static function group(): string
     {

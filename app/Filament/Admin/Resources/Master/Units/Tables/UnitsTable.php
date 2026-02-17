@@ -34,19 +34,19 @@ class UnitsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TrashedFilter::make()
+                // TrashedFilter::make()
             ])
             ->groupedRecordActions([
                 EditAction::make(),
                 DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
+                // RestoreAction::make(),
+                // ForceDeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    // ForceDeleteBulkAction::make(),
+                    // RestoreBulkAction::make(),
                 ]),
             ]);
     }
