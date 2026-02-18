@@ -1,23 +1,21 @@
 <?php
-
 namespace App\Filament\Admin\Resources\Master\Customers\RelationManagers;
 
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
 use App\Models\Master\Product;
-use Filament\Actions\EditAction;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Forms\Components\Select;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DissociateAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Validation\Rule;
 
 class ProductRatesRelationManager extends RelationManager
 {
@@ -31,6 +29,11 @@ class ProductRatesRelationManager extends RelationManager
                     ->relationship('product', 'name')
                     ->live()
                     ->partiallyRenderComponentsAfterStateUpdated(['selling_price'])
+                    ->rule(function ($record) {
+                        return Rule::unique('customer_product_rates', 'product_id')
+                            ->where('customer_id', $this->ownerRecord->id)
+                            ->ignore($record?->id);
+                    })
                     ->required(),
                 TextInput::make('selling_price')
                     ->required()
@@ -38,7 +41,10 @@ class ProductRatesRelationManager extends RelationManager
                     ->currency()
                     ->helperText(function (Get $get) {
                         $productId = $get('product_id');
-                        if (!$productId) return;
+                        if (! $productId) {
+                            return;
+                        }
+
                         $product = Product::find($productId);
                         if ($product) {
                             $sellingPrice = $product->selling_price ?? 0;

@@ -1,19 +1,14 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Tables;
 
-use Filament\Actions\ActionGroup;
+use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class InventoryAdjustmentsTable
 {
@@ -31,6 +26,10 @@ class InventoryAdjustmentsTable
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                PdfDownloadAction::make('partials.pdf.inventory-adjustment', fn(Model $record) => $record->adjustment_number)
+                    ->download(),
+                PdfDownloadAction::make('partials.pdf.inventory-adjustment', fn(Model $record) => $record->adjustment_number)
+                    ->print(),
                 // ForceDeleteAction::make(),
             ])
             ->toolbarActions([

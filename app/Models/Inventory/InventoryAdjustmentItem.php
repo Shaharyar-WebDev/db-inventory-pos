@@ -2,12 +2,9 @@
 
 namespace App\Models\Inventory;
 
-use Exception;
 use App\Enums\TransactionType;
 use App\Models\Master\Product;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
 use App\Models\Traits\ResolvesDocumentNumber;
 
 class InventoryAdjustmentItem extends Model

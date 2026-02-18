@@ -133,3 +133,17 @@ if (! function_exists('default_ledger_casts')) {
         ];
     }
 }
+
+if (!function_exists('number_to_words_currency')) {
+    function number_to_words_currency($number)
+    {
+        $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+
+        $integer = floor($number);
+        $fraction = round(($number - $integer) * 100);
+
+        $words = ucfirst($formatter->format($integer)) . ' rupees';
+
+        return $words . ' only';
+    }
+}

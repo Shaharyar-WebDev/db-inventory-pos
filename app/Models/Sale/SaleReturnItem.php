@@ -1,16 +1,14 @@
 <?php
-
 namespace App\Models\Sale;
 
-use App\Enums\DiscountType;
-use App\Models\Master\Unit;
 use App\Enums\TransactionType;
-use App\Models\Master\Product;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Inventory\InventoryLedger;
+use App\Models\Master\Product;
+use App\Models\Master\Unit;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class SaleReturnItem extends Model
 {
@@ -25,7 +23,7 @@ class SaleReturnItem extends Model
         'rate',
         // 'discount_type',
         // 'discount_value',
-        'total'
+        'total',
     ];
 
     public static $parentRelation = 'saleReturn';
@@ -61,7 +59,15 @@ class SaleReturnItem extends Model
             //     $item->discount_value = 0;
             // }
 
-            $item->cost = $item->product->getAvgRateOfUnitAsOf($item->created_at, $item->unit_id);
+            // $item->cost = $item->product->getAvgRateOfUnitAsOf($item->created_at, $item->unit_id)
+
+            $sale = $item->saleReturn->sale;
+
+            $originalSaleItem = $sale->items()
+                ->where('product_id', $item->product_id)
+                ->first();
+
+            $item->cost = $originalSaleItem?->cost ?? 0;
 
         });
 
@@ -77,19 +83,18 @@ class SaleReturnItem extends Model
                     'source_id'   => $item->id,
                 ],
                 [
-                    'product_id'     => $item->product_id,
-                    'unit_id'        => $product->unit_id, // base unit
-                    'qty'            => $baseQty,
-                    'rate'           => $avgRate,
-                    'value'          => ($avgRate * $baseQty),
+                    'product_id'       => $item->product_id,
+                    'unit_id'          => $product->unit_id, // base unit
+                    'qty'              => $baseQty,
+                    'rate'             => $avgRate,
+                    'value'            => ($avgRate * $baseQty),
                     'transaction_type' => TransactionType::SALE_RETURN,
-                    'remarks'        => 'Sale Return Saved',
+                    'remarks'          => 'Sale Return Saved',
                 ]
             );
         });
 
         static::deleting(function ($item) {
-              dd('eea');
             $item->ledger()->delete();
             // if ($item->ledger || $item->supplierLedger) {
             //     Notification::make('record_deletion_error')

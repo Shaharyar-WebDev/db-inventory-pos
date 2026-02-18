@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
@@ -13,15 +12,10 @@ use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Receipt extends Model
 {
-    use
-        // SoftDeletes,
-        BelongsToOutlet,
-        HasDocumentNumber,
-        ResolvesDocumentNumber;
+    use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
 
     protected $fillable = [
         'receipt_number',
@@ -74,13 +68,13 @@ class Receipt extends Model
             AccountLedger::updateOrCreate(
                 [
                     'source_type' => Receipt::class,
-                    'source_id' => $receipt->id,
+                    'source_id'   => $receipt->id,
                 ],
                 [
-                    'account_id' => $receipt->account_id,
-                    'amount' => $receipt->amount,
+                    'account_id'       => $receipt->account_id,
+                    'amount'           => $receipt->amount,
                     'transaction_type' => $transactionType,
-                    'remarks' => "Payment received from customer '{$receipt->customer->name}'",
+                    'remarks'          => "Payment received from customer '{$receipt->customer->name}'",
                 ]
             );
 
@@ -88,18 +82,18 @@ class Receipt extends Model
             CustomerLedger::updateOrCreate(
                 [
                     'source_type' => Receipt::class,
-                    'source_id' => $receipt->id,
+                    'source_id'   => $receipt->id,
                 ],
                 [
-                    'customer_id' => $receipt->customer_id,
-                    'amount' => -$receipt->amount,
+                    'customer_id'      => $receipt->customer_id,
+                    'amount'           => -$receipt->amount,
                     'transaction_type' => $transactionType,
-                    'remarks' => "Payment received from customer '{$receipt->customer->name}'",
+                    'remarks'          => "Payment received from customer '{$receipt->customer->name}'",
                 ]
             );
         });
 
-        static::deleting(function($receipt){
+        static::deleting(function ($receipt) {
             $receipt->accountLedger()->delete();
             $receipt->customerLedger()->delete();
         });

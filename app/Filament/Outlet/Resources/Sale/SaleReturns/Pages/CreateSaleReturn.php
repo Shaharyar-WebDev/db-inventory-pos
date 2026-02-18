@@ -39,8 +39,8 @@ class CreateSaleReturn extends CreateRecord
             'discount_type' => $saleDiscountType,
             // 'discount_value' => $saleDiscountValue,
             'discount_value' => 0,
-            'delivery_charges' => $saleDeliveryCharges,
-            'tax_charges' => $saleTaxCharges,
+            // 'delivery_charges' => $saleDeliveryCharges,
+            // 'tax_charges' => $saleTaxCharges,
             // 'grand_total' => $saleGrandTotal,
         ]);
     }

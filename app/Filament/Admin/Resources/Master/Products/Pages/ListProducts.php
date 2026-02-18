@@ -12,6 +12,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListProducts extends ListRecords
 {
     use ExposesTableToWidgets;
+
     protected static string $resource = ProductResource::class;
 
     protected function getHeaderActions(): array
@@ -25,7 +26,7 @@ class ListProducts extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            ProductStats::class,
+            // ProductStats::class,
         ];
     }
 }

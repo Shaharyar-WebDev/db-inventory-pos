@@ -58,7 +58,7 @@ class ProductsTable
                     ->action(
                         ViewProductStockByOutletAction::make()
                     )
-                    ->sortable(false),
+                    ->sortable(),
                 TextColumn::make('current_value')
                     ->currency()
                     ->sumCurrency()
@@ -66,7 +66,7 @@ class ProductsTable
                     ->action(
                         ViewProductValueByOutletAction::make()
                     )
-                    ->sortable(false),
+                    ->sortable(),
                 TextColumn::make('current_avg_rate')
                     ->currency()
                     ->searchable(false)
@@ -84,7 +84,7 @@ class ProductsTable
                                 return currency_format($totalValue / $totalQty);
                             }),
                     ])
-                    ->sortable(false),
+                    ->sortable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -1,17 +1,15 @@
 <?php
-
 namespace App\Models\Master;
 
 use App\Enums\TransactionType;
 use App\Models\Accounting\SupplierLedger;
 use App\Models\Scopes\OutletScope;
 use App\Models\Traits\HasStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Supplier extends Model
 {
-    // use SoftDeletes;
     use HasStatus;
 
     protected $fillable = [
@@ -31,6 +29,20 @@ class Supplier extends Model
         return $query->withSum('ledgers as current_balance', 'amount');
     }
 
+    public function getCurrentBalance()
+    {
+        return SupplierLedger::getBalanceForSupplierId($this->id);
+    }
+
+    public function getSupplierBalanceAsOf($asOf = null): float
+    {
+        $asOf = $asOf ? Carbon::parse($asOf) : now();
+
+        return SupplierLedger::getSupplierBalanceQuery($this->id)
+            ->where('created_at', '<', $asOf)
+            ->sum('amount');
+    }
+
     public static function booted()
     {
         static::saved(function ($supplier) {
@@ -39,14 +51,14 @@ class Supplier extends Model
             // }
             SupplierLedger::withoutGlobalScope(OutletScope::class)->updateOrCreate(
                 [
-                    'supplier_id' => $supplier->id,
-                    'source_type' => self::class,
-                    'source_id' => $supplier->id,
+                    'supplier_id'      => $supplier->id,
+                    'source_type'      => self::class,
+                    'source_id'        => $supplier->id,
                     'transaction_type' => TransactionType::OPENING_BALANCE->value,
                 ],
                 [
-                    'amount' => $supplier->opening_balance,
-                    'remarks' => 'Opening balance synced',
+                    'amount'    => $supplier->opening_balance,
+                    'remarks'   => 'Opening balance synced',
                     'outlet_id' => null,
                 ]
             );

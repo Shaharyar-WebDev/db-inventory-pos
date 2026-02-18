@@ -246,6 +246,7 @@ class SaleReturnForm
                         TableColumn::make('Total'),
                     ])
                     ->reorderable()
+                    ->addable(false)
                     ->compact()
                     ->schema([
                         Select::make('product_id')

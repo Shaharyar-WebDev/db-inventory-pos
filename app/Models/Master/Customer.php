@@ -1,28 +1,24 @@
 <?php
-
 namespace App\Models\Master;
 
-use App\Models\Sale\Sale;
 use App\Enums\CustomerType;
-use App\Models\Master\Area;
-use App\Models\Master\City;
 use App\Enums\TransactionType;
-use App\Models\Scopes\OutletScope;
-use App\Models\Traits\HasStatus;
-use Illuminate\Support\Facades\DB;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
 use App\Models\Accounting\CustomerLedger;
 use App\Models\Accounting\Receipt;
+use App\Models\Master\Area;
+use App\Models\Master\City;
 use App\Models\Master\CustomerProductRate;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Sale\Sale;
+use App\Models\Scopes\OutletScope;
+use App\Models\Traits\HasStatus;
+use Carbon\Carbon;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
-    // use SoftDeletes;
     use HasStatus;
 
     protected $fillable = [
@@ -81,7 +77,7 @@ class Customer extends Model
         return $query->withSum([
             'ledgers as current_balance' => function ($q) {
                 $q->withoutGlobalScope(OutletScope::class);
-            }
+            },
         ], 'amount');
     }
 
@@ -90,19 +86,28 @@ class Customer extends Model
         return Customer::get()->pluck('name', 'id');
     }
 
+    public function getCustomerBalanceAsOf($asOf = null): float
+    {
+        $asOf = $asOf ? Carbon::parse($asOf) : now();
+
+        return CustomerLedger::getCustomerBalanceQuery($this->id)
+            ->where('created_at', '<', $asOf)
+            ->sum('amount');
+    }
+
     public static function booted()
     {
         static::saved(function ($customer) {
             CustomerLedger::withoutGlobalScope(OutletScope::class)->updateOrCreate(
                 [
-                    'customer_id' => $customer->id,
-                    'source_type' => self::class,
-                    'source_id' => $customer->id,
+                    'customer_id'      => $customer->id,
+                    'source_type'      => self::class,
+                    'source_id'        => $customer->id,
                     'transaction_type' => TransactionType::OPENING_BALANCE->value,
                 ],
                 [
-                    'amount' => $customer->opening_balance ?? 0,
-                    'remarks' => 'Opening balance synced',
+                    'amount'    => $customer->opening_balance ?? 0,
+                    'remarks'   => 'Opening balance synced',
                     'outlet_id' => null,
                 ]
             );
@@ -132,7 +137,7 @@ class Customer extends Model
                 throw new \Exception('Walk-in customer cannot be deleted');
             }
 
-            if (!$customer->receipts()->exists() && !$customer->sales()->exists()) {
+            if (! $customer->receipts()->exists() && ! $customer->sales()->exists()) {
                 if ($customer->ledger && $customer->amount === 0) {
                     $customer->ledger->customer_id = null;
                     $customer->ledger->save();

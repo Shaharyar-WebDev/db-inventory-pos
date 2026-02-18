@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Sale;
 
 use App\Enums\DiscountType;
@@ -8,6 +7,9 @@ use App\Models\Accounting\CustomerLedger;
 use App\Models\Master\Customer;
 use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturn;
+use App\Models\Traits\BelongsToOutlet;
+use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\ResolvesDocumentNumber;
 use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
@@ -16,10 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sale extends Model
 {
-    use \App\Models\Traits\BelongsToOutlet,
-        // SoftDeletes,
-        \App\Models\Traits\HasDocumentNumber,
-        \App\Models\Traits\ResolvesDocumentNumber;
+    use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
 
     public static string $documentNumberColumn = 'sale_number';
 
@@ -63,8 +62,122 @@ class Sale extends Model
         return $this->hasMany(SaleReturn::class);
     }
 
+    // public function scopeWithMetrics($query)
+    // {
+    //     return $query->withAggregate('items as cogs', 'SUM(qty * cost)')
+    //         ->withAggregate('items as revenue', 'SUM(qty * rate)');
+    // }
+
+    // public function getGrossProfitAttribute()
+    // {
+    //     return ($this->revenue ?? 0) - ($this->cogs ?? 0);
+    // }
+
+    // public function getGrossMarginAttribute()
+    // {
+    //     if (! $this->revenue) {
+    //         return 0;
+    //     }
+
+    //     return round(($this->gross_profit / $this->revenue) * 100, 2);
+    // }
+
+    // public function getNetMarginAttribute()
+    // {
+    //     if (! $this->revenue) {
+    //         return 0;
+    //     }
+    //     return round(($this->net_profit / $this->revenue) * 100, 2);
+    // }
+
+    // public function getNetProfitAttribute()
+    // {
+    //     return ($this->revenue - $this->discount_amount - $this->cogs) ?? 0;
+    // }
+
+    public function getRevenueAttribute()
+    {
+        $saleRevenue = (float) $this->items()
+            ->selectRaw('COALESCE(SUM(qty * rate), 0) as total')
+            ->value('total');
+
+        $saleReturnRevenue = 0;
+
+        foreach ($this->saleReturns as $return) {
+            foreach ($return->items as $item) {
+                $saleReturnRevenue += $item['rate'] * $item['qty'];
+            }
+        }
+
+        return $saleRevenue - $saleReturnRevenue;
+    }
+
+    public function getCogsAttribute()
+    {
+        $saleCogs = (float) $this->items()
+            ->selectRaw('COALESCE(SUM(qty * cost), 0) as total')
+            ->value('total');
+
+        $saleReturnCogs = 0;
+
+        foreach ($this->saleReturns as $return) {
+            foreach ($return->items as $item) {
+                $saleReturnCogs += $item['cost'] * $item['qty'];
+            }
+        }
+
+        return $saleCogs - $saleReturnCogs;
+    }
+
+    public function getGrossProfitAttribute()
+    {
+        return $this->revenue - $this->cogs;
+    }
+
+    public function getGrossMarginAttribute()
+    {
+        $revenue = $this->revenue;
+
+        if ($revenue == 0) {
+            return 0;
+        }
+
+        return round(($this->gross_profit / $revenue) * 100, 2);
+    }
+
+    public function getTotalDiscountAmountAttribute()
+    {
+        $saleDiscountAmount = (float) $this->discount_amount;
+        $saleReturnDiscount = 0;
+
+        foreach ($this->saleReturns as $return) {
+            $saleReturnDiscount += $return['discount_amount'];
+        }
+
+        return $saleDiscountAmount - $saleReturnDiscount;
+    }
+
+    public function getNetProfitAttribute()
+    {
+        $totalDiscount = $this->total_discount_amount;
+        return $this->revenue - $totalDiscount - $this->cogs;
+    }
+
+    public function getNetMarginAttribute()
+    {
+        $revenue = $this->revenue;
+
+        if ($revenue == 0) {
+            return 0;
+        }
+
+        return round(($this->net_profit / $revenue) * 100, 2);
+    }
+
     public static function booted()
     {
+        // static::addGlobalScope(new WithSaleMetricsScope);
+
         static::saved(function ($sale) {
 
             // $total = $sale->items()->sum('total');

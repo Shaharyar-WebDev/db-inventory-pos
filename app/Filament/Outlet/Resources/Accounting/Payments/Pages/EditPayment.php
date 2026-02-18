@@ -1,13 +1,11 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Accounting\Payments\Pages;
 
 use App\Filament\Outlet\Resources\Accounting\Payments\PaymentResource;
+use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditPayment extends EditRecord
 {
@@ -18,6 +16,10 @@ class EditPayment extends EditRecord
         return [
             // ViewAction::make(),
             DeleteAction::make(),
+            PdfDownloadAction::make('partials.pdf.payment', fn(Model $record) => $record->payment_number)
+                ->download(),
+            PdfDownloadAction::make('partials.pdf.payment', fn(Model $record) => $record->payment_number)
+                ->print(),
             // ForceDeleteAction::make(),
             // RestoreAction::make(),
         ];

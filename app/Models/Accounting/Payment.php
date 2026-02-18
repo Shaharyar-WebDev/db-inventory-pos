@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Accounting;
 
 use App\Enums\TransactionType;
@@ -17,11 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    use BelongsToOutlet,
-        // SoftDeletes,
-        HasDocumentNumber,
-        HasTransactionType,
-        ResolvesDocumentNumber;
+    use BelongsToOutlet, HasDocumentNumber, HasTransactionType, ResolvesDocumentNumber;
 
     protected $fillable = [
         'payment_number',
@@ -76,29 +71,28 @@ class Payment extends Model
             AccountLedger::updateOrCreate(
                 [
                     'source_type' => Payment::class,
-                    'source_id' => $payment->id,
+                    'source_id'   => $payment->id,
                 ],
                 [
-                    'account_id' => $payment->account_id,
-                    'amount' => -$payment->amount,
+                    'account_id'       => $payment->account_id,
+                    'amount'           => -$payment->amount,
                     'transaction_type' => $transactionType,
-                    'remarks' => $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
+                    'remarks'          => $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
             SupplierLedger::updateOrCreate(
                 [
                     'source_type' => Payment::class,
-                    'source_id' => $payment->id,
+                    'source_id'   => $payment->id,
                 ],
                 [
-                    'supplier_id' => $payment->supplier_id,
-                    'amount' => -$payment->amount,
+                    'supplier_id'      => $payment->supplier_id,
+                    'amount'           => -$payment->amount,
                     'transaction_type' => $transactionType,
-                    'remarks' =>  $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
+                    'remarks'          => $payment->remarks ?? "Payment created for supplier {$payment->supplier->name} from account {$payment->account->name}",
                 ]
             );
         });
-
 
         static::deleting(function ($receipt) {
             $receipt->accountLedger()->delete();

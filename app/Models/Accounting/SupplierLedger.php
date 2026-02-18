@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
@@ -7,11 +6,12 @@ use App\Models\Master\Supplier;
 use App\Models\Scopes\OutletScope;
 use App\Models\Traits\HasTransactionType;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class SupplierLedger extends Model
 {
+
     use BelongsToOutlet, HasTransactionType;
 
     protected $fillable = [
@@ -23,7 +23,7 @@ class SupplierLedger extends Model
         'reference_type',
         'transaction_type',
         'remarks',
-        'outlet_id'
+        'outlet_id',
     ];
 
     public function supplier(): BelongsTo
@@ -46,4 +46,10 @@ class SupplierLedger extends Model
         return SupplierLedger::withoutGlobalScope(OutletScope::class)->where('supplier_id', $supplierId)
             ->sum('amount');
     }
+
+    public static function getSupplierBalanceQuery(int $supplierId)
+    {
+        return SupplierLedger::withoutGlobalScope(OutletScope::class)->where('supplier_id', $supplierId);
+    }
+
 }

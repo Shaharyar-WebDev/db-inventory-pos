@@ -1,15 +1,13 @@
 <?php
-
 namespace App\Models\Accounting;
 
-use App\Models\User;
 use App\BelongsToOutlet;
 use App\Models\Master\Customer;
 use App\Models\Scopes\OutletScope;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasTransactionType;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CustomerLedger extends Model
 {
@@ -22,7 +20,7 @@ class CustomerLedger extends Model
         'source_type',
         'transaction_type',
         'remarks',
-        'outlet_id'
+        'outlet_id',
     ];
 
     public function customer(): BelongsTo
@@ -37,7 +35,12 @@ class CustomerLedger extends Model
 
     public static function getBalanceForCustomerId(int $customerId): float
     {
-        return CustomerLedger::withoutGlobalScope(OutletScope::class)->where('customer_id', $customerId)
+        return self::withoutGlobalScope(OutletScope::class)->where('customer_id', $customerId)
             ->sum('amount');
+    }
+
+    public static function getCustomerBalanceQuery(int $customerId)
+    {
+        return self::withoutGlobalScope(OutletScope::class)->where('customer_id', $customerId);
     }
 }

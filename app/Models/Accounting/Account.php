@@ -5,7 +5,6 @@ namespace App\Models\Accounting;
 use App\Enums\TransactionType;
 use App\Models\Accounting\AccountLedger;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Account extends Model
 {
@@ -13,6 +12,7 @@ class Account extends Model
 
     protected $fillable = [
         'name',
+        'account_number',
         'description',
         'opening_balance',
     ];

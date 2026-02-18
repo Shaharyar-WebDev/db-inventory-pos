@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->unique();
+            $table->string('account_number', 255)->nullable();
             $table->text('description')->nullable();
             $table->money('opening_balance');
             $table->timestamps();

@@ -16,6 +16,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsTable
@@ -50,13 +51,11 @@ class ProductsTable
                 TextColumn::make('current_outlet_stock')
                     ->searchable(false)
                     ->quantity()
-                    ->suffix(fn($record) => ' ' . ($record->unit?->symbol ?? ''))
-                    ->sortable(false),
+                    ->suffix(fn($record) => ' ' . ($record->unit?->symbol ?? '')),
                 TextColumn::make('current_outlet_stock_value')
                     ->searchable(false)
                     ->currency()
-                    ->sumCurrency()
-                    ->sortable(false),
+                    ->sumCurrency(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -62,7 +62,7 @@ class PurchaseReturn extends Model
                 [
                     'supplier_id' => $return->purchase->supplier_id,
                     'amount' => -$return->grand_total,
-                    'transaction_type' => TransactionType::PURCHASE_RETURN->value,
+                    'transaction_type' => TransactionType::PURCHASE_RETURN,
                     'remarks' => 'Purchase Return Saved',
                 ]
             );

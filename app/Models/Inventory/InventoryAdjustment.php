@@ -4,15 +4,11 @@ namespace App\Models\Inventory;
 
 use App\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InventoryAdjustment extends Model
 {
-    use BelongsToOutlet,
-        // SoftDeletes,
-        HasDocumentNumber;
+    use BelongsToOutlet, HasDocumentNumber;
 
     protected $fillable = [
         'adjustment_number',

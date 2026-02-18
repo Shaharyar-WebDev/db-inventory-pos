@@ -1,25 +1,21 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Sale\Sales;
 
-use BackedEnum;
-use App\Models\Sale\Sale;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
-use App\Filament\Outlet\Resources\Sale\Sales\Pages\Pos;
-use App\Filament\Outlet\Resources\Sale\Sales\Pages\EditSale;
-use App\Filament\Outlet\Resources\Sale\Sales\Pages\ViewSale;
-use App\Filament\Outlet\Resources\Sale\Sales\Pages\ListSales;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\CreateSale;
-use App\Filament\Outlet\Resources\Sale\Sales\Pages\SalesReport;
+use App\Filament\Outlet\Resources\Sale\Sales\Pages\EditSale;
+use App\Filament\Outlet\Resources\Sale\Sales\Pages\ListSales;
+use App\Filament\Outlet\Resources\Sale\Sales\Pages\ViewSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleForm;
-use App\Filament\Outlet\Resources\Sale\Sales\Tables\SalesTable;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleInfolist;
+use App\Filament\Outlet\Resources\Sale\Sales\Tables\SalesTable;
+use App\Models\Sale\Sale;
+use BackedEnum;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class SaleResource extends Resource
 {
@@ -30,6 +26,8 @@ class SaleResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CurrencyDollar;
 
     protected static ?string $recordTitleAttribute = 'sale_number';
+
+    protected static null|SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function form(Schema $schema): Schema
     {
@@ -56,10 +54,15 @@ class SaleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListSales::route('/'),
+            'index'  => ListSales::route('/'),
             'create' => CreateSale::route('/create'),
-            'view' => ViewSale::route('/{record}'),
-            'edit' => EditSale::route('/{record}/edit'),
+            'view'   => ViewSale::route('/{record}'),
+            'edit'   => EditSale::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery();
     }
 }

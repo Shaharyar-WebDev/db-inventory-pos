@@ -188,7 +188,7 @@ class PurchaseReturnForm
                         TextInput::make('total')
                             ->numeric()
                             ->disabled()
-                            ->dehydrated()
+                            ->saved()
                             ->currency(),
                     ])
                     ->default(self::getDefaultRepeaterData()),

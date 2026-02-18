@@ -1,11 +1,12 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Sale\SaleReturns\Pages;
 
 use App\Filament\Outlet\Resources\Sale\SaleReturns\SaleReturnResource;
+use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditSaleReturn extends EditRecord
 {
@@ -16,6 +17,10 @@ class EditSaleReturn extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make(),
+            PdfDownloadAction::make('partials.pdf.sale-return', fn(Model $record) => $record->return_number)
+                ->download(),
+            PdfDownloadAction::make('partials.pdf.sale-return', fn(Model $record) => $record->return_number)
+                ->print(),
         ];
     }
 }

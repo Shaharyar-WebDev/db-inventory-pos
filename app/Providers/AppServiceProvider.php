@@ -13,10 +13,12 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Columns\Column;
@@ -66,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
                 ->maxContentWidth($width) : null;
         });
 
+        TextEntry::configureUsing(function(TextEntry $entry){
+            // $entry->size(TextSize::Large);
+        });
+
         TextColumn::macro('disableNumericFormatting', function (): static {
             $this->extraAttributes(['data-disable-numeric' => true]);
 
@@ -82,6 +88,25 @@ class AppServiceProvider extends ServiceProvider
 
         TextColumn::macro('currency', function () {
             $this->prefix(app_currency_symbol())
+                ->color(function ($state) {
+                    if ($state < 0) {
+                        return 'danger';
+                    }
+
+                    if ($state > 0) {
+                        return 'success';
+                    }
+
+                    return 'gray';
+                })
+                ->default(0);
+
+            return $this;
+        });
+
+           TextEntry::macro('currency', function () {
+            $this->prefix(app_currency_symbol())
+                ->numeric(2)
                 ->color(function ($state) {
                     if ($state < 0) {
                         return 'danger';
