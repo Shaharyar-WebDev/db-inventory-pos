@@ -16,7 +16,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsTable
@@ -42,9 +41,9 @@ class ProductsTable
                     ->copyable(),
                 TextColumn::make('unit.name')
                     ->copyable(),
-                // TextColumn::make('cost_price')
-                //     ->prefix(app_currency_symbol())
-                //     ->copyable(),
+                TextColumn::make('cost_price')
+                    ->prefix(app_currency_symbol())
+                    ->copyable(),
                 TextColumn::make('selling_price')
                     ->prefix(app_currency_symbol())
                     ->copyable(),
