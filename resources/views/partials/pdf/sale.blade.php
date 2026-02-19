@@ -582,14 +582,14 @@
                     $updatedBalance = $previousBalance + $record->grand_total;
                 @endphp
 
-                <tr>
-                    <td class="label">Previous balance</td>
-                    <td class="value">{{ currency_format($previousBalance) }}</td>
-                </tr>
-
                 <tr class="total-row">
                     <td class="label">Grand total</td>
                     <td class="value">{{ currency_format($record->grand_total) }}</td>
+                </tr>
+
+                 <tr>
+                    <td class="label">Previous balance</td>
+                    <td class="value">{{ currency_format($previousBalance) }}</td>
                 </tr>
 
                 <tr>
