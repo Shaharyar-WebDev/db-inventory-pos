@@ -135,7 +135,7 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            display: inline-block;
+            /* display: inline-block; */
         }
 
         .type-label {

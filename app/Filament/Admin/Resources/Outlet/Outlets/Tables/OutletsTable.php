@@ -15,7 +15,6 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -94,8 +93,8 @@ class OutletsTable
                 // TrashedFilter::make(),
             ])
             ->contentGrid([
-                'md' => 2,
-                'xl' => 3,
+                'xl' => 2,
+                '2xl' => 3,
             ])
             ->recordActions([
                 // ViewAction::make(),

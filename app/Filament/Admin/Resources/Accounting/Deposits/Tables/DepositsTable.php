@@ -1,19 +1,13 @@
 <?php
-
 namespace App\Filament\Admin\Resources\Accounting\Deposits\Tables;
 
+use App\Filament\Admin\Resources\Accounting\Accounts\AccountResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class DepositsTable
@@ -25,7 +19,10 @@ class DepositsTable
                 TextColumn::make('deposit_number')
                     ->copyable(),
                 TextColumn::make('account.name')
-                    ->copyable(),
+                    ->url(fn($record) => AccountResource::getUrl('index', [
+                        'search' => $record->account->name,
+                    ]), true)
+                    ->copyable(false),
                 TextColumn::make('amount')
                     ->currency()
                     ->copyable(),

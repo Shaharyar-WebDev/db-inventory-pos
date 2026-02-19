@@ -9,6 +9,7 @@ return new class extends SettingsMigration
     {
         $this->migrator->add('general.site_name', 'My App');
         $this->migrator->add('general.site_logo', null);
+        $this->migrator->add('general.site_logo_dark_mode', null);
 
         $this->migrator->add('general.background_type', 'solid');
 

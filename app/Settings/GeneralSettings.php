@@ -11,15 +11,17 @@ class GeneralSettings extends Settings
 
     public ?string $site_logo;
 
+    public ?string $site_logo_dark_mode;
+
     public string $navigation_type;
 
     public string $background_type;
 
     public bool $spa_mode;
 
-    // public string $address;
+    public ?string $address;
 
-    // public string $contact;
+    public ?string $contact;
 
     public string|Width|null $content_width;
 

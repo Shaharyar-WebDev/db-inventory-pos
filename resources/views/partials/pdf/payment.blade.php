@@ -438,7 +438,7 @@
                     <div class="party-title">account</div>
                     <div class="party-detail">
                         <strong>{!! $record->account->name !!}</strong><br>
-                        {!! $record->account->account_number ?? 'Account #: N/A' !!}<br>
+                        Account #: {!! $record->account->account_number ?? 'N/A' !!}<br>
                         @if ($record->account->description)
                             {{ Str::limit($record->account->description, 50) }}
                         @endif
@@ -551,6 +551,11 @@
         <hr>
         <div style="text-align:center; color:#869fac; font-size:7pt;">
             account ledger updated • supplier ledger updated • payment ref: {{ $record->payment_number }}
+        </div>
+
+         <!-- AMOUNT IN WORDS -->
+        <div style="text-align:center; color:#1e2b37; font-size:9pt; margin-top:0.3cm; font-style:italic;">
+            <strong>Amount in words:</strong> {{ number_to_words_currency($record->amount) }}
         </div>
 
     </div> <!-- end payment-wrapper -->

@@ -458,7 +458,7 @@
                 </tr>
                 @if($totalPositiveQty > 0)
                 <tr>
-                    <td class="label">Total additions</td>
+                    <td class="label">Total quantity</td>
                     <td class="value positive">{{ qty_format($totalPositiveQty) }} units</td>
                 </tr>
                 @endif

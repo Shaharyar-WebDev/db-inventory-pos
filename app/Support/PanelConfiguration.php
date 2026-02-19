@@ -1,16 +1,12 @@
 <?php
-
 namespace App\Support;
 
 use App\Settings\GeneralSettings;
-use App\Support\Components\Topbar;
 use Filament\FontProviders\GoogleFontProvider;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\View;
 
@@ -32,6 +28,7 @@ class PanelConfiguration
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandName($this->generalSettings->site_name)
             ->brandLogo(fn() => $this->generalSettings->site_logo ? asset('storage/' . $this->generalSettings->site_logo) : null)
+            ->darkModeBrandLogo(fn() => $this->generalSettings->site_logo_dark_mode ? asset('storage/' . $this->generalSettings->site_logo_dark_mode) : null)
             ->spa(fn() => $this->generalSettings->spa_mode)
             ->maxContentWidth($this->generalSettings->content_width ?? Width::Full)
             // ->topNavigation(fn() => $this->generalSettings->navigation_type === 'topbar')
@@ -69,7 +66,7 @@ class PanelConfiguration
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.copyright-label'))
             ->colors([
                 'primary' => [
-                    50 => 'rgb(235, 255, 239)',
+                    50  => 'rgb(235, 255, 239)',
                     100 => 'rgb(204, 255, 212)',
                     200 => 'rgb(153, 255, 170)',
                     300 => 'rgb(102, 255, 128)',
@@ -81,7 +78,7 @@ class PanelConfiguration
                     900 => 'rgb(0, 102, 34)',
                     950 => 'rgb(0, 51, 17)',
                 ],
-                'danger' => Color::Rose,
+                'danger'  => Color::Rose,
             ]);
 
         if ($this->generalSettings->background_type === 'pattern') {

@@ -15,7 +15,7 @@ class ListSuppliers extends ListRecords
     {
         return [
             CreateAction::make(),
-            RefreshAction::make(),
+            // RefreshAction::make(),
         ];
     }
 }

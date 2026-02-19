@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Filament\Admin\Resources\Accounting\Accounts\Schemas;
 
-use Filament\Schemas\Schema;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class AccountForm
 {
@@ -19,8 +18,11 @@ class AccountForm
                     ->schema([
                         TextInput::make('name')
                             ->required(),
+                        TextInput::make('account_number')
+                            ->nullable(),
                         TextInput::make('opening_balance')
                             ->numeric()
+                            ->columnSpanFull()
                             ->default(0)
                             ->required()
                             ->hintIcon(
