@@ -492,7 +492,7 @@
                     <th width="38%">product</th>
                     <th width="12%">qty</th>
                     <th width="12%">unit price</th>
-                    <th width="13%">discount</th>
+                    {{-- <th width="13%">discount</th> --}}
                     <th width="10%">total</th>
                 </tr>
             </thead>
@@ -532,11 +532,11 @@
                         </td>
                         <td class="qty-cell">{{ qty_format($item->qty) }} {{ $item->unit->symbol }}</td>
                         <td class="rate-cell">{{ currency_format($sellingPrice) }}</td>
-                        <td class="rate-cell">
+                        {{-- <td class="rate-cell">
                             <span class="{{ $discountAmount > 0 ? 'discount-info' : ($discountAmount < 0 ? 'discount-amount' : '') }}">
                                 {{ $discountDisplay }}
                             </span>
-                        </td>
+                        </td> --}}
                         <td class="total-cell">{{ currency_format($item->total) }}</td>
                     </tr>
                 @endforeach
@@ -547,7 +547,7 @@
         <div class="clearfix">
             <table class="summary-panel" cellspacing="0">
                 <tr>
-                    <td class="label">Subtotal (after item discounts)</td>
+                    <td class="label">Subtotal</td>
                     <td class="value">{{ currency_format($subtotal) }}</td>
                 </tr>
 
