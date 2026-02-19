@@ -442,7 +442,7 @@
                     <div class="party-title">account</div>
                     <div class="party-detail">
                         <strong>{!! $record->account->name !!}</strong><br>
-                        'Account #: {!! $record->account->account_number ?? 'N/A' !!}<br>
+                        Account #: {!! $record->account->account_number ?? 'N/A' !!}<br>
                         @if ($record->account->description)
                             {{ Str::limit($record->account->description, 50) }}
                         @endif
