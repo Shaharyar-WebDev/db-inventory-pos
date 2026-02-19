@@ -11,7 +11,7 @@ class GeneralSettings extends Settings
 
     public ?string $site_logo;
 
-    // public ?string $site_logo_dark_mode;
+    public ?string $site_logo_dark_mode;
 
     public string $navigation_type;
 
