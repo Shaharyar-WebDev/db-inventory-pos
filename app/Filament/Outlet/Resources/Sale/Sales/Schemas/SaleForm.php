@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Sale\Sales\Schemas;
 
 use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
@@ -9,6 +8,7 @@ use App\Filament\Outlet\Resources\Sale\Sales\Components\DiscountValueInput;
 use App\Filament\Outlet\Resources\Sale\Sales\Components\GrandTotalInput;
 use App\Filament\Outlet\Resources\Sale\Sales\Components\SaleItemsRepeater;
 use App\Filament\Outlet\Resources\Sale\Sales\Components\TotalAmountInput;
+use App\Models\Accounting\CustomerLedger;
 use App\Models\Master\Product;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -16,17 +16,17 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Width;
 
 class SaleForm
 {
     public static function configure(Schema $schema): Schema
     {
         // filament()
-            // ->getCurrentPanel()
-            // ->maxContentWidth(Width::Full);
+        // ->getCurrentPanel()
+        // ->maxContentWidth(Width::Full);
 
         $products = Product::with('unit', 'subUnit', 'customerRates')
             ->withOutletStock()
@@ -46,6 +46,16 @@ class SaleForm
                         Select::make('customer_id')
                             ->relationship('customer', 'name')
                             ->manageOptionForm(CustomerForm::configure($schema)->getComponents())
+                            ->helperText(function (Get $get) {
+                                $customerId = $get('customer_id');
+                                if (! $customerId) {
+                                    return null;
+                                }
+
+                                $balance = CustomerLedger::getBalanceForCustomerId($customerId);
+
+                                return 'Customer balance: ' . currency_format($balance);
+                            })
                             ->columnSpanFull()
                             ->required(),
                     ]),
@@ -71,7 +81,6 @@ class SaleForm
                             ->rules('min:0')
                             ->afterStateUpdatedJs(self::calculateGrandTotal())
                             ->required(),
-
 
                         TextInput::make('tax_charges')
                             ->currency()
