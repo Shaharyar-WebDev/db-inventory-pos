@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Pages\Enums\SubNavigationPosition;
@@ -121,10 +120,10 @@ class Settings extends SettingsPage
                             ->searchable(false)
                             ->options(Width::class),
                     ]),
-                    Tab::make('Company Information')->schema([
-                        Textarea::make('address')->nullable(),
-                        TextInput::make('contact')->nullable(),
-                    ]),
+                    // Tab::make('Company Information')->schema([
+                    // Textarea::make('address')->nullable(),
+                    // TextInput::make('contact')->nullable(),
+                    // ]),
                 ])->columnSpanFull()
                     ->columns(2)
                     ->persistTabInQueryString()
