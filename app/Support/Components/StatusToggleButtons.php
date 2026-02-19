@@ -2,6 +2,7 @@
 
 namespace App\Support\Components;
 
+use App\Enums\Status;
 use Filament\Forms\Components\ToggleButtons;
 
 class StatusToggleButtons
@@ -12,6 +13,8 @@ class StatusToggleButtons
             ->label('Status')
             ->options(status_options())
             ->colors(status_options_colors())
+            ->required()
+            ->default(Status::ACTIVE)
             ->inline();
     }
 }

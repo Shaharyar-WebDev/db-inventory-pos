@@ -433,7 +433,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Blueprint::macro('status', function () {
-            return $this->string('status')->default(Status::ACTIVE->value);
+            return $this->string('status')->default(Status::ACTIVE);
         });
 
         Blueprint::macro('discountType', function () {
