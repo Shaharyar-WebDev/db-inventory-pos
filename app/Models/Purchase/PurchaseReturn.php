@@ -25,6 +25,7 @@ class PurchaseReturn extends Model
         'purchase_id',
         'description',
         'outlet_id',
+        'attachments',
         'grand_total'
     ];
 

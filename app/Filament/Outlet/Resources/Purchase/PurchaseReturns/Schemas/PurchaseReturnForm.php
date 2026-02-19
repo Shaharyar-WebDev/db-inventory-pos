@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Schemas;
 
 use App\Models\Master\Product;
 use App\Models\Purchase\Purchase;
 use Closure;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class PurchaseReturnForm
 {
@@ -122,10 +123,10 @@ class PurchaseReturnForm
                             ->label('Quantity')
                             ->numeric()
                             ->required()
-                            // ->suffix(function(Get $get) use ($productsKeyedArray){
-                            //     $productId = $get('product_id');
-                            //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
-                            // })
+                        // ->suffix(function(Get $get) use ($productsKeyedArray){
+                        //     $productId = $get('product_id');
+                        //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
+                        // })
                             ->afterStateUpdatedJs(self::updateGrandTotals())
                             ->default(0)
                             ->rules(function (Get $get, ?Model $record) {
@@ -172,7 +173,7 @@ class PurchaseReturnForm
                                                 "Return quantity cannot exceed remaining quantity of {$remainingQty}."
                                             );
                                         }
-                                    }
+                                    },
                                 ];
                             })
                             ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
@@ -196,6 +197,19 @@ class PurchaseReturnForm
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
+                        FileUpload::make('attachments')
+                            ->label('Attachments')
+                            ->multiple()
+                            ->directory('attachments/purchase-return')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->deleteUploadedFileUsing(function ($file) {
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->nullable()
+                            ->downloadable()
+                            ->columnSpanFull()
+                            ->openable(),
                         Textarea::make('description')
                             ->nullable()
                             ->default(null)
@@ -251,7 +265,7 @@ class PurchaseReturnForm
 
                 return [
                     'product_id' => $item->product_id,
-                    // 'qty'        => (float) $remainingQty, // 👈 important
+                                               // 'qty'        => (float) $remainingQty, // 👈 important
                     'qty'        => (float) 0, // 👈 important
                     'rate'       => (float) $item->rate,
                     // 'total'      => (float) ($remainingQty * $item->rate),

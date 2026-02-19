@@ -1,23 +1,20 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Purchase\Purchases\Schemas;
 
-use Filament\Actions\Action;
-use Filament\Schemas\Schema;
 use App\Models\Master\Product;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Support\Exceptions\Halt;
-use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class PurchaseForm
 {
@@ -57,7 +54,7 @@ class PurchaseForm
                                         $items = $get('items') ?? [];
                                         $total = 0;
                                         foreach ($items as $item) {
-                                            $qty = $item['qty'] ?? 0;
+                                            $qty  = $item['qty'] ?? 0;
                                             $rate = $item['rate'] ?? 0;
 
                                             $total += ($qty * $rate);
@@ -128,10 +125,10 @@ class PurchaseForm
                             ->label('Quantity')
                             ->numeric()
                             ->required()
-                            // ->suffix(function(Get $get) use ($productsKeyedArray){
-                            //     $productId = $get('product_id');
-                            //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
-                            // })
+                        // ->suffix(function(Get $get) use ($productsKeyedArray){
+                        //     $productId = $get('product_id');
+                        //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
+                        // })
                             ->afterStateUpdatedJs(self::updateGrandTotals())
                             ->default(0)
                             ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
@@ -148,7 +145,7 @@ class PurchaseForm
                             ->dehydrated()
                             ->dehydrateStateUsing(function (Get $get) {
                                 $rate = (float) $get('rate');
-                                $qty = (float) $get('qty');
+                                $qty  = (float) $get('qty');
 
                                 return ($qty * $rate);
                             })
@@ -158,6 +155,19 @@ class PurchaseForm
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
+                        FileUpload::make('attachments')
+                            ->label('Attachments')
+                            ->multiple()
+                            ->directory('attachments/purchase')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->deleteUploadedFileUsing(function ($file) {
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->nullable()
+                            ->downloadable()
+                            ->columnSpanFull()
+                            ->openable(),
                         Textarea::make('description')
                             ->nullable()
                             ->default(null)

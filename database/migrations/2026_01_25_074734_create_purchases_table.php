@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained()->restrictOnDelete();
             $table->text('description')->nullable();
             $table->money('grand_total');
+            $table->json('attachments')->nullable()->default(null);
             $table->belongsToOutlet();
             $table->timestamps();
             $table->softDeletes();

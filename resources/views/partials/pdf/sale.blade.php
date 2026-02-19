@@ -505,7 +505,8 @@
                         $subtotal += $item->total;
 
                         // Calculate original total based on selling price
-                        $sellingPrice = $item->product->selling_price ?? 0;
+                        $sellingPrice = $item->cost ?? 0;
+
                         $originalTotal = $sellingPrice * $item->qty;
                         $discountAmount = $originalTotal - $item->total;
 
