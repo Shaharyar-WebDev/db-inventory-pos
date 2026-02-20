@@ -21,17 +21,17 @@ class PanelConfiguration
 
     public function apply(Panel $panel): Panel
     {
-        $this->generalSettings = app(GeneralSettings::class);
+        // $this->generalSettings = app(GeneralSettings::class);
 
         $panel
             ->font('Space Grotesk', provider: GoogleFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->brandName($this->generalSettings->site_name)
-            ->brandLogo(fn() => $this->generalSettings->site_logo ? asset('storage/' . $this->generalSettings->site_logo) : null)
-            ->darkModeBrandLogo(fn() => $this->generalSettings->site_logo_dark_mode ? asset('storage/' . $this->generalSettings->site_logo_dark_mode) : null)
-            ->spa(fn() => $this->generalSettings->spa_mode)
-            ->maxContentWidth($this->generalSettings->content_width ?? Width::Full)
-            // ->topNavigation(fn() => $this->generalSettings->navigation_type === 'topbar')
+            // ->brandName($this->generalSettings->site_name)
+            // ->brandLogo(fn() => $this->generalSettings->site_logo ? asset('storage/' . $this->generalSettings->site_logo) : null)
+            // ->darkModeBrandLogo(fn() => $this->generalSettings->site_logo_dark_mode ? asset('storage/' . $this->generalSettings->site_logo_dark_mode) : null)
+            // ->spa(fn() => $this->generalSettings->spa_mode)
+            // ->maxContentWidth($this->generalSettings->content_width ?? Width::Full)
+            // // ->topNavigation(fn() => $this->generalSettings->navigation_type === 'topbar')
             // ->topbar(fn() => $this->generalSettings->navigation_type === 'topbar')
             ->topbar(false)
             ->simplePageMaxContentWidth(Width::Medium)
@@ -81,10 +81,10 @@ class PanelConfiguration
                 'danger'  => Color::Rose,
             ]);
 
-        if ($this->generalSettings->background_type === 'pattern') {
-            $panel->renderHook(PanelsRenderHook::CONTENT_BEFORE, fn(): View => view('partials.background-pattern'))
-                ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.background-pattern'));
-        }
+        // if ($this->generalSettings->background_type === 'pattern') {
+        //     $panel->renderHook(PanelsRenderHook::CONTENT_BEFORE, fn(): View => view('partials.background-pattern'))
+        //         ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn(): View => view('partials.background-pattern'));
+        // }
 
         return $panel;
     }
