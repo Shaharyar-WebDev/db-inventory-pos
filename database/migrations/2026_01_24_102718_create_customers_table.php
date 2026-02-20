@@ -1,8 +1,6 @@
 <?php
 
 use App\Enums\CustomerType;
-use App\Enums\Status;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,6 +23,7 @@ return new class extends Migration
             $table->status();
             $table->string('customer_type')->default(CustomerType::REGISTERED->value);
             $table->json('attachments')->nullable();
+            $table->userstamps();
             $table->softDeletes();
             $table->timestamps();
         });

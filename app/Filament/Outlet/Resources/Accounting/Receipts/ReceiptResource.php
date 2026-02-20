@@ -1,24 +1,26 @@
 <?php
-
 namespace App\Filament\Outlet\Resources\Accounting\Receipts;
 
-use BackedEnum;
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
-use App\Models\Accounting\Receipt;
-use Filament\Support\Icons\Heroicon;
-use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\EditReceipt;
-use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ViewReceipt;
-use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ListReceipts;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\CreateReceipt;
+use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\EditReceipt;
+use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ListReceipts;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Schemas\ReceiptForm;
-use App\Filament\Outlet\Resources\Accounting\Receipts\Tables\ReceiptsTable;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Schemas\ReceiptInfolist;
+use App\Filament\Outlet\Resources\Accounting\Receipts\Tables\ReceiptsTable;
+use App\Filament\Outlet\Resources\Sale\Sales\RelationManagers\ReceiptSalesRelationManager;
+use App\Models\Accounting\Receipt;
+use App\Support\Traits\HasTimestampColumns;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
 
 class ReceiptResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Receipt::class;
 
@@ -44,17 +46,17 @@ class ReceiptResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ReceiptSalesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListReceipts::route('/'),
+            'index'  => ListReceipts::route('/'),
             'create' => CreateReceipt::route('/create'),
             // 'view' => ViewReceipt::route('/{record}'),
-            'edit' => EditReceipt::route('/{record}/edit'),
+            'edit'   => EditReceipt::route('/{record}/edit'),
         ];
     }
 }

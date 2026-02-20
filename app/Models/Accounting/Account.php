@@ -5,10 +5,12 @@ namespace App\Models\Accounting;
 use App\Enums\TransactionType;
 use App\Models\Accounting\AccountLedger;
 use Illuminate\Database\Eloquent\Model;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Account extends Model
 {
     // use SoftDeletes;
+    use Userstamps;
 
     protected $fillable = [
         'name',

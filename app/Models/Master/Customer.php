@@ -16,10 +16,12 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Customer extends Model
 {
     use HasStatus;
+    use Userstamps;
 
     protected $fillable = [
         'name',

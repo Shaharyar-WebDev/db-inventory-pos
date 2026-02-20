@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->money('grand_total');
             $table->money('discount_amount');
             $table->belongsToOutlet();
+            $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
         });

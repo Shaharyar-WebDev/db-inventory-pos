@@ -2,24 +2,27 @@
 
 namespace App\Filament\Admin\Resources\Master\Products;
 
-use BackedEnum;
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use App\Models\Master\Product;
-use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Admin\Resources\Master\Products\Pages\EditProduct;
-use App\Filament\Admin\Resources\Master\Products\Pages\ViewProduct;
-use App\Filament\Admin\Resources\Master\Products\Pages\ListProducts;
 use App\Filament\Admin\Resources\Master\Products\Pages\CreateProduct;
+use App\Filament\Admin\Resources\Master\Products\Pages\EditProduct;
+use App\Filament\Admin\Resources\Master\Products\Pages\ListProducts;
+use App\Filament\Admin\Resources\Master\Products\Pages\ViewProduct;
 use App\Filament\Admin\Resources\Master\Products\Schemas\ProductForm;
-use App\Filament\Admin\Resources\Master\Products\Tables\ProductsTable;
 use App\Filament\Admin\Resources\Master\Products\Schemas\ProductInfolist;
+use App\Filament\Admin\Resources\Master\Products\Tables\ProductsTable;
+use App\Models\Master\Product;
+use App\Support\Traits\HasTimestampColumns;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    // use HasTimestampColumns;
 
     protected static ?string $model = Product::class;
 

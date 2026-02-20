@@ -5,10 +5,12 @@ use App\Filament\Outlet\Resources\Sale\Sales\Pages\CreateSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\EditSale;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ListSales;
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\ViewSale;
+use App\Filament\Outlet\Resources\Sale\Sales\RelationManagers\ReceiptSalesRelationManager;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleForm;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleInfolist;
 use App\Filament\Outlet\Resources\Sale\Sales\Tables\SalesTable;
 use App\Models\Sale\Sale;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Resource;
@@ -20,6 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 class SaleResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Sale::class;
 
@@ -47,7 +51,7 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ReceiptSalesRelationManager::class
         ];
     }
 

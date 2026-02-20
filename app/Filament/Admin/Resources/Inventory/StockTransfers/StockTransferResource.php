@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Inventory\StockTransfers\Schemas\StockTransferF
 use App\Filament\Admin\Resources\Inventory\StockTransfers\Schemas\StockTransferInfolist;
 use App\Filament\Admin\Resources\Inventory\StockTransfers\Tables\StockTransfersTable;
 use App\Models\Inventory\StockTransfer;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -19,6 +20,8 @@ use Filament\Tables\Table;
 class StockTransferResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = StockTransfer::class;
 

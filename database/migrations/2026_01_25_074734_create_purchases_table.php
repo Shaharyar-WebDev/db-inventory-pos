@@ -19,6 +19,7 @@ return new class extends Migration
             $table->money('grand_total');
             $table->json('attachments')->nullable()->default(null);
             $table->belongsToOutlet();
+            $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -4,9 +4,11 @@ namespace App\Models\Sale;
 use App\Enums\DiscountType;
 use App\Enums\TransactionType;
 use App\Models\Accounting\CustomerLedger;
+use App\Models\Accounting\ReceiptSale;
 use App\Models\Master\Customer;
 use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturn;
+use App\Models\Scopes\WithSaleMetricsScope;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
@@ -15,10 +17,12 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Sale extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
+    use Userstamps;
 
     public static string $documentNumberColumn = 'sale_number';
 
@@ -60,6 +64,11 @@ class Sale extends Model
     public function saleReturns()
     {
         return $this->hasMany(SaleReturn::class);
+    }
+
+    public function receiptSales()
+    {
+        return $this->hasMany(ReceiptSale::class);
     }
 
     // public function scopeWithMetrics($query)

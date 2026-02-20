@@ -11,13 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory_adjustments', function (Blueprint $table) {
+        Schema::create('receipt_sales', function (Blueprint $table) {
             $table->id();
-            $table->string('adjustment_number')->unique()->nullable();
-            $table->text('description')->nullable()->default(null);
-            $table->softDeletes();
-            $table->userstamps();
-            $table->belongsToOutlet();
+            $table->foreignId('receipt_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('sale_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->unique(['receipt_id', 'sale_id']);
             $table->timestamps();
         });
     }
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_adjustments');
+        Schema::dropIfExists('receipt_sales');
     }
 };

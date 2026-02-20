@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('account_number', 255)->nullable();
             $table->text('description')->nullable();
             $table->money('opening_balance');
+            $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
         });

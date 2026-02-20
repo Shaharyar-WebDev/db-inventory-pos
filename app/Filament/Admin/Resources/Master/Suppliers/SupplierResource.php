@@ -10,17 +10,19 @@ use App\Filament\Admin\Resources\Master\Suppliers\Schemas\SupplierForm;
 use App\Filament\Admin\Resources\Master\Suppliers\Schemas\SupplierInfolist;
 use App\Filament\Admin\Resources\Master\Suppliers\Tables\SuppliersTable;
 use App\Models\Master\Supplier;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class SupplierResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+    use HasTimestampColumns;
+
     protected static ?string $model = Supplier::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Truck;

@@ -6,11 +6,10 @@ use BackedEnum;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use App\Models\Master\Customer;
+use App\Support\Traits\HasTimestampColumns;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Outlet\Resources\Master\Customers\Pages\EditCustomer;
 use App\Filament\Outlet\Resources\Master\Customers\Pages\ViewCustomer;
 use App\Filament\Outlet\Resources\Master\Customers\Pages\ListCustomers;
@@ -23,6 +22,8 @@ use App\Filament\Admin\Resources\Master\Customers\RelationManagers\ProductRatesR
 class CustomerResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Customer::class;
 

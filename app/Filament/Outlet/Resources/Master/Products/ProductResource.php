@@ -10,6 +10,7 @@ use App\Filament\Outlet\Resources\Master\Products\Schemas\ProductForm;
 use App\Filament\Outlet\Resources\Master\Products\Schemas\ProductInfolist;
 use App\Filament\Outlet\Resources\Master\Products\Tables\ProductsTable;
 use App\Models\Master\Product;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Builder;
 class ProductResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Product::class;
 

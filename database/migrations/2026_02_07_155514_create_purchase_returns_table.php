@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('attachments')->nullable()->default(null);
             $table->belongsToOutlet();
             $table->timestamps();
+            $table->userstamps();
             $table->softDeletes();
         });
     }

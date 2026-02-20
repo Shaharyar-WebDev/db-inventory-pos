@@ -7,10 +7,12 @@ use App\Models\Scopes\OutletScope;
 use App\Models\Traits\HasStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Supplier extends Model
 {
     use HasStatus;
+    use Userstamps;
 
     protected $fillable = [
         'name',

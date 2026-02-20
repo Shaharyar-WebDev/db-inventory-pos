@@ -1,26 +1,24 @@
 <?php
-
 namespace App\Filament\Admin\Resources\Accounting\Accounts;
 
-use BackedEnum;
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
-use App\Models\Accounting\Account;
-use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
-use App\Filament\Admin\Resources\Accounting\Accounts\Pages\EditAccount;
-use App\Filament\Admin\Resources\Accounting\Accounts\Pages\ViewAccount;
 use App\Filament\Admin\Resources\Accounting\Accounts\Pages\ListAccounts;
-use App\Filament\Admin\Resources\Accounting\Accounts\Pages\CreateAccount;
 use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountForm;
-use App\Filament\Admin\Resources\Accounting\Accounts\Tables\AccountsTable;
 use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountInfolist;
+use App\Filament\Admin\Resources\Accounting\Accounts\Tables\AccountsTable;
+use App\Models\Accounting\Account;
+use App\Support\Traits\HasTimestampColumns;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AccountResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Account::class;
 

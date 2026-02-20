@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('account_id')->constrained()->restrictOnDelete();
             $table->money('amount'); // uses Blueprint::macro('money') from AppServiceProvider
             $table->text('remarks')->nullable();
+            $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
         });

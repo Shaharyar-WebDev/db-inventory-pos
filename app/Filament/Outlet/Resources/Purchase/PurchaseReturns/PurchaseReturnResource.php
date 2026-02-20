@@ -10,6 +10,7 @@ use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Schemas\PurchaseRetur
 use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Schemas\PurchaseReturnInfolist;
 use App\Filament\Outlet\Resources\Purchase\PurchaseReturns\Tables\PurchaseReturnsTable;
 use App\Models\Purchase\PurchaseReturn;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -19,6 +20,8 @@ use Filament\Tables\Table;
 class PurchaseReturnResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = PurchaseReturn::class;
 

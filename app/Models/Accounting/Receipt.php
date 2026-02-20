@@ -10,12 +10,13 @@ use App\Models\Accounting\PaymentMethod;
 use App\Models\Master\Customer;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Receipt extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
+    use Userstamps;
 
     protected $fillable = [
         'receipt_number',
@@ -45,9 +46,9 @@ class Receipt extends Model
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function rider()
+    public function receiptSales()
     {
-        return $this->belongsTo(User::class, 'rider_id');
+        return $this->hasMany(ReceiptSale::class);
     }
 
     public function accountLedger()

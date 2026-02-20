@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Master;
 
 use App\Models\Inventory\InventoryLedger;
@@ -12,11 +11,13 @@ use App\Models\Traits\HasOptions;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Product extends Model
 {
     // use SoftDeletes;
     use CalculatesInventoryAvgRate, HasOptions;
+    use Userstamps;
 
     protected $fillable = [
         'name',
@@ -37,8 +38,8 @@ class Product extends Model
 
     protected $casts = [
         'additional_images' => 'array',
-        'attachments' => 'array',
-        'tags' => 'array',
+        'attachments'       => 'array',
+        'tags'              => 'array',
     ];
 
     public function unit()
@@ -137,5 +138,6 @@ class Product extends Model
             ->with('outlet');
     }
 
-    public function scopeWithTotalSaleQty() {}
+    public function scopeWithTotalSaleQty()
+    {}
 }

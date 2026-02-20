@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Purchase;
 
 use App\BelongsToOutlet;
@@ -11,16 +10,17 @@ use App\Models\Purchase\PurchaseItem;
 use App\Models\Purchase\PurchaseReturn;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Exception;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Purchase extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     // SoftDeletes,
+    use Userstamps;
 
     protected $fillable = [
         'purchase_number',
@@ -28,7 +28,7 @@ class Purchase extends Model
         'supplier_id',
         'description',
         'outlet_id',
-        'grand_total'
+        'grand_total',
     ];
 
     public static string $documentNumberColumn = 'purchase_number';
@@ -69,10 +69,10 @@ class Purchase extends Model
                     'source_id'   => $purchase->id,
                 ],
                 [
-                    'supplier_id'     => $purchase->supplier_id,
-                    'amount'          => $purchase->grand_total,
+                    'supplier_id'      => $purchase->supplier_id,
+                    'amount'           => $purchase->grand_total,
                     'transaction_type' => TransactionType::PURCHASE,
-                    'remarks'         => 'Purchase Saved',
+                    'remarks'          => 'Purchase Saved',
                 ]
             );
         });
@@ -98,7 +98,6 @@ class Purchase extends Model
 
             //     throw new Exception();
             // }
-
 
             // $ledgerExists = $purchase->ledger()->exists();
 

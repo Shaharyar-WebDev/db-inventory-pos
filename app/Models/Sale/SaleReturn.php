@@ -11,11 +11,13 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class SaleReturn extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     // SoftDeletes,
+    use Userstamps;
 
     public static string $documentNumberColumn = 'return_number';
 

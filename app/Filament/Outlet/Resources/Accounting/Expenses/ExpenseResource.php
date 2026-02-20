@@ -10,6 +10,7 @@ use App\Filament\Outlet\Resources\Accounting\Expenses\Schemas\ExpenseForm;
 use App\Filament\Outlet\Resources\Accounting\Expenses\Schemas\ExpenseInfolist;
 use App\Filament\Outlet\Resources\Accounting\Expenses\Tables\ExpensesTable;
 use App\Models\Accounting\Expense;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,6 +19,8 @@ use Filament\Tables\Table;
 
 class ExpenseResource extends Resource
 {
+    use HasTimestampColumns;
+
     protected static ?string $model = Expense::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CurrencyDollar;

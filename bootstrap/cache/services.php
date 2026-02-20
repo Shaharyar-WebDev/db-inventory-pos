@@ -54,9 +54,10 @@
     50 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
     51 => 'Spatie\\Permission\\PermissionServiceProvider',
     52 => 'Spatie\\LaravelSettings\\LaravelSettingsServiceProvider',
-    53 => 'App\\Providers\\AppServiceProvider',
-    54 => 'App\\Providers\\Filament\\AdminPanelProvider',
-    55 => 'App\\Providers\\Filament\\OutletPanelProvider',
+    53 => 'Mattiverse\\Userstamps\\UserstampsServiceProvider',
+    54 => 'App\\Providers\\AppServiceProvider',
+    55 => 'App\\Providers\\Filament\\AdminPanelProvider',
+    56 => 'App\\Providers\\Filament\\OutletPanelProvider',
   ),
   'eager' => 
   array (
@@ -98,9 +99,10 @@
     35 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
     36 => 'Spatie\\Permission\\PermissionServiceProvider',
     37 => 'Spatie\\LaravelSettings\\LaravelSettingsServiceProvider',
-    38 => 'App\\Providers\\AppServiceProvider',
-    39 => 'App\\Providers\\Filament\\AdminPanelProvider',
-    40 => 'App\\Providers\\Filament\\OutletPanelProvider',
+    38 => 'Mattiverse\\Userstamps\\UserstampsServiceProvider',
+    39 => 'App\\Providers\\AppServiceProvider',
+    40 => 'App\\Providers\\Filament\\AdminPanelProvider',
+    41 => 'App\\Providers\\Filament\\OutletPanelProvider',
   ),
   'deferred' => 
   array (

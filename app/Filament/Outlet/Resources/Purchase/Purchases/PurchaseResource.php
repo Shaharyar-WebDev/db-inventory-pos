@@ -10,17 +10,18 @@ use App\Filament\Outlet\Resources\Purchase\Purchases\Schemas\PurchaseForm;
 use App\Filament\Outlet\Resources\Purchase\Purchases\Schemas\PurchaseInfolist;
 use App\Filament\Outlet\Resources\Purchase\Purchases\Tables\PurchasesTable;
 use App\Models\Purchase\Purchase;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class PurchaseResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Purchase::class;
 

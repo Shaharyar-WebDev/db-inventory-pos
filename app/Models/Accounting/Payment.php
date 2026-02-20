@@ -13,10 +13,12 @@ use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\HasTransactionType;
 use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Model;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Payment extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, HasTransactionType, ResolvesDocumentNumber;
+    use Userstamps;
 
     protected $fillable = [
         'payment_number',

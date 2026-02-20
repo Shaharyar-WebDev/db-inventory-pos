@@ -245,4 +245,11 @@
       0 => 'Spatie\\LaravelSettings\\LaravelSettingsServiceProvider',
     ),
   ),
+  'wildside/userstamps' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Mattiverse\\Userstamps\\UserstampsServiceProvider',
+    ),
+  ),
 );

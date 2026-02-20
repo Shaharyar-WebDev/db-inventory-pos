@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
@@ -13,10 +12,12 @@ use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\HasTransactionType;
 use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Model;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class Expense extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, HasTransactionType, ResolvesDocumentNumber;
+    use Userstamps;
 
     protected $fillable = [
         'expense_number',
@@ -68,26 +69,26 @@ class Expense extends Model
             AccountLedger::updateOrCreate(
                 [
                     'source_type' => Expense::class,
-                    'source_id' => $expense->id,
+                    'source_id'   => $expense->id,
                 ],
                 [
-                    'account_id' => $expense->account_id,
-                    'amount' => -$expense->amount,
+                    'account_id'       => $expense->account_id,
+                    'amount'           => -$expense->amount,
                     'transaction_type' => TransactionType::EXPENSE,
-                    'remarks' => "Expense Recorded: {$expense->expense_number}",
+                    'remarks'          => "Expense Recorded: {$expense->expense_number}",
                 ]
             );
 
             ExpenseLedger::updateOrCreate(
                 [
                     'source_type' => Expense::class,
-                    'source_id' => $expense->id,
+                    'source_id'   => $expense->id,
                 ],
                 [
-                    'expense_id' => $expense->id,
-                    'amount' => $expense->amount,
+                    'expense_id'       => $expense->id,
+                    'amount'           => $expense->amount,
                     'transaction_type' => TransactionType::EXPENSE,
-                    'remarks' => "Expense Created: {$expense->expense_number}",
+                    'remarks'          => "Expense Created: {$expense->expense_number}",
                 ]
             );
         });

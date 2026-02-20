@@ -21,6 +21,7 @@ return new class extends Migration
             $table->money('amount');
             $table->text('remarks')->nullable();
             $table->belongsToOutlet();
+            $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
         });

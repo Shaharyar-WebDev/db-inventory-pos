@@ -1,14 +1,15 @@
 <?php
-
 namespace App\Models\Inventory;
 
 use App\Models\Outlet\Outlet;
 use App\Models\Traits\HasDocumentNumber;
 use Illuminate\Database\Eloquent\Model;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class StockTransfer extends Model
 {
     use HasDocumentNumber;
+    use Userstamps;
 
     public static string $documentNumberColumn = 'transfer_number';
 

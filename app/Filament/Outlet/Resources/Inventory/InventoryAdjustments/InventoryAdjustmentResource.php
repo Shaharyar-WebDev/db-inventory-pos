@@ -7,10 +7,8 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Inventory\InventoryAdjustment;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
+use App\Support\Traits\HasTimestampColumns;
 use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\EditInventoryAdjustment;
 use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\ViewInventoryAdjustment;
 use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Pages\ListInventoryAdjustments;
@@ -22,6 +20,8 @@ use App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas\Invento
 class InventoryAdjustmentResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = InventoryAdjustment::class;
 

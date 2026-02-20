@@ -12,7 +12,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -41,8 +40,6 @@ class ReceiptsTable
                     ->currency(),
                 TextColumn::make('remarks')
                     ->desc(),
-                TextColumn::make('rider.name')
-                    ->copyable(),
                 // TextColumn::make('outlet.name')
                 //     ->searchable(),
                 TextColumn::make('created_at')
@@ -61,8 +58,6 @@ class ReceiptsTable
             ->moreFilters([
                 // TrashedFilter::make(),
             ], [
-                SelectFilter::make('rider')
-                    ->relationship('rider', 'name'),
                 SelectFilter::make('account')
                     ->relationship('account', 'name'),
                 SelectFilter::make('customer')

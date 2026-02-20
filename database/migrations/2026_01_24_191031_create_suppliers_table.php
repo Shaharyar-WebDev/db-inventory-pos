@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->status();
             $table->money('opening_balance');
+            $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -10,6 +10,7 @@ use App\Filament\Outlet\Resources\Sale\SaleReturns\Schemas\SaleReturnForm;
 use App\Filament\Outlet\Resources\Sale\SaleReturns\Schemas\SaleReturnInfolist;
 use App\Filament\Outlet\Resources\Sale\SaleReturns\Tables\SaleReturnsTable;
 use App\Models\Sale\SaleReturn;
+use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,6 +19,8 @@ use Filament\Tables\Table;
 
 class SaleReturnResource extends Resource
 {
+    use HasTimestampColumns;
+
     protected static ?string $model = SaleReturn::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArrowUturnRight;

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->money('amount');
             $table->text('description')->nullable()->default(null);
             $table->json('attachments')->nullable()->default(null);
+            $table->userstamps();
             $table->belongsToOutlet();
             $table->timestamps();
         });

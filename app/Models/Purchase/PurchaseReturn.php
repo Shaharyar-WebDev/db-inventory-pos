@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Purchase;
 
 use App\Enums\TransactionType;
@@ -9,16 +8,16 @@ use App\Models\Purchase\PurchaseReturnItem;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Exception;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 class PurchaseReturn extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     // SoftDeletes,
+    use Userstamps;
 
     protected $fillable = [
         'return_number',
@@ -26,7 +25,7 @@ class PurchaseReturn extends Model
         'description',
         'outlet_id',
         'attachments',
-        'grand_total'
+        'grand_total',
     ];
 
     public static string $documentNumberColumn = 'return_number';
@@ -51,20 +50,20 @@ class PurchaseReturn extends Model
     public static function booted()
     {
         static::saved(function ($return) {
-            $total = $return->items->sum('total');
+            $total               = $return->items->sum('total');
             $return->grand_total = $total;
             $return->saveQuietly();
 
             SupplierLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
-                    'source_id' => $return->id,
+                    'source_id'   => $return->id,
                 ],
                 [
-                    'supplier_id' => $return->purchase->supplier_id,
-                    'amount' => -$return->grand_total,
+                    'supplier_id'      => $return->purchase->supplier_id,
+                    'amount'           => -$return->grand_total,
                     'transaction_type' => TransactionType::PURCHASE_RETURN,
-                    'remarks' => 'Purchase Return Saved',
+                    'remarks'          => 'Purchase Return Saved',
                 ]
             );
         });

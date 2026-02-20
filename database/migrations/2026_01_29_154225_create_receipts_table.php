@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('payment_method_id')->nullable()->constrained()->restrictOnDelete();
             $table->money('amount');
             $table->text('remarks')->nullable();
-            $table->foreignId('rider_id')->nullable()->constrained('users', 'id')->restrictOnDelete();
             $table->belongsToOutlet();
             $table->timestamps();
             $table->softDeletes();

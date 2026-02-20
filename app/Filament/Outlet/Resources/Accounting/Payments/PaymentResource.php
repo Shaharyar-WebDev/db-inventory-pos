@@ -7,10 +7,8 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use App\Models\Accounting\Payment;
+use App\Support\Traits\HasTimestampColumns;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use App\Filament\Outlet\Resources\Accounting\Payments\Pages\EditPayment;
 use App\Filament\Outlet\Resources\Accounting\Payments\Pages\ViewPayment;
 use App\Filament\Outlet\Resources\Accounting\Payments\Pages\ListPayments;
@@ -22,6 +20,8 @@ use App\Filament\Outlet\Resources\Accounting\Payments\Schemas\PaymentInfolist;
 class PaymentResource extends Resource
 {
     // use IgnoresSoftDeleteRouteBinding;
+
+    use HasTimestampColumns;
 
     protected static ?string $model = Payment::class;
 

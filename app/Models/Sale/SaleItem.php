@@ -80,6 +80,8 @@ class SaleItem extends Model
             //     $total -= $item->discount_value;
             // }
 
+            // $item->cost = $item->product->getAvgRateOfUnitAsOf($item->created_at, $item->unit_id);
+
             $item->cost = $item->product->getAvgRateOfUnitAsOf($item->created_at);
 
             // dd($item->product->getAvgRateOfUnitAsOf($item->created_at, $item->unit_id));
