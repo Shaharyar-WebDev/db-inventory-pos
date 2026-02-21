@@ -1,13 +1,11 @@
 <?php
 
 use App\Enums\Status;
-use App\Models\Scopes\OutletScope;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
 if (! function_exists('app_currency_symbol')) {
