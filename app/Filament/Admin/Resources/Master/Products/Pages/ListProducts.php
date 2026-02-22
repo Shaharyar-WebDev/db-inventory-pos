@@ -18,7 +18,7 @@ class ListProducts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            RefreshAction::make(),
+            // RefreshAction::make(),
             CreateAction::make(),
         ];
     }
