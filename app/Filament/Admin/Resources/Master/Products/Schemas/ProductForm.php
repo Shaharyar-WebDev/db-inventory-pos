@@ -41,7 +41,7 @@ class ProductForm
                                             ->columns(2)
                                             ->schema([
                                                 TextInput::make('name')
-                                                    ->unique()
+                                                    // ->unique()
                                                     ->columnSpanFull()
                                                     ->required(),
                                                 // TextInput::make('code')
