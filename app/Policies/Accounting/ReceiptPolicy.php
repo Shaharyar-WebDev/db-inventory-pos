@@ -67,4 +67,9 @@ class ReceiptPolicy
         return $authUser->can('Reorder:Receipt');
     }
 
+    public function updateStatus(AuthUser $authUser, Receipt $receipt): bool
+    {
+        return $authUser->can('UpdateStatus:Receipt');
+    }
+
 }

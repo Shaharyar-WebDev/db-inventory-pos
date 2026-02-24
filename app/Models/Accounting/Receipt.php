@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
+use App\Enums\ReceiptStatus;
 use App\Enums\TransactionType;
 use App\Models\Accounting\Account;
 use App\Models\Accounting\AccountLedger;
@@ -25,6 +27,11 @@ class Receipt extends Model
         'amount',
         'remarks',
         'outlet_id',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => ReceiptStatus::class
     ];
 
     public static string $documentNumberColumn = 'receipt_number';
@@ -64,34 +71,36 @@ class Receipt extends Model
     public static function booted()
     {
         static::saved(function ($receipt) {
-            $transactionType = $receipt->amount < 0 ? TransactionType::RECEIPT_REFUND_OR_ADJUSTMENT : TransactionType::RECEIPT;
+            if ($receipt->status == ReceiptStatus::APPROVED) {
+                $transactionType = $receipt->amount < 0 ? TransactionType::RECEIPT_REFUND_OR_ADJUSTMENT : TransactionType::RECEIPT;
 
-            AccountLedger::updateOrCreate(
-                [
-                    'source_type' => Receipt::class,
-                    'source_id'   => $receipt->id,
-                ],
-                [
-                    'account_id'       => $receipt->account_id,
-                    'amount'           => $receipt->amount,
-                    'transaction_type' => $transactionType,
-                    'remarks'          => "Payment received from customer '{$receipt->customer->name}'",
-                ]
-            );
+                AccountLedger::updateOrCreate(
+                    [
+                        'source_type' => Receipt::class,
+                        'source_id'   => $receipt->id,
+                    ],
+                    [
+                        'account_id'       => $receipt->account_id,
+                        'amount'           => $receipt->amount,
+                        'transaction_type' => $transactionType,
+                        'remarks'          => "Payment received from customer '{$receipt->customer->name}'",
+                    ]
+                );
 
-            // Update customer ledger (money received, reduces what customer owes)
-            CustomerLedger::updateOrCreate(
-                [
-                    'source_type' => Receipt::class,
-                    'source_id'   => $receipt->id,
-                ],
-                [
-                    'customer_id'      => $receipt->customer_id,
-                    'amount'           => -$receipt->amount,
-                    'transaction_type' => $transactionType,
-                    'remarks'          => "Payment received from customer '{$receipt->customer->name}'",
-                ]
-            );
+                // Update customer ledger (money received, reduces what customer owes)
+                CustomerLedger::updateOrCreate(
+                    [
+                        'source_type' => Receipt::class,
+                        'source_id'   => $receipt->id,
+                    ],
+                    [
+                        'customer_id'      => $receipt->customer_id,
+                        'amount'           => -$receipt->amount,
+                        'transaction_type' => $transactionType,
+                        'remarks'          => "Payment received from customer '{$receipt->customer->name}'",
+                    ]
+                );
+            }
         });
 
         static::deleting(function ($receipt) {

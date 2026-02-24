@@ -3,18 +3,15 @@
 namespace App\Filament\Outlet\Resources\Accounting\Receipts\Tables;
 
 use App\Enums\PanelId;
+use App\Enums\ReceiptStatus;
 use App\Filament\Outlet\Resources\Master\Customers\CustomerResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class ReceiptsTable
@@ -38,6 +35,9 @@ class ReceiptsTable
                 TextColumn::make('amount')
                     ->sumCurrency()
                     ->currency(),
+                SelectColumn::make('status')
+                    ->options(ReceiptStatus::class)
+                    ->disabled(fn() => !filament()->auth()->user()->can('UpdateStatus:Receipt')),
                 TextColumn::make('remarks')
                     ->desc(),
                 // TextColumn::make('outlet.name')
@@ -61,7 +61,9 @@ class ReceiptsTable
                 SelectFilter::make('account')
                     ->relationship('account', 'name'),
                 SelectFilter::make('customer')
-                    ->relationship('customer', 'name')
+                    ->relationship('customer', 'name'),
+                SelectFilter::make('status')
+                    ->options(ReceiptStatus::class)
             ])
             ->groupedRecordActions([
                 EditAction::make(),

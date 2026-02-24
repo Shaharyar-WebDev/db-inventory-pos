@@ -68,7 +68,7 @@ class AppServiceProvider extends ServiceProvider
                 ->maxContentWidth($width) : null;
         });
 
-        TextEntry::configureUsing(function(TextEntry $entry){
+        TextEntry::configureUsing(function (TextEntry $entry) {
             // $entry->size(TextSize::Large);
         });
 
@@ -104,7 +104,7 @@ class AppServiceProvider extends ServiceProvider
             return $this;
         });
 
-           TextEntry::macro('currency', function () {
+        TextEntry::macro('currency', function () {
             $this->prefix(app_currency_symbol())
                 ->numeric(2)
                 ->color(function ($state) {
@@ -315,6 +315,8 @@ class AppServiceProvider extends ServiceProvider
 
                         return "Updated until {$until}";
                     }),
+                SelectFilter::make('created_by')
+                    ->relationship('creator', 'name'),
                 ...$afterDefault
             ]);
         });

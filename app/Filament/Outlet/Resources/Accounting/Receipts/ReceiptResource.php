@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Accounting\Receipts;
 
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\CreateReceipt;

@@ -1,6 +1,9 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Accounting\Receipts\Schemas;
 
+use App\Enums\ReceiptStatus;
+use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
 use App\Models\Accounting\CustomerLedger;
 use Closure;
 use Filament\Forms\Components\Select;
@@ -24,12 +27,12 @@ class ReceiptForm
                     ->schema([
                         Group::make()
                             ->columnSpanFull()
-                            ->columns(3)
                             ->schema([
                                 Select::make('customer_id')
                                     ->relationship('customer', 'name')
                                     ->live()
                                     ->partiallyRenderComponentsAfterStateUpdated(['amount'])
+                                    ->manageOptionForm(CustomerForm::configure($schema)->getComponents())
                                     ->required(),
 
                                 Select::make('account_id')
@@ -51,9 +54,10 @@ class ReceiptForm
                                     ])
                                 // ->required()
                                 ,
-                            ]),
+                            ])
+                            ->columns(3),
                         TextInput::make('amount')
-                            ->columnSpanFull()
+                            // ->columnSpanFull()
                             ->required()
                             ->helperText(function (Get $get) {
                                 $customerId = $get('customer_id');
@@ -83,7 +87,12 @@ class ReceiptForm
                                 ];
                             })
                             ->currency(),
-
+                        Select::make('status')
+                            ->required()
+                            ->default(ReceiptStatus::PENDING)
+                            ->options(ReceiptStatus::class)
+                            ->disabled(fn() => !filament()->auth()->user()->can('UpdateStatus:Receipt'))
+                            ->saved(),
                         Textarea::make('remarks')
                             ->nullable()
                             ->columnSpanFull(),
@@ -147,7 +156,7 @@ class ReceiptForm
                         ->helperText(function (Get $get) use ($sale) {
                             return 'Sale Amount: ' . currency_format($sale->grand_total);
                         })
-                        ->rules(function (Get $get)use ($sale) {
+                        ->rules(function (Get $get) use ($sale) {
                             return [
                                 'numeric',
                                 // 'min:0',

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Filament\Outlet\Pages\Pos;
+use App\Filament\Outlet\Resources\Accounting\Receipts\ReceiptResource;
 
 return [
 
@@ -183,6 +184,9 @@ return [
                 'update',
                 'delete',
             ],
+            ReceiptResource::class => [
+                'update_status'
+            ]
         ],
         'exclude' => [
             //
