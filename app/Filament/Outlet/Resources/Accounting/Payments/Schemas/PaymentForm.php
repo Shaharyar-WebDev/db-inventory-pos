@@ -2,16 +2,19 @@
 
 namespace App\Filament\Outlet\Resources\Accounting\Payments\Schemas;
 
-use Closure;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Group;
-use Filament\Forms\Components\Textarea;
 use App\Models\Accounting\AccountLedger;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
 use App\Models\Accounting\SupplierLedger;
+use Closure;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentForm
 {
@@ -65,9 +68,9 @@ class PaymentForm
 
                                 return 'Supplier balance: ' . currency_format($balance);
                             })
-                            ->rules(fn(Get $get) => [
-                                // 'min:0',
-                                function (string $attribute, $value, Closure $fail) use ($get) {
+                            ->rules(fn(Get $get, ?Model $record) => [
+                                'min:0',
+                                function (string $attribute, $value, Closure $fail) use ($get, $record) {
                                     // $supplierId = $get('supplier_id');
                                     $accountId = $get('account_id');
 
@@ -80,6 +83,9 @@ class PaymentForm
 
                                     if ($accountId) {
                                         $accountBalance = AccountLedger::getBalanceForAccountId($accountId);
+                                        if ($record) {
+                                            $accountBalance += $record->amount ?? 0;
+                                        }
                                         if ($value > $accountBalance) {
                                             $fail("Insufficient account balance to make this payment.");
                                         }
@@ -90,6 +96,19 @@ class PaymentForm
                         Textarea::make('remarks')
                             ->nullable()
                             ->columnSpanFull(),
+                        FileUpload::make('attachments')
+                            ->label('Attachments')
+                            ->multiple()
+                            ->directory('attachments/payment')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->deleteUploadedFileUsing(function ($file) {
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->nullable()
+                            ->downloadable()
+                            ->columnSpanFull()
+                            ->openable(),
                     ]),
             ]);
     }

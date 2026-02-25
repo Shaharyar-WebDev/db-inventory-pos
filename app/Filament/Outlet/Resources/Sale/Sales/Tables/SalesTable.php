@@ -56,6 +56,7 @@ class SalesTable
                 TextColumn::make('grand_total')
                     ->sumCurrency()
                     ->currency(),
+                TextColumn::make('rider.name'),
                 TextColumn::make('description')
                     ->desc(),
                 TextColumn::make('created_at')
@@ -92,6 +93,11 @@ class SalesTable
                     ->preload()
                     ->searchable()
                     ->optionsLimit(10),
+                SelectFilter::make('rider')
+                    ->relationship('rider', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(10)
             ])
             ->groupedRecordActions([
                 EditAction::make(),

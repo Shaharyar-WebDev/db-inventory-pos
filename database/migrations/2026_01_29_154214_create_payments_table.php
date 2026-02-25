@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('payment_method_id')->constrained()->restrictOnDelete();
             $table->money('amount');
             $table->text('remarks')->nullable();
+            $table->json('attachments')->nullable()->default(null);
             $table->belongsToOutlet();
             $table->userstamps();
             $table->timestamps();

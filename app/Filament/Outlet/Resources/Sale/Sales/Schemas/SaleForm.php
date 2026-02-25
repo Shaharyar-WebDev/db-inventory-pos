@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Sale\Sales\Schemas;
 
 use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
@@ -42,6 +43,7 @@ class SaleForm
 
                 Section::make()
                     ->columnSpanFull()
+                    ->columns(2)
                     ->schema([
                         Select::make('customer_id')
                             ->relationship('customer', 'name')
@@ -56,8 +58,10 @@ class SaleForm
 
                                 return 'Customer balance: ' . currency_format($balance);
                             })
-                            ->columnSpanFull()
+                            // ->columnSpanFull()
                             ->required(),
+                        Select::make('rider_id')
+                            ->relationship('rider', 'name'),
                     ]),
 
                 Section::make()

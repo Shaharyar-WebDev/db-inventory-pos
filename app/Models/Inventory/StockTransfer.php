@@ -22,6 +22,10 @@ class StockTransfer extends Model
         'description',
     ];
 
+    protected $casts = [
+        'attachments' => 'array',
+    ];
+
     public function fromOutlet()
     {
         return $this->belongsTo(Outlet::class, 'from_outlet_id');

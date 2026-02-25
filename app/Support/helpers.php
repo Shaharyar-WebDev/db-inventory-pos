@@ -16,9 +16,9 @@ if (! function_exists('app_currency_symbol')) {
 }
 
 if (! function_exists('currency_format')) {
-    function currency_format($value)
+    function currency_format($value,  ?int $precision = 2)
     {
-        return app_currency_symbol() . number_format($value, 2);
+        return app_currency_symbol() . number_format($value, $precision);
     }
 }
 

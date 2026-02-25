@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Sale;
 
 use App\BelongsToOutlet;
@@ -35,6 +36,10 @@ class SaleReturn extends Model
         'tax_charges',
         'grand_total',
         'outlet_id',
+    ];
+
+    protected $casts = [
+        'attachments'       => 'array',
     ];
 
     public function sale(): BelongsTo

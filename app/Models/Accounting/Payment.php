@@ -31,6 +31,10 @@ class Payment extends Model
         'outlet_id',
     ];
 
+     protected $casts = [
+        'attachments'       => 'array',
+    ];
+
     public static string $documentNumberColumn = 'payment_number';
 
     public static string $documentNumberPrefix = 'PAY';

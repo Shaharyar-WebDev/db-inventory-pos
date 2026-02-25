@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Sale;
 
 use App\Enums\DiscountType;
@@ -12,6 +13,7 @@ use App\Models\Scopes\WithSaleMetricsScope;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
+use App\Models\User;
 use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
@@ -69,6 +71,11 @@ class Sale extends Model
     public function receiptSales()
     {
         return $this->hasMany(ReceiptSale::class);
+    }
+
+    public function rider()
+    {
+        return $this->belongsTo(User::class);
     }
 
     // public function scopeWithMetrics($query)

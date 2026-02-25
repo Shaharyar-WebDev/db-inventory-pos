@@ -31,7 +31,8 @@ class Receipt extends Model
     ];
 
     protected $casts = [
-        'status' => ReceiptStatus::class
+        'status' => ReceiptStatus::class,
+        'attachments' => 'array',
     ];
 
     public static string $documentNumberColumn = 'receipt_number';

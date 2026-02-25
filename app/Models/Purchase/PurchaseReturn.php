@@ -28,6 +28,10 @@ class PurchaseReturn extends Model
         'grand_total',
     ];
 
+     protected $casts = [
+        'attachments'       => 'array',
+    ];
+
     public static string $documentNumberColumn = 'return_number';
 
     public static string $documentNumberPrefix = 'PR';

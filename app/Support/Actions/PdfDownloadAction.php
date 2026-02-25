@@ -57,6 +57,7 @@ class PdfDownloadAction
         return Action::make('print_pdf')
             ->icon(Heroicon::OutlinedDocumentDuplicate)
             ->color('success')
+            ->keyBindings(['ctrl+p'])
             ->action(function (Model $record, Component $livewire) {
 
                 $html = view($this->getViewName(), [

@@ -3,9 +3,11 @@
 namespace App\Filament\Outlet\Resources\Accounting\Receipts\Schemas;
 
 use App\Enums\ReceiptStatus;
+use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountForm;
 use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
 use App\Models\Accounting\CustomerLedger;
 use Closure;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,6 +16,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class ReceiptForm
 {
@@ -38,6 +41,7 @@ class ReceiptForm
                                 Select::make('account_id')
                                     ->relationship('account', 'name')
                                     ->live()
+                                    // ->manageOptionForm(AccountForm::configure($schema)->getComponents())
                                     ->required(),
 
                                 Select::make('payment_method_id')
@@ -72,7 +76,7 @@ class ReceiptForm
                             ->rules(function (Get $get) {
                                 return [
                                     'numeric',
-                                    // 'min:0',
+                                    'min:0',
                                     function (string $attribute, $value, Closure $fail) use ($get) {
                                         // $customerId = $get('customer_id');
                                         // $accountId = $get('account_id');
@@ -96,6 +100,19 @@ class ReceiptForm
                         Textarea::make('remarks')
                             ->nullable()
                             ->columnSpanFull(),
+                        FileUpload::make('attachments')
+                            ->label('Attachments')
+                            ->multiple()
+                            ->directory('attachments/receipt')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->deleteUploadedFileUsing(function ($file) {
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->nullable()
+                            ->downloadable()
+                            ->columnSpanFull()
+                            ->openable(),
                     ]),
             ]);
     }

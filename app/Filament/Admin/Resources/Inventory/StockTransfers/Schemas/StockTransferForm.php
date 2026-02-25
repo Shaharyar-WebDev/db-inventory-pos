@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\Inventory\StockTransfers\Schemas;
 
 use App\Models\Inventory\InventoryLedger;
 use Closure;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -12,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class StockTransferForm
 {
@@ -90,6 +92,19 @@ class StockTransferForm
                 Textarea::make('description')
                     ->nullable()
                     ->columnSpanFull(),
+                FileUpload::make('attachments')
+                    ->label('Attachments')
+                    ->multiple()
+                    ->directory('attachments/str')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->deleteUploadedFileUsing(function ($file) {
+                        Storage::disk('public')->delete($file);
+                    })
+                    ->nullable()
+                    ->downloadable()
+                    ->columnSpanFull()
+                    ->openable(),
             ]);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Admin\Pages;
 
 use App\Settings\GeneralSettings;
@@ -120,10 +121,43 @@ class Settings extends SettingsPage
                             ->searchable(false)
                             ->options(Width::class),
                     ]),
-                    // Tab::make('Company Information')->schema([
-                    // Textarea::make('address')->nullable(),
-                    // TextInput::make('contact')->nullable(),
-                    // ]),
+                    Tab::make('Invoice Settings')->schema([
+                        Group::make()
+                            ->columnSpanFull()
+                            ->columns(2)
+                            ->schema([
+                                FileUpload::make('invoice_watermark_logo')
+                                    ->directory('images/logo')
+                                    ->disk('public')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->visibility('public')
+                                    ->deleteUploadedFileUsing(function ($file, GeneralSettings $generalSettings) {
+                                        Storage::disk('public')->delete($file);
+                                        $generalSettings->site_logo = null;
+                                        $generalSettings->save();
+                                    })
+                                    ->nullable()
+                                    ->removeUploadedFileButtonPosition('right')
+                                    ->downloadable()
+                                    ->openable(),
+                                FileUpload::make('invoice_footer_logo')
+                                    ->directory('images/logo')
+                                    ->disk('public')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->visibility('public')
+                                    ->deleteUploadedFileUsing(function ($file, GeneralSettings $generalSettings) {
+                                        Storage::disk('public')->delete($file);
+                                        $generalSettings->site_logo_dark_mode = null;
+                                        $generalSettings->save();
+                                    })
+                                    ->nullable()
+                                    ->removeUploadedFileButtonPosition('right')
+                                    ->downloadable()
+                                    ->openable(),
+                            ]),
+                    ]),
                 ])->columnSpanFull()
                     ->columns(2)
                     ->persistTabInQueryString()

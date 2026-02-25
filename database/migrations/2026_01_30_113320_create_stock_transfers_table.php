@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('from_outlet_id')->constrained('outlets', 'id')->restrictOnDelete();
             $table->foreignId('to_outlet_id')->constrained('outlets', 'id')->restrictOnDelete();
             $table->text('description')->nullable();
+            $table->json('attachments')->nullable()->default(null);
             $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
@@ -31,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('stock_transfers');
     }
 };
+

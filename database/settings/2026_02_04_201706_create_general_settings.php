@@ -18,6 +18,9 @@ return new class extends SettingsMigration
         $this->migrator->add('general.spa_mode', false);
 
         $this->migrator->add('general.address', 'Karachi');
-        $this->migrator->add('general.contact', '03154573767');
+        $this->migrator->add('general.contact', '03352049834');
+
+        $this->migrator->add('general.invoice_watermark_logo', null);
+        $this->migrator->add('general.invoice_footer_logo', null);
     }
 };

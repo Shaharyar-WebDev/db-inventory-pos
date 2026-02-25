@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Purchase;
 
 use App\BelongsToOutlet;
@@ -29,6 +30,10 @@ class Purchase extends Model
         'description',
         'outlet_id',
         'grand_total',
+    ];
+
+    protected $casts = [
+        'attachments'       => 'array',
     ];
 
     public static string $documentNumberColumn = 'purchase_number';
