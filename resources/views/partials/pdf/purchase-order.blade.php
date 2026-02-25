@@ -502,7 +502,7 @@
         <!-- Summary Info -->
         <div class="summary-info clearfix">
             <div class="info-box">
-                <strong>Items:</strong> {{ $totalItems }} | <strong>Qty:</strong> {{ qty_format($totalQty) }}
+                <strong>Total Items:</strong> {{ $totalItems }} | <strong>Total Qty:</strong> {{ qty_format($totalQty) }}
             </div>
         </div>
 
@@ -567,6 +567,26 @@
                 </div>
             @endif
             <div class="footer-right"><span class="disclaimer-text">No signature required</span></div>
+        </div>
+
+        <!-- Solo Dev Marketing -->
+        <div
+            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+
+            <span>
+                {{ config('software.marketing_headline') }}
+                <strong>{{ config('software.developer_name') }}</strong>
+            </span>
+            <br>
+
+            <span style="font-size:5pt;">
+                {{ collect([
+                    config('software.developer_contact'),
+                    config('software.developer_email'),
+                    config('software.developer_portfolio'),
+                ])->filter()->join(' | ') }}
+            </span>
+
         </div>
     </div>
 
@@ -704,6 +724,26 @@
                 </div>
             @endif
             <div class="footer-right"><span class="purchase-stamp">Signature</span></div>
+        </div>
+
+        <!-- Solo Dev Marketing -->
+        <div
+            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+
+            <span>
+                {{ config('software.marketing_headline') }}
+                <strong>{{ config('software.developer_name') }}</strong>
+            </span>
+            <br>
+
+            <span style="font-size:5pt;">
+                {{ collect([
+                    config('software.developer_contact'),
+                    config('software.developer_email'),
+                    config('software.developer_portfolio'),
+                ])->filter()->join(' | ') }}
+            </span>
+
         </div>
     </div>
 </body>

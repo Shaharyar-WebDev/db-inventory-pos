@@ -11,7 +11,8 @@
         /*-----------------------------------------------
             RESET & BASE STYLES
         -----------------------------------------------*/
-        html, body {
+        html,
+        body {
             height: auto;
             overflow: visible;
             margin: 0;
@@ -51,9 +52,11 @@
             content: "";
             display: table;
         }
+
         .clearfix:after {
             clear: both;
         }
+
         .clearfix {
             zoom: 1;
         }
@@ -193,6 +196,27 @@
             color: #2b4b5e;
             font-style: italic;
             line-height: 1.2;
+        }
+
+        /*-----------------------------------------------
+            SUMMARY INFO ROW
+        -----------------------------------------------*/
+        .summary-info {
+            width: 100%;
+            margin: 0.06cm 0;
+            font-size: 6.5pt;
+            color: #1e2b37;
+        }
+
+        .summary-info .info-box {
+            background: #f0f5fa;
+            border: 0.8px solid #ccdae5;
+            padding: 1.5px 6px;
+            display: inline-block;
+        }
+
+        .summary-info strong {
+            color: #2e7d32;
         }
 
         /*-----------------------------------------------
@@ -375,9 +399,11 @@
 
     @php
         // Helper function to get image path
-        $getImagePath = function($setting) use ($generalSettings) {
+        $getImagePath = function ($setting) use ($generalSettings) {
             $image = $generalSettings->$setting ?? '';
-            if (!$image) return null;
+            if (!$image) {
+                return null;
+            }
 
             $url = filter_var($image, FILTER_VALIDATE_URL)
                 ? $image
@@ -392,21 +418,22 @@
         $footerLogoPath = $getImagePath('invoice_footer_logo');
 
         $totalItems = $record->items->count();
-        $totalValue = 0;
-        $totalPositiveQty = 0;
-        $totalNegativeQty = 0;
+        $totalQty = $record->items->sum('qty');
+        // $totalValue = 0;
+        // $totalPositiveQty = 0;
+        // $totalNegativeQty = 0;
 
-        foreach ($record->items as $item) {
-            $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
-            $value = $item->qty * $avgRate;
-            $totalValue += $value;
+        // foreach ($record->items as $item) {
+        //     $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
+        //     $value = $item->qty * $avgRate;
+        //     $totalValue += $value;
 
-            if ($item->qty > 0) {
-                $totalPositiveQty += $item->qty;
-            } else {
-                $totalNegativeQty += $item->qty;
-            }
-        }
+        //     // if ($item->qty > 0) {
+        //     //     $totalPositiveQty += $item->qty;
+        //     // } else {
+        //     //     $totalNegativeQty += $item->qty;
+        //     // }
+        // }
     @endphp
 
     <!-- Single Adjustment Copy -->
@@ -431,7 +458,8 @@
                 <div class="doc-label">inventory adjustment</div>
                 <div class="doc-number">{{ $record->adjustment_number }}</div>
                 <div class="doc-meta">
-                    Created: {{ $record->created_at->format(app_date_time_format()) }} | By: {{ $record->creator->name }}
+                    Created: {{ $record->created_at->format(app_date_time_format()) }} | By:
+                    {{ $record->creator->name }}
                 </div>
             </div>
         </div>
@@ -460,6 +488,13 @@
             </div>
         @endif
 
+        <!-- Summary Info -->
+        <div class="summary-info clearfix">
+            <div class="info-box">
+                <strong>Total Items:</strong> {{ $totalItems }} | <strong>Total Qty:</strong> {{ qty_format($totalQty) }}
+            </div>
+        </div>
+
         <!-- Items Table -->
         <table class="items-table" cellspacing="0">
             <thead>
@@ -482,14 +517,15 @@
                         $displayTotalValue += $value;
                         $qtyClass = $item->qty > 0 ? 'positive' : ($item->qty < 0 ? 'negative' : '');
 
-                        $productDetails = collect([
-                            $item->product->brand?->name,
-                            $item->product->category?->name
-                        ])->filter()->map(fn($n) => "- $n")->join(' ');
+                        $productDetails = collect([$item->product->brand?->name, $item->product->category?->name])
+                            ->filter()
+                            ->map(fn($n) => "- $n")
+                            ->join(' ');
                     @endphp
                     <tr @if ($index % 2 == 1) class="alt" @endif>
                         <td>{{ $index + 1 }}</td>
-                        <td class="qty-cell {{ $qtyClass }}">{{ qty_format($item->qty) }} {{ $item->product->unit->symbol }}</td>
+                        <td class="qty-cell {{ $qtyClass }}">{{ qty_format($item->qty) }}
+                            {{ $item->product->unit->symbol }}</td>
                         <td>{{ $item->product->name }} {{ $productDetails }}</td>
                         <td class="qty-cell">{{ currency_format($avgRate) }}</td>
                         <td class="value-cell {{ $qtyClass }}">{{ currency_format($value) }}</td>
@@ -501,13 +537,22 @@
         <!-- Summary Totals -->
         <div class="clearfix">
             <table class="summary-panel" cellspacing="0">
-                <tr><td class="label">Total items</td><td class="value">{{ $totalItems }}</td></tr>
-                @if ($totalPositiveQty > 0)
-                    <tr><td class="label">Additions</td><td class="value positive">{{ qty_format($totalPositiveQty) }}</td></tr>
+                {{-- <tr>
+                    <td class="label">Total items</td>
+                    <td class="value">{{ $totalItems }}</td>
+                </tr> --}}
+                {{-- @if ($totalPositiveQty > 0)
+                    <tr>
+                        <td class="label">Additions</td>
+                        <td class="value positive">{{ qty_format($totalPositiveQty) }}</td>
+                    </tr>
                 @endif
                 @if ($totalNegativeQty < 0)
-                    <tr><td class="label">Reductions</td><td class="value negative">{{ qty_format($totalNegativeQty) }}</td></tr>
-                @endif
+                    <tr>
+                        <td class="label">Reductions</td>
+                        <td class="value negative">{{ qty_format($totalNegativeQty) }}</td>
+                    </tr>
+                @endif --}}
                 <tr class="total-row">
                     <td class="label">Net adjustment</td>
                     <td class="value {{ $displayTotalValue >= 0 ? 'positive' : 'negative' }}">
@@ -523,10 +568,32 @@
         <div class="footer-note clearfix">
             <div class="footer-left"><span class="disclaimer-text">Computer generated</span></div>
             @if ($footerLogoPath)
-                <div class="footer-center"><img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}" alt="Footer"></div>
+                <div class="footer-center"><img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}" alt="Footer">
+                </div>
             @endif
             <div class="footer-right"><span class="disclaimer-text">No signature required</span></div>
         </div>
+
+        <!-- Solo Dev Marketing -->
+        <div
+            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+
+            <span>
+                {{ config('software.marketing_headline') }}
+                <strong>{{ config('software.developer_name') }}</strong>
+            </span>
+            <br>
+
+            <span style="font-size:5pt;">
+                {{ collect([
+                    config('software.developer_contact'),
+                    config('software.developer_email'),
+                    config('software.developer_portfolio'),
+                ])->filter()->join(' | ') }}
+            </span>
+
+        </div>
     </div>
 </body>
+
 </html>
