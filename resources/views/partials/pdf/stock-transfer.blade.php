@@ -11,7 +11,8 @@
         /*-----------------------------------------------
             RESET & BASE STYLES
         -----------------------------------------------*/
-        html, body {
+        html,
+        body {
             height: auto;
             overflow: visible;
             margin: 0;
@@ -51,9 +52,11 @@
             content: "";
             display: table;
         }
+
         .clearfix:after {
             clear: both;
         }
+
         .clearfix {
             zoom: 1;
         }
@@ -407,9 +410,11 @@
 
     @php
         // Helper function to get image path
-        $getImagePath = function($setting) use ($generalSettings) {
+        $getImagePath = function ($setting) use ($generalSettings) {
             $image = $generalSettings->$setting ?? '';
-            if (!$image) return null;
+            if (!$image) {
+                return null;
+            }
 
             $url = filter_var($image, FILTER_VALIDATE_URL)
                 ? $image
@@ -457,7 +462,8 @@
                 <div class="doc-label">stock transfer</div>
                 <div class="doc-number">{{ $record->transfer_number }}</div>
                 <div class="doc-meta">
-                    Created at: {{ $record->created_at->format(app_date_time_format()) }} | By: {{ $record->creator->name }}
+                    Created at: {{ $record->created_at->format(app_date_time_format()) }} | By:
+                    {{ $record->creator->name }}
                 </div>
             </div>
         </div>
@@ -524,10 +530,10 @@
                         $value = $item->qty * $avgRate;
                         $displayTotalValue += $value;
 
-                        $productDetails = collect([
-                            $item->product->brand?->name,
-                            $item->product->category?->name
-                        ])->filter()->map(fn($n) => "- $n")->join(' ');
+                        $productDetails = collect([$item->product->brand?->name, $item->product->category?->name])
+                            ->filter()
+                            ->map(fn($n) => "- $n")
+                            ->join(' ');
                     @endphp
                     <tr @if ($index % 2 == 1) class="alt" @endif>
                         <td>{{ $index + 1 }}</td>
@@ -543,9 +549,18 @@
         <!-- Summary Totals -->
         <div class="clearfix">
             <table class="summary-panel" cellspacing="0">
-                <tr><td class="label">Total items</td><td class="value">{{ $totalItems }}</td></tr>
-                <tr><td class="label">Total qty</td><td class="value">{{ qty_format($totalQty) }}</td></tr>
-                <tr class="total-row"><td class="label">Transfer value</td><td class="value">{{ currency_format($displayTotalValue) }}</td></tr>
+                <tr>
+                    <td class="label">Total items</td>
+                    <td class="value">{{ $totalItems }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Total qty</td>
+                    <td class="value">{{ qty_format($totalQty) }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td class="label">Transfer value</td>
+                    <td class="value">{{ currency_format($displayTotalValue) }}</td>
+                </tr>
             </table>
         </div>
 
@@ -555,30 +570,33 @@
         <div class="footer-note clearfix">
             <div class="footer-left"><span class="disclaimer-text">Computer generated</span></div>
             @if ($footerLogoPath)
-                <div class="footer-center"><img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}" alt="Footer"></div>
+                <div class="footer-center"><img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}" alt="Footer">
+                </div>
             @endif
             <div class="footer-right"><span class="disclaimer-text">No signature required</span></div>
         </div>
 
-        <!-- Solo Dev Marketing -->
-        <div
-            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+        @if (config('software.marketing_footer_enabled', false))
+            <!-- Solo Dev Marketing -->
+            <div
+                style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
 
-            <span>
-                {{ config('software.marketing_headline') }}
-                <strong>{{ config('software.developer_name') }}</strong>
-            </span>
-            <br>
+                <span>
+                    {{ config('software.marketing_headline') }}
+                    <strong>{{ config('software.developer_name') }}</strong>
+                </span>
+                <br>
 
-            <span style="font-size:5pt;">
-                {{ collect([
-                    config('software.developer_contact'),
-                    config('software.developer_email'),
-                    config('software.developer_portfolio'),
-                ])->filter()->join(' | ') }}
-            </span>
+                <span style="font-size:5pt;">
+                    {{ collect([
+                        config('software.developer_contact'),
+                        config('software.developer_email'),
+                        config('software.developer_portfolio'),
+                    ])->filter()->join(' | ') }}
+                </span>
 
-        </div>
+            </div>
+        @endif
     </div>
 
     {{-- <!-- Destination Copy -->
@@ -727,4 +745,5 @@
         </div>
     </div> --}}
 </body>
+
 </html>

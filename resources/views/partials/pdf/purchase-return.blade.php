@@ -85,7 +85,8 @@
             margin: 0;
             padding: 0 0 1px;
             line-height: 1.15;
-            border-bottom: 1.8px solid #c62828;  /* Red for return */
+            border-bottom: 1.8px solid #c62828;
+            /* Red for return */
             display: inline-block;
         }
 
@@ -591,7 +592,8 @@
                     @endphp
                     <tr @if ($index % 2 == 1) class="alt" @endif>
                         <td>{{ $index + 1 }}</td>
-                        <td class="qty-cell negative">{{ qty_format($item->qty) }} {{ $item->product->unit->symbol }}</td>
+                        <td class="qty-cell negative">{{ qty_format($item->qty) }} {{ $item->product->unit->symbol }}
+                        </td>
                         <td>
                             {{ $item->product->name }} {{ $productDetails }}
                         </td>
@@ -634,25 +636,27 @@
             <div class="footer-right"><span class="disclaimer-text">No signature required</span></div>
         </div>
 
-        <!-- Solo Dev Marketing -->
-        <div
-            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+        @if (config('software.marketing_footer_enabled', false))
+            <!-- Solo Dev Marketing -->
+            <div
+                style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
 
-            <span>
-                {{ config('software.marketing_headline') }}
-                <strong>{{ config('software.developer_name') }}</strong>
-            </span>
-            <br>
+                <span>
+                    {{ config('software.marketing_headline') }}
+                    <strong>{{ config('software.developer_name') }}</strong>
+                </span>
+                <br>
 
-            <span style="font-size:5pt;">
-                {{ collect([
-                    config('software.developer_contact'),
-                    config('software.developer_email'),
-                    config('software.developer_portfolio'),
-                ])->filter()->join(' | ') }}
-            </span>
+                <span style="font-size:5pt;">
+                    {{ collect([
+                        config('software.developer_contact'),
+                        config('software.developer_email'),
+                        config('software.developer_portfolio'),
+                    ])->filter()->join(' | ') }}
+                </span>
 
-        </div>
+            </div>
+        @endif
     </div>
 
     <!-- Second Return - Supplier Copy -->
@@ -754,7 +758,8 @@
                     @endphp
                     <tr @if ($index % 2 == 1) class="alt" @endif>
                         <td>{{ $index + 1 }}</td>
-                        <td class="qty-cell negative">{{ qty_format($item->qty) }} {{ $item->product->unit->symbol }}</td>
+                        <td class="qty-cell negative">{{ qty_format($item->qty) }} {{ $item->product->unit->symbol }}
+                        </td>
                         <td>
                             {{ $item->product->name }} {{ $productDetails }}
                         </td>
@@ -797,25 +802,27 @@
             <div class="footer-right"><span class="return-stamp">Signature</span></div>
         </div>
 
-        <!-- Solo Dev Marketing -->
-        <div
-            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+        @if (config('software.marketing_footer_enabled', false))
+            <!-- Solo Dev Marketing -->
+            <div
+                style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
 
-            <span>
-                {{ config('software.marketing_headline') }}
-                <strong>{{ config('software.developer_name') }}</strong>
-            </span>
-            <br>
+                <span>
+                    {{ config('software.marketing_headline') }}
+                    <strong>{{ config('software.developer_name') }}</strong>
+                </span>
+                <br>
 
-            <span style="font-size:5pt;">
-                {{ collect([
-                    config('software.developer_contact'),
-                    config('software.developer_email'),
-                    config('software.developer_portfolio'),
-                ])->filter()->join(' | ') }}
-            </span>
+                <span style="font-size:5pt;">
+                    {{ collect([
+                        config('software.developer_contact'),
+                        config('software.developer_email'),
+                        config('software.developer_portfolio'),
+                    ])->filter()->join(' | ') }}
+                </span>
 
-        </div>
+            </div>
+        @endif
     </div>
 </body>
 

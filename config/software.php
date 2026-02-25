@@ -8,6 +8,7 @@ return [
         Purchase::class => true,
     ],
 
+    'marketing_footer_enabled' => true,
     'marketing_headline' => 'Custom Business Software by',
     'developer_name' => 'Shaharyar Ahmed',
     'developer_email' => 'shery.codes@gmail.com',

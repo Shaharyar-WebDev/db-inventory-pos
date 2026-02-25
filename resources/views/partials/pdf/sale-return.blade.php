@@ -74,7 +74,8 @@
             margin: 0;
             padding: 0;
             line-height: 1.2;
-            border-bottom: 2.5px solid #f57c00;  /* Orange for returns */
+            border-bottom: 2.5px solid #f57c00;
+            /* Orange for returns */
             display: inline-block;
             padding-bottom: 4px;
         }
@@ -122,7 +123,8 @@
 
         .return-type-card td {
             vertical-align: middle;
-            background: #fff3e0;  /* Light orange */
+            background: #fff3e0;
+            /* Light orange */
             border: 1.5px solid #ffb74d;
             padding: 0.4cm;
         }
@@ -572,30 +574,30 @@
                     <td class="value">{{ currency_format($subtotal) }}</td>
                 </tr>
 
-                @if($record->discount_amount > 0)
-                <tr>
-                    <td class="label">
-                        Discount adjustment
-                        @if($record->discount_type == \App\Enums\DiscountType::PERCENT)
-                            ({{ $record->discount_value }}%)
-                        @endif
-                    </td>
-                    <td class="value negative">- {{ currency_format($record->discount_amount) }}</td>
-                </tr>
+                @if ($record->discount_amount > 0)
+                    <tr>
+                        <td class="label">
+                            Discount adjustment
+                            @if ($record->discount_type == \App\Enums\DiscountType::PERCENT)
+                                ({{ $record->discount_value }}%)
+                            @endif
+                        </td>
+                        <td class="value negative">- {{ currency_format($record->discount_amount) }}</td>
+                    </tr>
                 @endif
 
-                @if($record->delivery_charges > 0)
-                <tr>
-                    <td class="label">Delivery charges adjustment</td>
-                    <td class="value">{{ currency_format($record->delivery_charges) }}</td>
-                </tr>
+                @if ($record->delivery_charges > 0)
+                    <tr>
+                        <td class="label">Delivery charges adjustment</td>
+                        <td class="value">{{ currency_format($record->delivery_charges) }}</td>
+                    </tr>
                 @endif
 
-                @if($record->tax_charges > 0)
-                <tr>
-                    <td class="label">Tax charges adjustment</td>
-                    <td class="value">{{ currency_format($record->tax_charges) }}</td>
-                </tr>
+                @if ($record->tax_charges > 0)
+                    <tr>
+                        <td class="label">Tax charges adjustment</td>
+                        <td class="value">{{ currency_format($record->tax_charges) }}</td>
+                    </tr>
                 @endif
 
                 @php
@@ -649,31 +651,33 @@
         </div>
 
         <!-- AMOUNT IN WORDS -->
-        @if(function_exists('number_to_words_currency'))
-        <div style="text-align:center; color:#1e2b37; font-size:9pt; margin-top:0.3cm; font-style:italic;">
-            <strong>Credit amount in words:</strong> {{ number_to_words_currency($record->grand_total) }}
-        </div>
+        @if (function_exists('number_to_words_currency'))
+            <div style="text-align:center; color:#1e2b37; font-size:9pt; margin-top:0.3cm; font-style:italic;">
+                <strong>Credit amount in words:</strong> {{ number_to_words_currency($record->grand_total) }}
+            </div>
         @endif
 
-        <!-- Solo Dev Marketing -->
-        <div
-            style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
+        @if (config('software.marketing_footer_enabled', false))
+            <!-- Solo Dev Marketing -->
+            <div
+                style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
 
-            <span>
-                {{ config('software.marketing_headline') }}
-                <strong>{{ config('software.developer_name') }}</strong>
-            </span>
-            <br>
+                <span>
+                    {{ config('software.marketing_headline') }}
+                    <strong>{{ config('software.developer_name') }}</strong>
+                </span>
+                <br>
 
-            <span style="font-size:5pt;">
-                {{ collect([
-                    config('software.developer_contact'),
-                    config('software.developer_email'),
-                    config('software.developer_portfolio'),
-                ])->filter()->join(' | ') }}
-            </span>
+                <span style="font-size:5pt;">
+                    {{ collect([
+                        config('software.developer_contact'),
+                        config('software.developer_email'),
+                        config('software.developer_portfolio'),
+                    ])->filter()->join(' | ') }}
+                </span>
 
-        </div>
+            </div>
+        @endif
 
     </div> <!-- end return-wrapper -->
 
