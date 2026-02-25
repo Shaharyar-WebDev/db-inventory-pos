@@ -25,9 +25,9 @@ class GeneralSettings extends Settings
 
     public string|Width|null $content_width;
 
-    public ?string $invoice_watermark_logo;
+    // public ?string $invoice_watermark_logo;
 
-    public ?string $invoice_footer_logo;
+    // public ?string $invoice_footer_logo;
 
     public static function group(): string
     {
