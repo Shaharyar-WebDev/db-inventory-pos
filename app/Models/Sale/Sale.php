@@ -9,7 +9,6 @@ use App\Models\Accounting\ReceiptSale;
 use App\Models\Master\Customer;
 use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturn;
-use App\Models\Scopes\WithSaleMetricsScope;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;

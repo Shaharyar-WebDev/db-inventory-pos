@@ -33,11 +33,9 @@ class AreasTable
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->moreFilters([
-                // TrashedFilter::make(),
-            ], [
+            ->filters([
                 SelectFilter::make('city')
-                    ->relationship('city', 'name'),
+                    ->relationship('city', 'name')
             ])
             ->groupedRecordActions([
                 // ViewAction::make(),
