@@ -3,13 +3,20 @@
 namespace App\Filament\Outlet\Resources\Sale\Sales\Components;
 
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductSelect
 {
     public static function make()
     {
         return Select::make('product_id')
-            ->relationship('product', 'name')
+            ->relationship('product', 'name',    modifyQueryUsing: fn(Builder $query, $search) => $query
+                ->where('name', 'like', "%{$search}%")
+                ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))
+                ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%")))
+
             ->disableOptionWhen(function ($value, $state, $get) {
                 $selected = collect($get('../../items'))
                     ->pluck('product_id')
