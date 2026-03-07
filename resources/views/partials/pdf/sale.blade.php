@@ -582,7 +582,7 @@
                     </tr>
                 @endif
                 <tr>
-                    <td class="label">Prev balance</td>
+                    <td class="label">Previous balance</td>
                     <td class="value">{{ currency_format($previousBalance) }}</td>
                 </tr>
                 <tr class="total-row">
@@ -763,7 +763,7 @@
                     </tr>
                 @endif
                 <tr>
-                    <td class="label">Prev balance</td>
+                    <td class="label">Previous balance</td>
                     <td class="value">{{ currency_format($previousBalance) }}</td>
                 </tr>
                 <tr class="total-row">

@@ -25,7 +25,7 @@ if (! function_exists('currency_format')) {
 if (! function_exists('qty_format')) {
     function qty_format($value)
     {
-        return number_format($value, 3);
+        return number_format($value, 0);
     }
 }
 
