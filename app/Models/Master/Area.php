@@ -9,8 +9,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
 class Area extends Model
 {
     use SoftDeletes;
-    use Userstamps;
-
+    
     protected $fillable = [
         'city_id',
         'name',

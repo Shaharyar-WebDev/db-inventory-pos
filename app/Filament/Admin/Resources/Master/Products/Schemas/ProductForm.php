@@ -101,7 +101,7 @@ class ProductForm
                                                     ->imageEditor()
                                                     ->visibility('public')
                                                     ->deleteUploadedFileUsing(function ($file) {
-                                                        Storage::disk('public')->delete($file);
+                                                    Storage::disk('public')->delete($file);
                                                     })
                                                     ->nullable()
                                                     ->removeUploadedFileButtonPosition('right')
