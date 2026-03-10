@@ -2,13 +2,17 @@
 
 namespace App\Filament\Admin\Resources\Master\Customers\Pages;
 
-use App\Exports\CustomerBalancesExport;
+use App\Exports\CustomerExampleExport;
 use App\Filament\Admin\Resources\Master\Customers\CustomerResource;
+use App\Imports\CustomerImport;
 use App\Models\Outlet\Outlet;
-use App\Support\Actions\LedgerExportAction;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Icons\Heroicon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListCustomers extends ListRecords
 {
@@ -18,6 +22,33 @@ class ListCustomers extends ListRecords
     {
         return [
             CreateAction::make(),
+            Action::make('import_customers')
+                ->icon(Heroicon::ArrowDownTray)
+                ->label('Import Customers')
+                ->color('warning')
+                ->schema([
+                    FileUpload::make('file')
+                        ->label('Excel File')
+                        ->required()
+                        ->hintAction(
+                            Action::make('download_example')->label('Download Example')->icon(Heroicon::ArrowDownTray)
+                                ->action(function () {
+                                    return Excel::download(new CustomerExampleExport, 'customers-import.xlsx');
+                                })
+                        )
+                        ->acceptedFileTypes([
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'text/csv',
+                        ]),
+                ])
+                ->action(function (array $data) {
+                    Excel::import(new CustomerImport, $data['file']);
+
+                    Notification::make()
+                        ->title('Customers imported successfully')
+                        ->success()
+                        ->send();
+                })
             // LedgerExportAction::configure(CustomerBalancesExport::class)
             //     ->fileName(function (?Model $record, ?Outlet $outlet) {
             //         return "customer_balances_export";
