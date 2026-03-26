@@ -47,6 +47,7 @@ class SaleForm
                     ->schema([
                         Select::make('customer_id')
                             ->relationship('customer', 'name')
+                            ->getOptionLabelFromRecordUsing(fn($record) => $record->full_name)
                             ->manageOptionForm(CustomerForm::configure($schema)->getComponents())
                             ->helperText(function (Get $get) {
                                 $customerId = $get('customer_id');

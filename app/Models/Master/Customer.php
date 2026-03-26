@@ -13,6 +13,7 @@ use App\Models\Scopes\OutletScope;
 use App\Models\Traits\HasStatus;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -72,6 +73,17 @@ class Customer extends Model
     public function productRates(): HasMany
     {
         return $this->hasMany(CustomerProductRate::class);
+    }
+
+    public function fullName(): Attribute
+    {
+        $name = $this->name;
+        $area = $this->area?->name;
+        $city = $this->city?->name;
+
+        return Attribute::make(
+            get: fn() => collect([$name, $area, $city])->filter()->implode(' - ')
+        );
     }
 
     public function scopeWithCustomerBalances($query)
