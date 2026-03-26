@@ -67,4 +67,9 @@ class AreaPolicy
         return $authUser->can('Reorder:Area');
     }
 
+    public function viewFinancials(AuthUser $authUser, Area $area): bool
+    {
+        return $authUser->can('ViewFinancials:Area');
+    }
+
 }

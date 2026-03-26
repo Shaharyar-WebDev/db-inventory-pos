@@ -67,4 +67,9 @@ class PaymentPolicy
         return $authUser->can('Reorder:Payment');
     }
 
+    public function viewFinancials(AuthUser $authUser, Payment $payment): bool
+    {
+        return $authUser->can('ViewFinancials:Payment');
+    }
+
 }

@@ -67,4 +67,9 @@ class OutletPolicy
         return $authUser->can('Reorder:Outlet');
     }
 
+    public function viewFinancials(AuthUser $authUser, Outlet $outlet): bool
+    {
+        return $authUser->can('ViewFinancials:Outlet');
+    }
+
 }

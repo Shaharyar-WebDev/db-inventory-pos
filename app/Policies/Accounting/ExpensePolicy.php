@@ -67,4 +67,9 @@ class ExpensePolicy
         return $authUser->can('Reorder:Expense');
     }
 
+    public function viewFinancials(AuthUser $authUser, Expense $expense): bool
+    {
+        return $authUser->can('ViewFinancials:Expense');
+    }
+
 }

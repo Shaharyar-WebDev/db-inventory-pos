@@ -67,4 +67,9 @@ class ProductPolicy
         return $authUser->can('Reorder:Product');
     }
 
+    public function viewFinancials(AuthUser $authUser, Product $product): bool
+    {
+        return $authUser->can('ViewFinancials:Product');
+    }
+
 }

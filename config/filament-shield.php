@@ -136,6 +136,7 @@ return [
             'restoreAny',
             'replicate',
             'reorder',
+            'view_financials'
         ],
         'single_parameter_methods' => [
             'viewAny',

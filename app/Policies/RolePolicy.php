@@ -67,4 +67,9 @@ class RolePolicy
         return $authUser->can('Reorder:Role');
     }
 
+    public function viewFinancials(AuthUser $authUser, Role $role): bool
+    {
+        return $authUser->can('ViewFinancials:Role');
+    }
+
 }

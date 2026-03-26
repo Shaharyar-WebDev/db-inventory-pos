@@ -67,4 +67,9 @@ class UnitPolicy
         return $authUser->can('Reorder:Unit');
     }
 
+    public function viewFinancials(AuthUser $authUser, Unit $unit): bool
+    {
+        return $authUser->can('ViewFinancials:Unit');
+    }
+
 }

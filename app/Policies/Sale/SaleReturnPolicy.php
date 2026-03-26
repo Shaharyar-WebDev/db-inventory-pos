@@ -67,4 +67,9 @@ class SaleReturnPolicy
         return $authUser->can('Reorder:SaleReturn');
     }
 
+    public function viewFinancials(AuthUser $authUser, SaleReturn $saleReturn): bool
+    {
+        return $authUser->can('ViewFinancials:SaleReturn');
+    }
+
 }

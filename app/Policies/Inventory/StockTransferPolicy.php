@@ -67,4 +67,9 @@ class StockTransferPolicy
         return $authUser->can('Reorder:StockTransfer');
     }
 
+    public function viewFinancials(AuthUser $authUser, StockTransfer $stockTransfer): bool
+    {
+        return $authUser->can('ViewFinancials:StockTransfer');
+    }
+
 }

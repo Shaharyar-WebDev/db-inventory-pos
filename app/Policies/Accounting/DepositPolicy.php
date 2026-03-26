@@ -67,4 +67,9 @@ class DepositPolicy
         return $authUser->can('Reorder:Deposit');
     }
 
+    public function viewFinancials(AuthUser $authUser, Deposit $deposit): bool
+    {
+        return $authUser->can('ViewFinancials:Deposit');
+    }
+
 }

@@ -67,4 +67,9 @@ class PurchasePolicy
         return $authUser->can('Reorder:Purchase');
     }
 
+    public function viewFinancials(AuthUser $authUser, Purchase $purchase): bool
+    {
+        return $authUser->can('ViewFinancials:Purchase');
+    }
+
 }

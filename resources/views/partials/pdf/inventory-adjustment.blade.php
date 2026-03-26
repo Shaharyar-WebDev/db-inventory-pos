@@ -1,5 +1,6 @@
 @php
     $generalSettings = app(App\Settings\GeneralSettings::class);
+    $canViewFinancials = auth()->user()->can('ViewFinancials', $record);
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -504,7 +505,9 @@
                     <th width="15%">Qty</th>
                     <th width="45%">Product</th>
                     <th width="15%">Rate</th>
-                    <th width="20%">Value</th>
+                    @if ($canViewFinancials)
+                        <th width="20%">Value</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -529,7 +532,9 @@
                             {{ $item->product->unit->symbol }}</td>
                         <td>{{ $item->product->name }} {{ $productDetails }}</td>
                         <td class="qty-cell">{{ currency_format($avgRate) }}</td>
-                        <td class="value-cell {{ $qtyClass }}">{{ currency_format($value) }}</td>
+                        @if ($canViewFinancials)
+                            <td class="value-cell {{ $qtyClass }}">{{ currency_format($value) }}</td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>
@@ -554,12 +559,14 @@
                         <td class="value negative">{{ qty_format($totalNegativeQty) }}</td>
                     </tr>
                 @endif --}}
+                @if ($canViewFinancials)
                 <tr class="total-row">
                     <td class="label">Net adjustment</td>
                     <td class="value {{ $displayTotalValue >= 0 ? 'positive' : 'negative' }}">
                         {{ currency_format($displayTotalValue) }}
                     </td>
                 </tr>
+                @endif
             </table>
         </div>
 

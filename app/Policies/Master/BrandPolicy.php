@@ -67,4 +67,9 @@ class BrandPolicy
         return $authUser->can('Reorder:Brand');
     }
 
+    public function viewFinancials(AuthUser $authUser, Brand $brand): bool
+    {
+        return $authUser->can('ViewFinancials:Brand');
+    }
+
 }

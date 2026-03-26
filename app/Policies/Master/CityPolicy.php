@@ -67,4 +67,9 @@ class CityPolicy
         return $authUser->can('Reorder:City');
     }
 
+    public function viewFinancials(AuthUser $authUser, City $city): bool
+    {
+        return $authUser->can('ViewFinancials:City');
+    }
+
 }

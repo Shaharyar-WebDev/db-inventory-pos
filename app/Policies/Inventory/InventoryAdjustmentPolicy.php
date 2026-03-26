@@ -67,4 +67,9 @@ class InventoryAdjustmentPolicy
         return $authUser->can('Reorder:InventoryAdjustment');
     }
 
+    public function viewFinancials(AuthUser $authUser, InventoryAdjustment $inventoryAdjustment): bool
+    {
+        return $authUser->can('ViewFinancials:InventoryAdjustment');
+    }
+
 }

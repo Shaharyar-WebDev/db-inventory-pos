@@ -67,4 +67,9 @@ class AccountPolicy
         return $authUser->can('Reorder:Account');
     }
 
+    public function viewFinancials(AuthUser $authUser, Account $account): bool
+    {
+        return $authUser->can('ViewFinancials:Account');
+    }
+
 }

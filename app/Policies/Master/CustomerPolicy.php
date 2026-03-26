@@ -67,4 +67,9 @@ class CustomerPolicy
         return $authUser->can('Reorder:Customer');
     }
 
+    public function viewFinancials(AuthUser $authUser, Customer $customer): bool
+    {
+        return $authUser->can('ViewFinancials:Customer');
+    }
+
 }

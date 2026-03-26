@@ -67,6 +67,11 @@ class ReceiptPolicy
         return $authUser->can('Reorder:Receipt');
     }
 
+    public function viewFinancials(AuthUser $authUser, Receipt $receipt): bool
+    {
+        return $authUser->can('ViewFinancials:Receipt');
+    }
+
     public function updateStatus(AuthUser $authUser, Receipt $receipt): bool
     {
         return $authUser->can('UpdateStatus:Receipt');

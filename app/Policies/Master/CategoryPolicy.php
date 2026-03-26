@@ -67,4 +67,9 @@ class CategoryPolicy
         return $authUser->can('Reorder:Category');
     }
 
+    public function viewFinancials(AuthUser $authUser, Category $category): bool
+    {
+        return $authUser->can('ViewFinancials:Category');
+    }
+
 }

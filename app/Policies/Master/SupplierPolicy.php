@@ -67,4 +67,9 @@ class SupplierPolicy
         return $authUser->can('Reorder:Supplier');
     }
 
+    public function viewFinancials(AuthUser $authUser, Supplier $supplier): bool
+    {
+        return $authUser->can('ViewFinancials:Supplier');
+    }
+
 }
