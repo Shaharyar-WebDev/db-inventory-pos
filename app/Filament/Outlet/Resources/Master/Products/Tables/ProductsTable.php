@@ -3,19 +3,15 @@
 namespace App\Filament\Outlet\Resources\Master\Products\Tables;
 
 use App\Exports\InventoryLedgerExport;
+use App\Models\Master\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsTable
@@ -38,11 +34,13 @@ class ProductsTable
                 TextColumn::make('category.name')
                     ->copyable(),
                 TextColumn::make('brand.name')
+                    // ->visible(fn($record) => dd($record))
                     ->copyable(),
                 TextColumn::make('unit.name')
                     ->copyable(),
                 TextColumn::make('cost_price')
                     ->prefix(app_currency_symbol())
+                    ->visible(fn() => filament()->auth()->user()->can('ViewFinancials:Product'))
                     ->copyable(),
                 TextColumn::make('selling_price')
                     ->prefix(app_currency_symbol())
@@ -53,6 +51,8 @@ class ProductsTable
                     ->suffix(fn($record) => ' ' . ($record->unit?->symbol ?? '')),
                 TextColumn::make('current_outlet_stock_value')
                     ->searchable(false)
+                    ->visible(fn() => filament()->auth()->user()->can('ViewFinancials:Product'))
+                    // ->visible(fn(Model $record) => filament()->auth()->user()->can('ViewFinancials', $record))
                     ->currency()
                     ->sumCurrency(),
                 TextColumn::make('deleted_at')

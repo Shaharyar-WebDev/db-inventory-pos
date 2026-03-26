@@ -19,6 +19,11 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
         protected ?int $outletId = null,
     ) {}
 
+    protected function canViewFinancials(): bool
+    {
+        return filament()->auth()->user()->can('ViewFinancials:Product');
+    }
+
     public function collection()
     {
         return InventoryLedger::withCasts(default_ledger_casts())
@@ -37,23 +42,28 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return [
+        $headings = [
             'Product',
             'Unit',
             'In',
             'Out',
             'Balance',
             'Rate',
-            'Value',
-            'Valuation',
+        ];
+
+        if ($this->canViewFinancials()) {
+            $headings[] = 'Value';
+            $headings[] = 'Valuation';
+        }
+
+        return array_merge($headings, [
             'Transaction Type',
-            // 'Reference',
             'Source',
             'Remarks',
             'Outlet',
             'Created',
-            'Updated'
-        ];
+            'Updated',
+        ]);
     }
 
     public function map($ledger): array
@@ -62,27 +72,31 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
         $out = $ledger->qty < 0 ? abs($ledger->qty) : null;
 
         $this->runningBalance += $ledger->qty;
-        $this->runningValuation +=  $ledger->value;
+        $this->runningValuation += $ledger->value;
 
-        return [
+        $row = [
             $ledger->product?->name,
             $ledger->unit?->name,
             $in ?: 0,
             $out ?: 0,
             $this->runningBalance,
             $ledger->rate,
-            $ledger->value,
-            $this->runningValuation,
+        ];
+
+        if ($this->canViewFinancials()) {
+            $row[] = $ledger->value;
+            $row[] = $this->runningValuation;
+        }
+
+        return array_merge($row, [
             $ledger->transaction_type->label(),
-            // $ledger->reference?->{$ledger->reference::$documentNumberColumn},
-            // class_basename($ledger->source_type) . ' #' . $ledger->source_id,
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',
             $ledger->remarks,
             $ledger->outlet->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
-            Carbon::parse($ledger->updated)->format(app_date_time_format()),
-        ];
+            Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
+        ]);
     }
 }

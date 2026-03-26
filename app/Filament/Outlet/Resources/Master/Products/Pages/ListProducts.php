@@ -3,11 +3,8 @@
 namespace App\Filament\Outlet\Resources\Master\Products\Pages;
 
 use App\Filament\Admin\Resources\Master\Products\Widgets\ProductStats;
-use App\Filament\Outlet\Pages\ProductSalesOverview;
 use App\Filament\Outlet\Resources\Master\Products\ProductResource;
 use App\Support\Actions\RefreshAction;
-use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 
@@ -29,8 +26,12 @@ class ListProducts extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            ProductStats::class,
-        ];
+        if (filament()->auth()->user()->can('ViewFinancials:Product')) {
+            return [
+                ProductStats::class,
+            ];
+        }
+
+        return [];
     }
 }
