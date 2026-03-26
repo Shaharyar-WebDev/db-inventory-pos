@@ -101,7 +101,7 @@ class ProductForm
                                                     ->imageEditor()
                                                     ->visibility('public')
                                                     ->deleteUploadedFileUsing(function ($file) {
-                                                    Storage::disk('public')->delete($file);
+                                                        Storage::disk('public')->delete($file);
                                                     })
                                                     ->nullable()
                                                     ->removeUploadedFileButtonPosition('right')
@@ -187,8 +187,36 @@ class ProductForm
                                                 if (filled($subUnitId)) {
                                                     return true;
                                                 }
+                                                return false;
                                             })
-                                            ->minValue(1),
+                                            ->minValue(function (Get $get) {
+                                                $subUnitId = $get('sub_unit_id');
+
+                                                if (filled($subUnitId)) {
+                                                    return 1;
+                                                }
+                                                return null;
+                                            }),
+
+                                        TextInput::make('sub_unit_selling_price')
+                                            ->numeric()
+                                            ->step(1)
+                                            ->required(function (Get $get) {
+                                                $subUnitId = $get('sub_unit_id');
+
+                                                if (filled($subUnitId)) {
+                                                    return true;
+                                                }
+                                                return false;
+                                            })
+                                            ->minValue(function (Get $get) {
+                                                $subUnitId = $get('sub_unit_id');
+
+                                                if (filled($subUnitId)) {
+                                                    return 1;
+                                                }
+                                                  return null;
+                                            }),
                                     ]),
                             ]),
                     ]),

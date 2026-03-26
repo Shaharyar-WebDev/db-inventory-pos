@@ -53,11 +53,15 @@ class UnitSelect
 
                                 if (products[productId]) {
                                     const product = products[productId];
-
+                                    
                                     const customerRateObj = (product.customer_rates || []).find(
                                         r => r.customer_id == customerId
                                     );
-
+                                    
+                                   const productSubUnitRate = parseFloat(
+                                        product.sub_unit_selling_price ?? 0
+                                    ) || 0;
+                                    
                                     rate = parseFloat(
                                         customerRateObj?.selling_price ??
                                         product.selling_price ??
@@ -78,12 +82,14 @@ class UnitSelect
                                     if (selectedUnitId == productUnitId) {
                                         baseRate = rate;
                                     } else if (selectedUnitId == productSubUnitId) {
-                                        baseRate = rate / conversion;
+                                        if(productSubUnitRate){
+                                            baseRate = productSubUnitRate;
+                                        }else{
+                                            baseRate = rate / conversion;
+                                        }
                                     } else {
                                         baseRate = rate;
                                     }
-
-                                    console.log(baseRate ,rate, rate / conversion);
 
                                 }
 
