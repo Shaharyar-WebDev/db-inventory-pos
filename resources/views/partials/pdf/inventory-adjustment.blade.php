@@ -504,8 +504,8 @@
                     <th width="5%">#</th>
                     <th width="15%">Qty</th>
                     <th width="45%">Product</th>
-                    <th width="15%">Rate</th>
                     @if ($canViewFinancials)
+                        <th width="15%">Rate</th>
                         <th width="20%">Value</th>
                     @endif
                 </tr>
@@ -531,8 +531,8 @@
                         <td class="qty-cell {{ $qtyClass }}">{{ qty_format($item->qty) }}
                             {{ $item->product->unit->symbol }}</td>
                         <td>{{ $item->product->name }} {{ $productDetails }}</td>
-                        <td class="qty-cell">{{ currency_format($avgRate) }}</td>
                         @if ($canViewFinancials)
+                            <td class="qty-cell">{{ currency_format($avgRate) }}</td>
                             <td class="value-cell {{ $qtyClass }}">{{ currency_format($value) }}</td>
                         @endif
                     </tr>
@@ -560,12 +560,12 @@
                     </tr>
                 @endif --}}
                 @if ($canViewFinancials)
-                <tr class="total-row">
-                    <td class="label">Net adjustment</td>
-                    <td class="value {{ $displayTotalValue >= 0 ? 'positive' : 'negative' }}">
-                        {{ currency_format($displayTotalValue) }}
-                    </td>
-                </tr>
+                    <tr class="total-row">
+                        <td class="label">Net adjustment</td>
+                        <td class="value {{ $displayTotalValue >= 0 ? 'positive' : 'negative' }}">
+                            {{ currency_format($displayTotalValue) }}
+                        </td>
+                    </tr>
                 @endif
             </table>
         </div>
