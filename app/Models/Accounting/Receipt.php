@@ -27,7 +27,8 @@ class Receipt extends Model
         'amount',
         'remarks',
         'outlet_id',
-        'status'
+        'status',
+        'attachments',
     ];
 
     protected $casts = [

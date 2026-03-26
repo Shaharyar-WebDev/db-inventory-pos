@@ -3,7 +3,6 @@
 namespace App\Filament\Outlet\Resources\Accounting\Receipts\Schemas;
 
 use App\Enums\ReceiptStatus;
-use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountForm;
 use App\Filament\Outlet\Resources\Master\Customers\Schemas\CustomerForm;
 use App\Models\Accounting\CustomerLedger;
 use Closure;

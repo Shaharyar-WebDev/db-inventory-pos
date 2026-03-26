@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Accounting;
 
 use App\Enums\TransactionType;
@@ -16,6 +17,7 @@ class Deposit extends Model
     protected $fillable = [
         'deposit_number',
         'account_id',
+        'attachments',
         'amount',
         'remarks',
     ];

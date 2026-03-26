@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Accounting;
 
 use App\BelongsToOutlet;
@@ -23,6 +24,7 @@ class Expense extends Model
         'expense_number',
         'account_id',
         'expense_category_id',
+        'attachments',
         'attachments',
         'payment_method_id',
         'amount',

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Accounting;
 
 use App\Enums\TransactionType;
@@ -28,10 +29,11 @@ class Payment extends Model
         'payment_method_id',
         'amount',
         'remarks',
+        'attachments',
         'outlet_id',
     ];
 
-     protected $casts = [
+    protected $casts = [
         'attachments'       => 'array',
     ];
 
