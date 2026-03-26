@@ -59,7 +59,7 @@ class SaleInfolist
                                 TableColumn::make('Quantity'),
                                 TableColumn::make('Selling Price'),
                                 TableColumn::make('Rate'),
-                                TableColumn::make('Discount'),
+                                // TableColumn::make('Discount'),
                                 TableColumn::make('Total'),
                             ])
                             ->schema([
@@ -68,7 +68,7 @@ class SaleInfolist
                                 TextEntry::make('qty'),
                                 TextEntry::make('product.selling_price')->currency(),
                                 TextEntry::make('rate')->currency(),
-                                TextEntry::make('discount')->currency()->state(fn($record) => ($record->product->selling_price * $record->qty) - $record->total),
+                                // TextEntry::make('discount')->currency()->state(fn($record) => ($record->product->selling_price * $record->qty) - $record->total),
                                 TextEntry::make('total')->currency(),
                             ]),
                         RepeatableEntry::make('saleReturns')
@@ -78,7 +78,7 @@ class SaleInfolist
                                 TableColumn::make('Reference'),
                                 TableColumn::make('Total Cogs'),
                                 TableColumn::make('Grand Total'),
-                                // TableColumn::make('Discount Amount'),
+                                TableColumn::make('Discount Amount'),
                                 TableColumn::make('Description'),
                             ])
                             ->schema([
@@ -88,7 +88,7 @@ class SaleInfolist
                                     ]), true),
                                 TextEntry::make('total')->label('Toal Cogs')->currency(),
                                 TextEntry::make('grand_total')->currency(),
-                                // TextEntry::make('discount_amount')->currency(),
+                                TextEntry::make('discount_amount')->currency(),
                                 TextEntry::make('description')->default('-'),
                             ]),
                     ]),
