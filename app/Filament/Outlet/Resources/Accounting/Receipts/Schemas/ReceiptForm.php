@@ -33,6 +33,7 @@ class ReceiptForm
                             ->schema([
                                 Select::make('customer_id')
                                     ->relationship('customer', 'name')
+                                    ->getOptionLabelFromRecordUsing(fn($record) => $record->full_name)
                                     ->live()
                                     ->partiallyRenderComponentsAfterStateUpdated(['amount'])
                                     ->manageOptionForm(CustomerForm::configure($schema)->getComponents())
