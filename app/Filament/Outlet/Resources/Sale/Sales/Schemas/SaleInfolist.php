@@ -78,7 +78,7 @@ class SaleInfolist
                                 TableColumn::make('Reference'),
                                 TableColumn::make('Total Cogs'),
                                 TableColumn::make('Grand Total'),
-                                TableColumn::make('Discount Amount'),
+                                // TableColumn::make('Discount Amount'),
                                 TableColumn::make('Description'),
                             ])
                             ->schema([
@@ -88,7 +88,7 @@ class SaleInfolist
                                     ]), true),
                                 TextEntry::make('total')->label('Toal Cogs')->currency(),
                                 TextEntry::make('grand_total')->currency(),
-                                TextEntry::make('discount_amount')->currency(),
+                                // TextEntry::make('discount_amount')->currency(),
                                 TextEntry::make('description')->default('-'),
                             ]),
                     ]),
