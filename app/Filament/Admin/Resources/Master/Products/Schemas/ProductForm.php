@@ -196,7 +196,9 @@ class ProductForm
                                                     return 1;
                                                 }
                                                 return null;
-                                            }),
+                                            })
+                                            ->default(0)
+                                            ->nullable(false),
 
                                         TextInput::make('sub_unit_selling_price')
                                             ->numeric()
@@ -216,7 +218,9 @@ class ProductForm
                                                     return 1;
                                                 }
                                                   return null;
-                                            }),
+                                            })
+                                            ->default(0)
+                                            ->nullable(false),
                                     ]),
                             ]),
                     ]),

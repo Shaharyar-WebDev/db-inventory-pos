@@ -37,6 +37,7 @@ class ReceiptsTable
                     ->currency(),
                 SelectColumn::make('status')
                     ->options(ReceiptStatus::class)
+                    ->sortable()
                     ->disabled(fn() => !filament()->auth()->user()->can('UpdateStatus:Receipt')),
                 TextColumn::make('remarks')
                     ->desc(),
