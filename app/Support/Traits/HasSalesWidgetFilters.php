@@ -20,6 +20,20 @@ trait HasSalesWidgetFilters
             : null;
     }
 
+    protected function getAreaId(): ?int
+    {
+        return isset($this->pageFilters['areaId'])
+            ? (int) $this->pageFilters['areaId']
+            : null;
+    }
+
+    protected function getCityId(): ?int
+    {
+        return isset($this->pageFilters['cityId'])
+            ? (int) $this->pageFilters['cityId']
+            : null;
+    }
+
     protected function applyFilters(Builder $query): Builder
     {
         if ($this->getOutletId()) {
@@ -33,15 +47,49 @@ trait HasSalesWidgetFilters
             ]);
         }
 
-        if ($this->getCustomerId()) {
-            // Check if this is a SaleReturn query
-            if ($query->getModel() instanceof SaleReturn) {
-                $query->whereHas('sale', function ($q) {
-                    $q->where('customer_id', $this->getCustomerId());
-                });
-            } else {
-                $query->where('customer_id', $this->getCustomerId());
+        // if ($this->getCustomerId()) {
+        //     // Check if this is a SaleReturn query
+        //     if ($query->getModel() instanceof SaleReturn) {
+        //         $query->whereHas('sale', function ($q) {
+        //             $q->where('customer_id', $this->getCustomerId());
+        //         });
+        //     } else {
+        //         $query->where('customer_id', $this->getCustomerId());
+        //     }
+        // }
+
+        // SaleReturn doesn't have customer_id directly — goes through sale
+        if ($query->getModel() instanceof SaleReturn) {
+            if ($this->getCustomerId()) {
+                $query->whereHas('sale', fn($q) => $q->where('customer_id', $this->getCustomerId()));
             }
+
+            if ($this->getAreaId()) {
+                $query->whereHas('sale.customer', fn($q) => $q->where('area_id', $this->getAreaId()));
+            }
+
+            if ($this->getCityId()) {
+                $query->whereHas('sale.customer', fn($q) => $q->where('city_id', $this->getCityId()));
+            }
+        } else {
+            $this->applyCustomerFilters($query);
+        }
+
+        return $query;
+    }
+
+    protected function applyCustomerFilters(Builder $query, string $customerRelation = 'customer'): Builder
+    {
+        if ($this->getCustomerId()) {
+            $query->where('customer_id', $this->getCustomerId());
+        }
+
+        if ($this->getAreaId()) {
+            $query->whereHas($customerRelation, fn($q) => $q->where('area_id', $this->getAreaId()));
+        }
+
+        if ($this->getCityId()) {
+            $query->whereHas($customerRelation, fn($q) => $q->where('city_id', $this->getCityId()));
         }
 
         return $query;
@@ -64,19 +112,52 @@ trait HasSalesWidgetFilters
             ]);
         }
 
-        if ($this->getCustomerId()) {
-            $query->where(function ($query) use ($classes) {
-                $hasSale = in_array(SaleItem::class, $classes);
-                $hasReturn = in_array(SaleReturnItem::class, $classes);
+        // if ($this->getCustomerId()) {
+        //     $query->where(function ($query) use ($classes) {
+        //         $hasSale = in_array(SaleItem::class, $classes);
+        //         $hasReturn = in_array(SaleReturnItem::class, $classes);
 
+        //         if ($hasSale) {
+        //             $query->whereHasMorph(
+        //                 'source',
+        //                 SaleItem::class,
+        //                 fn($q) => $q->whereHas(
+        //                     'sale',
+        //                     fn($q) => $q->where('customer_id', $this->getCustomerId())
+        //                 )
+        //             );
+        //         }
+
+        //         if ($hasReturn) {
+        //             $method = $hasSale ? 'orWhereHasMorph' : 'whereHasMorph';
+        //             $query->$method(
+        //                 'source',
+        //                 SaleReturnItem::class,
+        //                 fn($q) => $q->whereHas(
+        //                     'saleReturn',
+        //                     fn($q) => $q->whereHas(
+        //                         'sale',
+        //                         fn($q) => $q->where('customer_id', $this->getCustomerId())
+        //                     )
+        //                 )
+        //             );
+        //         }
+        //     });
+        // }
+
+
+        $hasCustomerFilter = $this->getCustomerId() || $this->getAreaId() || $this->getCityId();
+
+        if ($hasCustomerFilter) {
+            $hasSale   = in_array(SaleItem::class, $classes);
+            $hasReturn = in_array(SaleReturnItem::class, $classes);
+
+            $query->where(function ($query) use ($hasSale, $hasReturn) {
                 if ($hasSale) {
                     $query->whereHasMorph(
                         'source',
                         SaleItem::class,
-                        fn($q) => $q->whereHas(
-                            'sale',
-                            fn($q) => $q->where('customer_id', $this->getCustomerId())
-                        )
+                        fn($q) => $q->whereHas('sale', fn($q) => $this->applyCustomerFilters($q))
                     );
                 }
 
@@ -85,13 +166,7 @@ trait HasSalesWidgetFilters
                     $query->$method(
                         'source',
                         SaleReturnItem::class,
-                        fn($q) => $q->whereHas(
-                            'saleReturn',
-                            fn($q) => $q->whereHas(
-                                'sale',
-                                fn($q) => $q->where('customer_id', $this->getCustomerId())
-                            )
-                        )
+                        fn($q) => $q->whereHas('saleReturn.sale', fn($q) => $this->applyCustomerFilters($q))
                     );
                 }
             });

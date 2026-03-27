@@ -9,7 +9,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
 class Area extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'city_id',
         'name',
@@ -18,5 +18,10 @@ class Area extends Model
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public static function options()
+    {
+        return Area::get()->pluck('name', 'id');
     }
 }

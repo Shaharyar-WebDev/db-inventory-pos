@@ -5,6 +5,8 @@ namespace App\Filament\Outlet\Pages;
 use App\Filament\Outlet\Navigation\ReportGroup;
 use App\Filament\Outlet\Resources\Sale\Sales\Widgets\OutletSaleStats;
 use App\Filament\Outlet\Widgets\TopProductsTable;
+use App\Models\Master\Area;
+use App\Models\Master\City;
 use App\Models\Master\Customer;
 use App\Models\Outlet\Outlet;
 use App\Support\Actions\RefreshAction;
@@ -86,6 +88,22 @@ class SalesReport extends Dashboard
                         Select::make('customerId')
                             ->label('Customer')
                             ->options(Customer::options())
+                            ->searchable()
+                            ->preload(false)
+                            ->optionsLimit(0)
+                            ->native(false)
+                            ->dehydrated(false),
+                        Select::make('areaId')
+                            ->label('Area')
+                            ->options(Area::options())
+                            ->searchable()
+                            ->preload(false)
+                            ->optionsLimit(0)
+                            ->native(false)
+                            ->dehydrated(false),
+                        Select::make('cityId')
+                            ->label('City')
+                            ->options(City::options())
                             ->searchable()
                             ->preload(false)
                             ->optionsLimit(0)
