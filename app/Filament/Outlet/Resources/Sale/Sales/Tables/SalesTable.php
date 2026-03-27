@@ -35,6 +35,10 @@ class SalesTable
                         true
                     )
                     ->copyable(!filament()->auth()->user()->isSuperAdmin()),
+                TextColumn::make('customer.area.name')
+                    ->copyable(),
+                TextColumn::make('customer.city.name')
+                    ->copyable(),
                 TextColumn::make('total')
                     ->summarize(Sum::make()->formatStateUsing(fn($state) => currency_format($state)))
                     ->currency(),
@@ -75,6 +79,16 @@ class SalesTable
             ->moreFilters([], [
                 SelectFilter::make('customer')
                     ->relationship('customer', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(10),
+                SelectFilter::make('area')
+                    ->relationship('customer.area', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(10),
+                SelectFilter::make('city')
+                    ->relationship('customer.city', 'name')
                     ->searchable()
                     ->preload()
                     ->optionsLimit(10),
