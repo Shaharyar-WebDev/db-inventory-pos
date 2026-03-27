@@ -56,6 +56,7 @@ class UsersRelationManager extends RelationManager
             ->filters([
                 //
             ])
+            ->defaultSort('outlet_user.created_at', 'desc')
             ->headerActions([
                 CreateAction::make(),
                 AttachAction::make()
