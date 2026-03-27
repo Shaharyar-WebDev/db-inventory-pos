@@ -38,6 +38,8 @@ class OutletSaleStats extends StatsOverviewWidget
 
     protected ?object $mostReturnedProductData = null;
 
+    protected ?object $receiptAggregates = null;
+
     protected function getSalesAggregates(): object
     {
         if ($this->salesAggregates) {
@@ -108,6 +110,17 @@ class OutletSaleStats extends StatsOverviewWidget
             COALESCE(SUM(sale_return_items.cost * sale_return_items.qty), 0) as total_cost,
             COALESCE(SUM(sale_return_items.rate * sale_return_items.qty), 0) as total_price
         ')
+            ->first();
+    }
+
+    protected function getReceiptAggregates(): object
+    {
+        if ($this->receiptAggregates) {
+            return $this->receiptAggregates;
+        }
+
+        return $this->receiptAggregates = $this->getFilteredReceiptsQuery()
+            ->selectRaw('COALESCE(SUM(amount), 0) as total_received')
             ->first();
     }
 
@@ -241,6 +254,16 @@ class OutletSaleStats extends StatsOverviewWidget
         return (float) ($this->getSalesGrossProfit() - $this->getSalesDiscount());
     }
 
+    public function getTotalReceived(): float
+    {
+        return (float) $this->getReceiptAggregates()->total_received;
+    }
+
+    public function getOutstandingBalance(): float
+    {
+        return ($this->getSalesGrandTotalAmount() - $this->getSalesReturnGrandTotalAmount()) - $this->getTotalReceived();
+    }
+
     protected function getStats(): array
     {
         return [
@@ -279,6 +302,16 @@ class OutletSaleStats extends StatsOverviewWidget
                 ->icon(Heroicon::CurrencyDollar)
                 ->color('success')
                 ->description('[Sales - Sales Returns]'),
+
+            Stat::make('Total Received', currency_format($this->getTotalReceived()))
+                ->icon(Heroicon::Banknotes)
+                ->color('success')
+                ->description('Payments collected from customers'),
+
+            Stat::make('Outstanding Balance', currency_format($this->getOutstandingBalance()))
+                ->icon(Heroicon::ExclamationCircle)
+                ->color($this->getOutstandingBalance() > 0 ? 'danger' : 'success')
+                ->description('Receivable - Received'),
 
             Stat::make('Total Cost of Products Sold (COGS)', currency_format($this->getSalesCost()))
                 ->icon(Heroicon::ArchiveBox)

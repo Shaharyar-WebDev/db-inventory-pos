@@ -2,12 +2,14 @@
 
 namespace App\Support\Traits;
 
+use App\Models\Accounting\Receipt;
 use App\Models\Inventory\InventoryLedger;
 use App\Models\Sale\Sale;
 use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturn;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Sale\SaleReturnItem;
+use Illuminate\Database\Eloquent\Builder;
+use App\Enums\ReceiptStatus;
 
 trait HasSalesWidgetFilters
 {
@@ -171,6 +173,27 @@ trait HasSalesWidgetFilters
                 }
             });
         }
+
+        return $query;
+    }
+
+    protected function getFilteredReceiptsQuery(): Builder
+    {
+        $query = Receipt::query()->where('status', ReceiptStatus::APPROVED);
+
+        if ($this->getOutletId()) {
+            $query->where('outlet_id', $this->getOutletId());
+        }
+
+        if ($this->getStartDate() && $this->getEndDate()) {
+            $query->whereBetween('created_at', [
+                $this->getStartDate(),
+                $this->getEndDate(),
+            ]);
+        }
+
+        // Receipt has customer_id directly, so applyCustomerFilters works as-is
+        $this->applyCustomerFilters($query);
 
         return $query;
     }
