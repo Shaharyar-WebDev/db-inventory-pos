@@ -32,7 +32,7 @@ class SaleItemsRepeater
                 // TableColumn::make('Discount Value'),
                 TableColumn::make('Total'),
             ])
-            ->reorderable()
+            // ->reorderable()
             ->compact()
             ->schema([
                 ProductSelect::make(),

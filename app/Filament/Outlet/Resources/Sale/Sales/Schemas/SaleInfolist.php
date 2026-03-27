@@ -66,7 +66,9 @@ class SaleInfolist
                                 TextEntry::make('product.name'),
                                 TextEntry::make('unit.name'),
                                 TextEntry::make('qty'),
-                                TextEntry::make('product.selling_price')->currency(),
+                                TextEntry::make('product.selling_price')->state(function(Model $record){
+                                    return $record->unit->id === $record->product->sub_unit_id ? $record->product->sub_unit_selling_price : $record->product->selling_price;
+                                })->currency(),
                                 TextEntry::make('rate')->currency(),
                                 // TextEntry::make('discount')->currency()->state(fn($record) => ($record->product->selling_price * $record->qty) - $record->total),
                                 TextEntry::make('total')->currency(),

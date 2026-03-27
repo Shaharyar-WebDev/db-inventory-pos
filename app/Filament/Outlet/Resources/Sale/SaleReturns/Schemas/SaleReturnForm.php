@@ -245,7 +245,7 @@ class SaleReturnForm
                         // TableColumn::make('Discount Value'),
                         TableColumn::make('Total'),
                     ])
-                    ->reorderable()
+                    // ->reorderable()
                     ->addable(false)
                     ->compact()
                     ->schema([
