@@ -9,8 +9,14 @@ class Category extends Model
 {
     // use SoftDeletes;
     use HasOptions;
+
     protected $fillable = [
         'name',
         'description',
     ];
+
+    public static function options()
+    {
+        return Category::get()->pluck('name', 'id');
+    }
 }

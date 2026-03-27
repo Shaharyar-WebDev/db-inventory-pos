@@ -14,4 +14,9 @@ class Brand extends Model
         'name',
         'description',
     ];
+
+    public static function options()
+    {
+        return Brand::get()->pluck('name', 'id');
+    }
 }

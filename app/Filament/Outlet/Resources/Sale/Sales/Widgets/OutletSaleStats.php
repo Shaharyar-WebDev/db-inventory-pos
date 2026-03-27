@@ -2,6 +2,8 @@
 
 namespace App\Filament\Outlet\Resources\Sale\Sales\Widgets;
 
+use App\Enums\ReceiptStatus;
+use App\Models\Accounting\ReceiptSale;
 use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturnItem;
 use App\Support\Traits\HasSalesWidgetFilters;
@@ -119,8 +121,15 @@ class OutletSaleStats extends StatsOverviewWidget
             return $this->receiptAggregates;
         }
 
-        return $this->receiptAggregates = $this->getFilteredReceiptsQuery()
-            ->selectRaw('COALESCE(SUM(amount), 0) as total_received')
+        return $this->receiptAggregates = ReceiptSale::query()
+            ->joinSub(
+                $this->getFilteredSalesQuery()->select('id'),
+                'filtered_sales',
+                fn($join) => $join->on('receipt_sales.sale_id', '=', 'filtered_sales.id')
+            )
+            ->join('receipts', 'receipt_sales.receipt_id', '=', 'receipts.id')
+            ->where('receipts.status', ReceiptStatus::APPROVED)
+            ->selectRaw('COALESCE(SUM(receipt_sales.amount), 0) as total_received')
             ->first();
     }
 

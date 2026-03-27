@@ -4,10 +4,12 @@ namespace App\Filament\Outlet\Pages;
 
 use App\Filament\Outlet\Navigation\ReportGroup;
 use App\Filament\Outlet\Resources\Sale\Sales\Widgets\OutletSaleStats;
-use App\Filament\Outlet\Widgets\TopProductsTable;
 use App\Models\Master\Area;
+use App\Models\Master\Brand;
+use App\Models\Master\Category;
 use App\Models\Master\City;
 use App\Models\Master\Customer;
+use App\Models\Master\Product;
 use App\Models\Outlet\Outlet;
 use App\Support\Actions\RefreshAction;
 use BackedEnum;
@@ -69,6 +71,12 @@ class SalesReport extends Dashboard
                             ->action(function (Set $set) {
                                 $set('startDate', now());
                                 $set('endDate', now());
+                                $set('customerId', null);
+                                $set('areaId', null);
+                                $set('cityId', null);
+                                $set('categoryId', null);
+                                $set('brandId', null);
+                                $set('productId', null);
                             }),
                     ])
                     ->schema([
@@ -109,6 +117,30 @@ class SalesReport extends Dashboard
                             ->optionsLimit(0)
                             ->native(false)
                             ->dehydrated(false),
+                        Select::make('categoryId')
+                            ->label('Category')
+                            ->options(Category::options())
+                            ->searchable()
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(fn(Set $set) => $set('productId', null)),
+                        Select::make('brandId')
+                            ->label('Brand')
+                            ->options(Brand::options())
+                            ->searchable()
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(fn(Set $set) => $set('productId', null)),
+                        Select::make('productId')
+                            ->label('Product')
+                            ->options(
+                                fn(Get $get) => Product::query()
+                                    ->when($get('categoryId'), fn($q, $v) => $q->where('category_id', $v))
+                                    ->when($get('brandId'), fn($q, $v) => $q->where('brand_id', $v))
+                                    ->pluck('name', 'id')
+                            )
+                            ->searchable()
+                            ->native(false),
                         DatePicker::make('startDate')
                             ->native(false)
                             ->maxDate(fn(Get $get, Set $set) => $get('endDate') ?: now())
