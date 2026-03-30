@@ -11,6 +11,8 @@ use App\Filament\Outlet\Resources\Sale\Sales\Components\SaleItemsRepeater;
 use App\Filament\Outlet\Resources\Sale\Sales\Components\TotalAmountInput;
 use App\Models\Accounting\CustomerLedger;
 use App\Models\Master\Product;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -59,10 +61,11 @@ class SaleForm
 
                                 return 'Customer balance: ' . currency_format($balance);
                             })
-                            // ->columnSpanFull()
+                            ->columnSpanFull()
                             ->required(),
                         Select::make('rider_id')
                             ->relationship('rider', 'name'),
+                        // DateTimePicker::make('created_at')->default(now())->required(),
                     ]),
 
                 Section::make()

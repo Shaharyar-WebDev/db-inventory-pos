@@ -189,6 +189,28 @@ class Sale extends Model
         return round(($this->net_profit / $revenue) * 100, 2);
     }
 
+    public function getGrossMarkupAttribute()
+    {
+        $cogs = $this->cogs;
+
+        if ($cogs == 0) {
+            return 0;
+        }
+
+        return round(($this->gross_profit / $cogs) * 100, 2);
+    }
+
+    public function getNetMarkupAttribute()
+    {
+        $cogs = $this->cogs;
+
+        if ($cogs == 0) {
+            return 0;
+        }
+        
+        return round(($this->net_profit / $cogs) * 100, 2);
+    }
+
     public static function booted()
     {
         // static::addGlobalScope(new WithSaleMetricsScope);

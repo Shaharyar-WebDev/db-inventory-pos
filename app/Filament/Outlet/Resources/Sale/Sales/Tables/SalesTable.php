@@ -6,11 +6,13 @@ use App\Enums\DiscountType;
 use App\Enums\PanelId;
 use App\Filament\Outlet\Resources\Master\Customers\CustomerResource;
 use App\Filament\Outlet\Resources\Sale\SaleReturns\SaleReturnResource;
+use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -112,6 +114,7 @@ class SalesTable
                     ->optionsLimit(10)
             ])
             ->groupedRecordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 Action::make('create_sale_return')
@@ -128,6 +131,10 @@ class SalesTable
                             ]
                         ]]);
                     }, true),
+                PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
+                    ->download(),
+                PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
+                    ->print(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

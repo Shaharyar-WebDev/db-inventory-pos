@@ -49,6 +49,7 @@ class SaleInfolist
                                 TextEntry::make('net_profit')->currency(),
                                 TextEntry::make('gross_margin')->currency()->prefix('')->suffix(' %'),
                                 TextEntry::make('net_margin')->currency()->prefix('')->suffix(' %'),
+                                TextEntry::make('net_markup')->currency()->prefix('')->suffix(' %'),
                             ]),
                         RepeatableEntry::make('items')
                             ->label('Sale Items')

@@ -38,6 +38,7 @@ class ReceiptsTable
                 SelectColumn::make('status')
                     ->options(ReceiptStatus::class)
                     ->sortable()
+                    ->searchable()
                     ->disabled(fn() => !filament()->auth()->user()->can('UpdateStatus:Receipt')),
                 TextColumn::make('remarks')
                     ->desc(),

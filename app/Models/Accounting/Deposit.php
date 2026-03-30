@@ -20,6 +20,11 @@ class Deposit extends Model
         'attachments',
         'amount',
         'remarks',
+        'attachments'
+    ];
+
+    protected $casts = [
+        'attachments'       => 'array',
     ];
 
     public static string $documentNumberColumn = 'deposit_number';

@@ -23,7 +23,8 @@ class InventoryLedger extends Model
         'source_type',
         'transaction_type',
         'remarks',
-        'outlet_id'
+        'outlet_id',
+        'created_at'
     ];
 
     public function product()

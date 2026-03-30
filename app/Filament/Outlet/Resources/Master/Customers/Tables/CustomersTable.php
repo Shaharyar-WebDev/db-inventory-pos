@@ -5,15 +5,11 @@ namespace App\Filament\Outlet\Resources\Master\Customers\Tables;
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\RestoreAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\ForceDeleteBulkAction;
 
 class CustomersTable
 {
@@ -36,9 +32,9 @@ class CustomersTable
                     ->copyable(),
                 TextColumn::make('area.name')
                     ->copyable(),
-                // TextColumn::make('opening_balance')
-                //     ->currency()
-                //     ->copyable(),
+                TextColumn::make('opening_balance')
+                    ->currency()
+                    ->copyable(),
                 TextColumn::make('current_balance')
                     ->currency()
                     ->sumCurrency()

@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\Admin\Resources\Accounting\ExpenseCategories;
+
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Pages\CreateExpenseCategory;
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Pages\EditExpenseCategory;
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Pages\ListExpenseCategories;
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Pages\ViewExpenseCategory;
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Schemas\ExpenseCategoryForm;
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Schemas\ExpenseCategoryInfolist;
+use App\Filament\Admin\Resources\Accounting\ExpenseCategories\Tables\ExpenseCategoriesTable;
+use App\Models\Accounting\ExpenseCategory;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class ExpenseCategoryResource extends Resource
+{
+    protected static ?string $model = ExpenseCategory::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function form(Schema $schema): Schema
+    {
+        return ExpenseCategoryForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return ExpenseCategoryInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return ExpenseCategoriesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListExpenseCategories::route('/'),
+            'create' => CreateExpenseCategory::route('/create'),
+            // 'view' => ViewExpenseCategory::route('/{record}'),
+            'edit' => EditExpenseCategory::route('/{record}/edit'),
+        ];
+    }
+}

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class ExpenseLedger extends Model
 {
     use BelongsToOutlet, HasTransactionType;
+    
     protected $fillable = [
         'expense_id',
         'amount',

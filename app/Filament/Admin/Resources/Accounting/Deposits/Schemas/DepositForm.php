@@ -2,12 +2,14 @@
 
 namespace App\Filament\Admin\Resources\Accounting\Deposits\Schemas;
 
-use Filament\Schemas\Schema;
+use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountForm;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use App\Filament\Admin\Resources\Accounting\Accounts\Schemas\AccountForm;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class DepositForm
 {
@@ -30,6 +32,19 @@ class DepositForm
                 Textarea::make('remarks')
                     ->nullable()
                     ->columnSpanFull(),
+                FileUpload::make('attachments')
+                    ->label('Attachments')
+                    ->multiple()
+                    ->directory('attachments/deposits')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->deleteUploadedFileUsing(function ($file) {
+                        Storage::disk('public')->delete($file);
+                    })
+                    ->nullable()
+                    ->downloadable()
+                    ->columnSpanFull()
+                    ->openable(),
             ]);
     }
 }

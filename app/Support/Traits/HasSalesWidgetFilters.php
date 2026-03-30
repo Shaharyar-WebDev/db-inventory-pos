@@ -2,6 +2,8 @@
 
 namespace App\Support\Traits;
 
+use App\Enums\ReceiptStatus;
+use App\Models\Accounting\Expense;
 use App\Models\Accounting\Receipt;
 use App\Models\Inventory\InventoryLedger;
 use App\Models\Sale\Sale;
@@ -9,7 +11,6 @@ use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturn;
 use App\Models\Sale\SaleReturnItem;
 use Illuminate\Database\Eloquent\Builder;
-use App\Enums\ReceiptStatus;
 
 trait HasSalesWidgetFilters
 {
@@ -33,6 +34,27 @@ trait HasSalesWidgetFilters
     {
         return isset($this->pageFilters['cityId'])
             ? (int) $this->pageFilters['cityId']
+            : null;
+    }
+
+    protected function getProductId(): ?int
+    {
+        return isset($this->pageFilters['productId'])
+            ? (int) $this->pageFilters['productId']
+            : null;
+    }
+
+    protected function getCategoryId(): ?int
+    {
+        return isset($this->pageFilters['categoryId'])
+            ? (int) $this->pageFilters['categoryId']
+            : null;
+    }
+
+    protected function getBrandId(): ?int
+    {
+        return isset($this->pageFilters['brandId'])
+            ? (int) $this->pageFilters['brandId']
             : null;
     }
 
@@ -194,6 +216,24 @@ trait HasSalesWidgetFilters
 
         // Receipt has customer_id directly, so applyCustomerFilters works as-is
         $this->applyCustomerFilters($query);
+
+        return $query;
+    }
+
+    protected function getFilteredExpensesQuery(): Builder
+    {
+        $query = Expense::query();
+
+        if ($this->getOutletId()) {
+            $query->where('outlet_id', $this->getOutletId());
+        }
+
+        if ($this->getStartDate() && $this->getEndDate()) {
+            $query->whereBetween('created_at', [
+                $this->getStartDate(),
+                $this->getEndDate(),
+            ]);
+        }
 
         return $query;
     }

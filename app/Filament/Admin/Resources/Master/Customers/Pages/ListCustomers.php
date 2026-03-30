@@ -3,15 +3,19 @@
 namespace App\Filament\Admin\Resources\Master\Customers\Pages;
 
 use App\Exports\CustomerExampleExport;
+use App\Exports\CustomerExport;
 use App\Filament\Admin\Resources\Master\Customers\CustomerResource;
 use App\Imports\CustomerImport;
 use App\Models\Outlet\Outlet;
+use App\Support\Actions\LedgerExportAction;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ListCustomers extends ListRecords
@@ -48,7 +52,14 @@ class ListCustomers extends ListRecords
                         ->title('Customers imported successfully')
                         ->success()
                         ->send();
+                }),
+            LedgerExportAction::configure(CustomerExport::class)
+                ->fileName(function (?Model $record, ?Outlet $outlet) {
+                    return "customer_export";
                 })
+                ->isOutletRequired(false)
+                ->hasOutletSelectionSchema(false)
+                ->make(),
             // LedgerExportAction::configure(CustomerBalancesExport::class)
             //     ->fileName(function (?Model $record, ?Outlet $outlet) {
             //         return "customer_balances_export";
