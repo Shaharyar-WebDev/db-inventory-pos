@@ -11,8 +11,7 @@
         /*-----------------------------------------------
             RESET & BASE STYLES
         -----------------------------------------------*/
-        html,
-        body {
+        html, body {
             height: auto;
             overflow: visible;
             margin: 0;
@@ -52,11 +51,9 @@
             content: "";
             display: table;
         }
-
         .clearfix:after {
             clear: both;
         }
-
         .clearfix {
             zoom: 1;
         }
@@ -138,14 +135,6 @@
             background: #f6f9fc;
             border: 0.8px solid #dde5ec;
             padding: 0.15cm;
-        }
-
-        .party-section td.left-cell {
-            margin-right: 2%;
-        }
-
-        .party-section td.right-cell {
-            margin-left: 2%;
         }
 
         .party-title {
@@ -282,8 +271,35 @@
         }
 
         /*-----------------------------------------------
-            SUMMARY PANEL (Right-aligned totals)
+            SUMMARY PANELS (Left & Right)
         -----------------------------------------------*/
+        .summary-left-panel {
+            float: left;
+            width: 48%;
+            margin: 0.1cm 0;
+            border-collapse: collapse;
+        }
+
+        .summary-left-panel td {
+            padding: 3px 5px;
+            border: 0.8px solid #ccdae5;
+            font-size: 7pt;
+        }
+
+        .summary-left-panel .label {
+            background: #eef3f8;
+            font-weight: bold;
+            color: #1f3f52;
+            text-align: left;
+            width: 60%;
+        }
+
+        .summary-left-panel .value {
+            text-align: right;
+            background: #fff;
+            font-weight: bold;
+        }
+
         .summary-panel {
             float: right;
             width: 48%;
@@ -405,6 +421,22 @@
         }
 
         /*-----------------------------------------------
+            MARKETING FOOTER
+        -----------------------------------------------*/
+        .marketing-footer {
+            text-align: center;
+            color: #6f8a9c;
+            font-size: 5.5pt;
+            margin-top: 0.05cm;
+            border-top: 0.5px dotted #ccdae5;
+            padding-top: 0.05cm;
+        }
+
+        .marketing-footer span {
+            display: inline-block;
+        }
+
+        /*-----------------------------------------------
             OVERRIDES & PAGE SETTINGS
         -----------------------------------------------*/
         div[style*="margin-top:0.7cm"] {
@@ -425,12 +457,9 @@
 <body>
 
     @php
-        // Helper function to get image path
         $getImagePath = function ($setting) use ($generalSettings) {
             $image = $generalSettings->$setting ?? '';
-            if (!$image) {
-                return null;
-            }
+            if (!$image) return null;
 
             $url = filter_var($image, FILTER_VALIDATE_URL)
                 ? $image
@@ -449,369 +478,209 @@
         $subtotal = $record->items->sum('total');
         $previousBalance = $record->customer->getCustomerBalanceAsOf($record->created_at);
         $updatedBalance = $previousBalance + $record->grand_total;
+
+        $copies = [
+            ['label' => 'Office Copy', 'footer_right' => 'no_signature'],
+            ['label' => 'Customer Copy', 'footer_right' => 'signature'],
+        ];
     @endphp
 
-    <!-- Office Copy -->
-    <div class="sale-wrapper">
-        @if ($watermarkPath)
-            <div class="watermark">
-                <img src="{{ $watermarkPath }}" alt="Watermark">
-            </div>
-        @endif
-
-        <!-- HEADER -->
-        <div class="clearfix">
-            <div class="header-left">
-                @if ($logoPath)
-                    <img src="{{ $logoPath }}" alt="{{ $generalSettings->site_name ?? 'Logo' }}"
-                        style="max-height: 1.8cm; max-width: 5.5cm; margin-bottom: 0.06cm; display: block;">
-                @else
-                    <div class="company-name">{{ $generalSettings->site_name ?? 'My App' }}</div>
-                @endif
-            </div>
-            <div class="header-right">
-                <div class="doc-label">sale invoice</div>
-                <div class="doc-number">{{ $record->sale_number }}</div>
-                <div class="doc-meta">
-                    Created At: {{ $record->created_at->format(app_date_time_format()) }} | By:
-                    {{ $record->creator->name }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Customer & Outlet Details -->
-        <table class="party-section" cellspacing="0">
-            <tr>
-                <td class="left-cell">
-                    <div class="party-title">customer</div>
-                    <div class="party-detail">
-                        <strong>{{ $record->customer->name }}</strong><br>
-                        {{ $record->customer->address ?? '' }}
-                        @if ($record->customer->area || $record->customer->city)
-                            <br>{{ $record->customer->area?->name }} {{ $record->customer->city?->name }}
-                        @endif
-                        @if ($record->customer->contact)
-                            <br><strong>Tel:</strong> {{ $record->customer->contact }}
-                        @endif
-                    </div>
-                </td>
-                <td class="right-cell">
-                    <div class="party-title">outlet</div>
-                    <div class="party-detail">
-                        <strong>{{ $record->outlet->name }}</strong><br>
-                        {{ $record->outlet->address ?? '' }}
-                        @if ($record->outlet->phone_number)
-                            <br><strong>Tel:</strong> {{ $record->outlet->phone_number }}
-                        @endif
-                        @if ($record->rider)
-                            <br><strong>Rider:</strong> {{ $record->rider->name }}
-                        @endif
-                    </div>
-                </td>
-            </tr>
-        </table>
-
-        <!-- Description -->
-        @if ($record->description)
-            <div class="desc-card">
-                <div class="desc-label">note</div>
-                <div class="desc-text">{{ Str::limit($record->description, 90) }}</div>
-            </div>
-        @endif
-
-        <!-- Summary Info -->
-        <div class="summary-info clearfix">
-            <div class="info-box">
-                <strong>Items:</strong> {{ $totalItems }} | <strong>Qty:</strong> {{ qty_format($totalQty) }}
-            </div>
-        </div>
-
-        <!-- Items Table -->
-        <table class="items-table" cellspacing="0">
-            <thead>
-                <tr>
-                    <th width="4%">#</th>
-                    <th width="12%">Qty</th>
-                    <th width="48%">Product</th>
-                    <th width="13%">Price</th>
-                    <th width="11%">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($record->items as $index => $item)
-                    @php
-                        $details = collect([$item->product->brand?->name, $item->product->category?->name])
-                            ->filter()
-                            ->map(fn($n) => "- $n")
-                            ->join(' ');
-                    @endphp
-                    <tr @if ($index % 2 == 1) class="alt" @endif>
-                        <td>{{ $index + 1 }}</td>
-                        <td class="qty-cell">{{ qty_format($item->qty) }} {{ $item->unit->symbol }}</td>
-                        <td>{{ $item->product->name }} {{ $details }}</td>
-                        <td class="rate-cell">{{ currency_format($item->rate ?? 0) }}</td>
-                        <td class="total-cell">{{ currency_format($item->total) }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <!-- Summary Totals -->
-        <div class="clearfix">
-            <table class="summary-panel" cellspacing="0">
-                <tr>
-                    <td class="label">Subtotal</td>
-                    <td class="value">{{ currency_format($subtotal) }}</td>
-                </tr>
-                @if ($record->discount_amount > 0)
-                    <tr>
-                        <td class="label">Discount</td>
-                        <td class="value negative">-{{ currency_format($record->discount_amount) }}</td>
-                    </tr>
-                @endif
-                @if ($record->delivery_charges > 0)
-                    <tr>
-                        <td class="label">Delivery</td>
-                        <td class="value">{{ currency_format($record->delivery_charges) }}</td>
-                    </tr>
-                @endif
-                @if ($record->tax_charges > 0)
-                    <tr>
-                        <td class="label">Tax</td>
-                        <td class="value">{{ currency_format($record->tax_charges) }}</td>
-                    </tr>
-                @endif
-                <tr>
-                    <td class="label">Previous balance</td>
-                    <td class="value">{{ currency_format($previousBalance) }}</td>
-                </tr>
-                <tr class="total-row">
-                    <td class="label">Grand total</td>
-                    <td class="value">{{ currency_format($record->grand_total) }}</td>
-                </tr>
-                <tr>
-                    <td class="label">New balance</td>
-                    <td class="value {{ $updatedBalance >= 0 ? 'positive' : 'negative' }}">
-                        {{ currency_format($updatedBalance) }}</td>
-                </tr>
-            </table>
-        </div>
-
-        <div style="clear:both; height:0.06cm;"></div>
-
-        <!-- Footer - Office Copy -->
-        <div class="footer-note clearfix">
-            <div class="footer-left"><span class="disclaimer-text">Computer generated</span></div>
-            @if ($footerLogoPath)
-                <div class="footer-center"><img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}" alt="Footer">
+    @foreach ($copies as $copy)
+        <div class="sale-wrapper">
+            @if ($watermarkPath)
+                <div class="watermark">
+                    <img src="{{ $watermarkPath }}" alt="Watermark">
                 </div>
             @endif
-            <div class="footer-right"><span class="disclaimer-text">No signature required</span></div>
-        </div>
 
-        @if (config('software.marketing_footer_enabled', false))
-            <!-- Solo Dev Marketing -->
-            <div
-                style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
-
-                <span>
-                    {{ config('software.marketing_headline') }}
-                    <strong>{{ config('software.developer_name') }}</strong>
-                </span>
-                <br>
-
-                <span style="font-size:5pt;">
-                    {{ collect([
-                        config('software.developer_contact'),
-                        config('software.developer_email'),
-                        config('software.developer_portfolio'),
-                    ])->filter()->join(' | ') }}
-                </span>
-
-            </div>
-        @endif
-    </div>
-
-    <!-- Customer Copy (with Receiving Stamp) -->
-    <div class="sale-wrapper">
-        @if ($watermarkPath)
-            <div class="watermark">
-                <img src="{{ $watermarkPath }}" alt="Watermark">
-            </div>
-        @endif
-
-        <!-- HEADER -->
-        <div class="clearfix">
-            <div class="header-left">
-                @if ($logoPath)
-                    <img src="{{ $logoPath }}" alt="{{ $generalSettings->site_name ?? 'Logo' }}"
-                        style="max-height: 1.8cm; max-width: 5.5cm; margin-bottom: 0.06cm; display: block;">
-                @else
-                    <div class="company-name">{{ $generalSettings->site_name ?? 'My App' }}</div>
-                @endif
-            </div>
-            <div class="header-right">
-                <div class="doc-label">sale invoice</div>
-                <div class="doc-number">{{ $record->sale_number }}</div>
-                <div class="doc-meta">
-                    Created At: {{ $record->created_at->format(app_date_time_format()) }} | By:
-                    {{ $record->creator->name }}
+            <!-- HEADER -->
+            <div class="clearfix">
+                <div class="header-left">
+                    @if ($logoPath)
+                        <img src="{{ $logoPath }}" alt="{{ $generalSettings->site_name ?? 'Logo' }}"
+                            style="max-height: 1.8cm; max-width: 5.5cm; margin-bottom: 0.06cm; display: block;">
+                    @else
+                        <div class="company-name">{{ $generalSettings->site_name ?? 'My App' }}</div>
+                    @endif
+                </div>
+                <div class="header-right">
+                    <div class="doc-label">sale invoice</div>
+                    <div class="doc-number">{{ $record->sale_number }}</div>
+                    <div class="doc-meta">
+                        {{ $record->created_at->format(app_date_time_format()) }} | By: {{ $record->creator->name }}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Customer & Outlet Details -->
-        <table class="party-section" cellspacing="0">
-            <tr>
-                <td class="left-cell">
-                    <div class="party-title">customer</div>
-                    <div class="party-detail">
-                        <strong>{{ $record->customer->name }}</strong><br>
-                        {{ $record->customer->address ?? '' }}
-                        @if ($record->customer->area || $record->customer->city)
-                            <br>{{ $record->customer->area?->name }} {{ $record->customer->city?->name }}
-                        @endif
-                        @if ($record->customer->contact)
-                            <br><strong>Tel:</strong> {{ $record->customer->contact }}
-                        @endif
-                    </div>
-                </td>
-                <td class="right-cell">
-                    <div class="party-title">outlet</div>
-                    <div class="party-detail">
-                        <strong>{{ $record->outlet->name }}</strong><br>
-                        {{ $record->outlet->address ?? '' }}
-                        @if ($record->outlet->phone_number)
-                            <br><strong>Tel:</strong> {{ $record->outlet->phone_number }}
-                        @endif
-                        @if ($record->rider)
-                            <br><strong>Rider:</strong> {{ $record->rider->name }}
-                        @endif
-                    </div>
-                </td>
-            </tr>
-        </table>
-
-        <!-- Description -->
-        @if ($record->description)
-            <div class="desc-card">
-                <div class="desc-label">note</div>
-                <div class="desc-text">{{ Str::limit($record->description, 90) }}</div>
-            </div>
-        @endif
-
-        <!-- Summary Info -->
-        <div class="summary-info clearfix">
-            <div class="info-box">
-                <strong>Items:</strong> {{ $totalItems }} | <strong>Qty:</strong> {{ qty_format($totalQty) }}
-            </div>
-        </div>
-
-        <!-- Items Table -->
-        <table class="items-table" cellspacing="0">
-            <thead>
+            <!-- Customer & Outlet Details -->
+            <table class="party-section" cellspacing="0">
                 <tr>
-                    <th width="4%">#</th>
-                    <th width="12%">Qty</th>
-                    <th width="48%">Product</th>
-                    <th width="13%">Price</th>
-                    <th width="11%">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($record->items as $index => $item)
-                    @php
-                        $details = collect([$item->product->brand?->name, $item->product->category?->name])
-                            ->filter()
-                            ->map(fn($n) => "- $n")
-                            ->join(' ');
-                    @endphp
-                    <tr @if ($index % 2 == 1) class="alt" @endif>
-                        <td>{{ $index + 1 }}</td>
-                        <td class="qty-cell">{{ qty_format($item->qty) }} {{ $item->unit->symbol }}</td>
-                        <td>{{ $item->product->name }} {{ $details }}</td>
-                        <td class="rate-cell">{{ currency_format($item->rate ?? 0) }}</td>
-                        <td class="total-cell">{{ currency_format($item->total) }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <!-- Summary Totals -->
-        <div class="clearfix">
-            <table class="summary-panel" cellspacing="0">
-                <tr>
-                    <td class="label">Subtotal</td>
-                    <td class="value">{{ currency_format($subtotal) }}</td>
-                </tr>
-                @if ($record->discount_amount > 0)
-                    <tr>
-                        <td class="label">Discount</td>
-                        <td class="value negative">-{{ currency_format($record->discount_amount) }}</td>
-                    </tr>
-                @endif
-                @if ($record->delivery_charges > 0)
-                    <tr>
-                        <td class="label">Delivery</td>
-                        <td class="value">{{ currency_format($record->delivery_charges) }}</td>
-                    </tr>
-                @endif
-                @if ($record->tax_charges > 0)
-                    <tr>
-                        <td class="label">Tax</td>
-                        <td class="value">{{ currency_format($record->tax_charges) }}</td>
-                    </tr>
-                @endif
-                <tr>
-                    <td class="label">Previous balance</td>
-                    <td class="value">{{ currency_format($previousBalance) }}</td>
-                </tr>
-                <tr class="total-row">
-                    <td class="label">Grand total</td>
-                    <td class="value">{{ currency_format($record->grand_total) }}</td>
-                </tr>
-                <tr>
-                    <td class="label">New balance</td>
-                    <td class="value {{ $updatedBalance >= 0 ? 'positive' : 'negative' }}">
-                        {{ currency_format($updatedBalance) }}</td>
+                    <td class="left-cell">
+                        <div class="party-title">customer</div>
+                        <div class="party-detail">
+                            <strong>{{ $record->customer->name }}</strong><br>
+                            {{ $record->customer->address ?? '' }}
+                            @if ($record->customer->area || $record->customer->city)
+                                <br>{{ $record->customer->area?->name }} {{ $record->customer->city?->name }}
+                            @endif
+                            @if ($record->customer->contact)
+                                <br><strong>Tel:</strong> {{ $record->customer->contact }}
+                            @endif
+                        </div>
+                    </td>
+                    <td class="right-cell">
+                        <div class="party-title">outlet</div>
+                        <div class="party-detail">
+                            <strong>{{ $record->outlet->name }}</strong><br>
+                            {{ $record->outlet->address ?? '' }}
+                            @if ($record->outlet->phone_number)
+                                <br><strong>Tel:</strong> {{ $record->outlet->phone_number }}
+                            @endif
+                            @if ($record->rider)
+                                <br><strong>Rider:</strong> {{ $record->rider->name }}
+                            @endif
+                        </div>
+                    </td>
                 </tr>
             </table>
-        </div>
 
-        <div style="clear:both; height:0.06cm;"></div>
-
-        <!-- Footer - Customer Copy with Receiving Stamp -->
-        <div class="footer-note clearfix">
-            <div class="footer-left"><span class="disclaimer-text">Computer generated</span></div>
-            @if ($footerLogoPath)
-                <div class="footer-center"><img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}"
-                        alt="Footer"></div>
+            <!-- Description -->
+            @if ($record->description)
+                <div class="desc-card">
+                    <div class="desc-label">note</div>
+                    <div class="desc-text">{{ Str::limit($record->description, 90) }}</div>
+                </div>
             @endif
-            <div class="footer-right"><span class="stamp">Signature</span></div>
-        </div>
 
-        @if (config('software.marketing_footer_enabled', false))
-            <!-- Solo Dev Marketing -->
-            <div
-                style="text-align:center; color:#6f8a9c; font-size:5.5pt; margin-top:0.05cm; border-top:0.5px dotted #ccdae5; padding-top:0.05cm;">
-
-                <span>
-                    {{ config('software.marketing_headline') }}
-                    <strong>{{ config('software.developer_name') }}</strong>
-                </span>
-                <br>
-
-                <span style="font-size:5pt;">
-                    {{ collect([
-                        config('software.developer_contact'),
-                        config('software.developer_email'),
-                        config('software.developer_portfolio'),
-                    ])->filter()->join(' | ') }}
-                </span>
-
+            <!-- Summary Info -->
+            <div class="summary-info clearfix">
+                <div class="info-box">
+                    <strong>Items:</strong> {{ $totalItems }} | <strong>Qty:</strong> {{ qty_format($totalQty) }}
+                </div>
             </div>
-        @endif
-    </div>
+
+            <!-- Items Table -->
+            <table class="items-table" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="4%">#</th>
+                        <th width="12%">Qty</th>
+                        <th width="48%">Product</th>
+                        <th width="13%">Price</th>
+                        <th width="11%">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($record->items as $index => $item)
+                        @php
+                            $details = collect([$item->product->brand?->name, $item->product->category?->name])
+                                ->filter()
+                                ->map(fn($n) => "- $n")
+                                ->join(' ');
+                        @endphp
+                        <tr @if ($index % 2 == 1) class="alt" @endif>
+                            <td>{{ $index + 1 }}</td>
+                            <td class="qty-cell">{{ qty_format($item->qty) }} {{ $item->unit->symbol }}</td>
+                            <td>{{ $item->product->name }} {{ $details }}</td>
+                            <td class="rate-cell">{{ currency_format($item->rate ?? 0) }}</td>
+                            <td class="total-cell">{{ currency_format($item->total) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <!-- Summary Totals - Left Panel (Payment) & Right Panel (Totals) -->
+            <div class="clearfix">
+                <table class="summary-left-panel" cellspacing="0">
+                    <tr>
+                        <td class="label">Amount Received</td>
+                        <td class="value"></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Net Balance</td>
+                        <td class="value"></td>
+                    </tr>
+                </table>
+
+                <table class="summary-panel" cellspacing="0">
+                    <tr>
+                        <td class="label">Subtotal</td>
+                        <td class="value">{{ currency_format($subtotal) }}</td>
+                    </tr>
+                    @if ($record->discount_amount > 0)
+                        <tr>
+                            <td class="label">Discount</td>
+                            <td class="value negative">-{{ currency_format($record->discount_amount) }}</td>
+                        </tr>
+                    @endif
+                    @if ($record->delivery_charges > 0)
+                        <tr>
+                            <td class="label">Delivery</td>
+                            <td class="value">{{ currency_format($record->delivery_charges) }}</td>
+                        </tr>
+                    @endif
+                    @if ($record->tax_charges > 0)
+                        <tr>
+                            <td class="label">Tax</td>
+                            <td class="value">{{ currency_format($record->tax_charges) }}</td>
+                        </tr>
+                    @endif
+                    <tr class="total-row">
+                        <td class="label">Grand total</td>
+                        <td class="value">{{ currency_format($record->grand_total) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Previous balance</td>
+                        <td class="value">{{ currency_format($previousBalance) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">New balance</td>
+                        <td style="font-weight: bold; font-size: 8.5pt;" class="value {{ $updatedBalance >= 0 ? 'positive' : 'negative' }}">
+                            {{ currency_format($updatedBalance) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="clear:both; height:0.06cm;"></div>
+
+            <!-- Footer -->
+            <div class="footer-note clearfix">
+                <div class="footer-left">
+                    <span class="disclaimer-text">Computer generated</span>
+                </div>
+                @if ($footerLogoPath)
+                    <div class="footer-center">
+                        <img style="max-height: 0.7cm;" src="{{ $footerLogoPath }}" alt="Footer">
+                    </div>
+                @endif
+                <div class="footer-right">
+                    @if ($copy['footer_right'] === 'signature')
+                        <span class="stamp">Signature</span>
+                    @else
+                        <span class="disclaimer-text">No signature required</span>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Marketing Footer - Config Driven -->
+            @if (config('software.marketing_footer_enabled', false))
+                <div class="marketing-footer">
+                    <span>
+                        {{ config('software.marketing_headline') }}
+                        <strong>{{ config('software.developer_name') }}</strong>
+                    </span>
+                    <br>
+                    <span style="font-size:5pt;">
+                        {{ collect([
+                            config('software.developer_contact'),
+                            config('software.developer_email'),
+                            config('software.developer_portfolio'),
+                        ])->filter()->join(' | ') }}
+                    </span>
+                </div>
+            @endif
+        </div>
+    @endforeach
 </body>
-
 </html>
