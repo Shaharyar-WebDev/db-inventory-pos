@@ -640,6 +640,11 @@ class OutletSaleStats extends StatsOverviewWidget
         return ($this->getSalesGrandTotalAmount() - $this->getSalesReturnGrandTotalAmount()) - $this->getTotalReceived();
     }
 
+    public function getTotalQtySold(): float
+    {
+        return (float) $this->getSalesItemAggregates()->total_qty - (float) $this->getSalesReturnItemAggregates()->total_qty;
+    }
+
     // ═══════════════════════════════════════════
     // Stats
     // ═══════════════════════════════════════════
@@ -735,6 +740,11 @@ class OutletSaleStats extends StatsOverviewWidget
                 ->icon(Heroicon::ShoppingCart)
                 ->color('primary')
                 ->description($countDescription),
+
+            Stat::make('Total Units Sold', number_format($this->getTotalQtySold()))
+                ->icon(Heroicon::RectangleStack)
+                ->color('primary')
+                ->description($productFiltered ? 'Units of this product sold (net of returns)' : 'Total units sold across all products (net of returns)'),
 
             Stat::make('Total Sales Returns', $this->getSalesReturnCount())
                 ->icon(Heroicon::ShoppingCart)
