@@ -50,9 +50,9 @@ class ExpenseCategoryResource extends Resource
     {
         return [
             'index' => ListExpenseCategories::route('/'),
-            'create' => CreateExpenseCategory::route('/create'),
+            // 'create' => CreateExpenseCategory::route('/create'),
             // 'view' => ViewExpenseCategory::route('/{record}'),
-            'edit' => EditExpenseCategory::route('/{record}/edit'),
+            // 'edit' => EditExpenseCategory::route('/{record}/edit'),
         ];
     }
 }
