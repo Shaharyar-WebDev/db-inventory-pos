@@ -20,7 +20,7 @@ use Filament\Widgets\AccountWidget;
 class OutletDashboard extends BaseDashboard
 {
     use HasPageShield;
-    use HasFiltersForm;
+    // use HasFiltersForm;
 
     protected static ?string $title = 'Outlet Dashboard';
 

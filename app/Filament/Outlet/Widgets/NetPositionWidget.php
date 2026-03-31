@@ -6,13 +6,15 @@ use App\Services\NetPositionService;
 use App\Support\Traits\DefaultPageFIlters;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Facades\Filament;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
+// use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class NetPositionWidget extends StatsOverviewWidget
 {
-    use HasPageShield, InteractsWithPageFilters, DefaultPageFIlters;
+    use HasPageShield,
+        // InteractsWithPageFilters,
+        DefaultPageFIlters;
 
     protected function getStats(): array
     {
