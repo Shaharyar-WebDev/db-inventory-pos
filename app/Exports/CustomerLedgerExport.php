@@ -60,9 +60,7 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
         //     ? (int) Carbon::parse($ledger->created_at)->diffInDays(now())
         //     : null;
 
-        if ($ledger->amount < 0) {
-            $agingDays = (int) Carbon::parse($ledger->created_at)->diffInDays(now());
-        }
+        $agingDays = $ledger->amount < 0 ? (int) Carbon::parse($ledger->created_at)->diffInDays(now()) : null;
 
         $this->runningBalance += $ledger->amount;
 
