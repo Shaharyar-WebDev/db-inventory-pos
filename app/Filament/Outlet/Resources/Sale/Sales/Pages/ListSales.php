@@ -4,7 +4,6 @@ namespace App\Filament\Outlet\Resources\Sale\Sales\Pages;
 
 use App\Exports\SalesExport;
 use App\Filament\Outlet\Resources\Sale\Sales\SaleResource;
-use App\Filament\Outlet\Resources\Sale\Sales\Widgets\SalesOverviewWidget;
 use App\Models\Outlet\Outlet;
 use App\Support\Actions\LedgerExportAction;
 use App\Support\Actions\RefreshAction;
@@ -18,12 +17,9 @@ class ListSales extends ListRecords
 {
     use ExposesTableToWidgets;
 
-
     protected function getHeaderWidgets(): array
     {
-        return [
-            SalesOverviewWidget::class,
-        ];
+        return SaleResource::getWidgets();
     }
 
     protected static string $resource = SaleResource::class;

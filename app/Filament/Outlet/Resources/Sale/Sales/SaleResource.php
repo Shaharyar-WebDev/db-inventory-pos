@@ -10,6 +10,7 @@ use App\Filament\Outlet\Resources\Sale\Sales\RelationManagers\ReceiptSalesRelati
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleForm;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleInfolist;
 use App\Filament\Outlet\Resources\Sale\Sales\Tables\SalesTable;
+use App\Filament\Outlet\Resources\Sale\Sales\Widgets\SalesOverviewWidget;
 use App\Models\Sale\Sale;
 use App\Support\Traits\HasTimestampColumns;
 use BackedEnum;
@@ -53,6 +54,13 @@ class SaleResource extends Resource
     {
         return [
             ReceiptSalesRelationManager::class
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            SalesOverviewWidget::class,
         ];
     }
 
