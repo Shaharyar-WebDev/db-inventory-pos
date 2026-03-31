@@ -56,7 +56,7 @@ class ReceiptResource extends Resource
         return [
             'index'  => ListReceipts::route('/'),
             'create' => CreateReceipt::route('/create'),
-            // 'view' => ViewReceipt::route('/{record}'),
+            'view' => ViewReceipt::route('/{record}'),
             'edit'   => EditReceipt::route('/{record}/edit'),
         ];
     }
