@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Pages;
 
 use App\Filament\Admin\Widgets\NetPositionBreakdownWidget;
 use App\Filament\Admin\Widgets\NetPositionStatsWidget;
+use App\Support\Actions\RefreshAction;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -23,6 +24,13 @@ class AdminDashboard extends BaseDashboard
     public function getColumns(): int|array
     {
         return 2;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            RefreshAction::make(),
+        ];
     }
 
     protected int|string|array $columnSpan = 'full';
