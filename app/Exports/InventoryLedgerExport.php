@@ -2,11 +2,12 @@
 
 namespace App\Exports;
 
-use Carbon\Carbon;
+use App\Enums\TransactionType;
 use App\Models\Inventory\InventoryLedger;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
@@ -88,8 +89,10 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             $row[] = $this->runningValuation;
         }
 
+        $transactionType = $ledger->transaction_type === TransactionType::SALE ? $ledger->source->sale->customer->name : $ledger->transaction_type->label();
+
         return array_merge($row, [
-            $ledger->transaction_type->label(),
+            $transactionType,
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',
