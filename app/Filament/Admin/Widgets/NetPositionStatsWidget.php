@@ -41,9 +41,9 @@ class NetPositionStatsWidget extends StatsOverviewWidget
                 ->description('What you owe suppliers — Global')
                 ->color('danger'),
 
-            Stat::make('Total Expenses', 'Rs. ' . number_format($data['total_expenses'], 0))
-                ->description('All outlet expenses combined')
-                ->color('danger'),
+            // Stat::make('Total Expenses', 'Rs. ' . number_format($data['total_expenses'], 0))
+            //     ->description('All outlet expenses combined')
+            //     ->color('danger'),
 
             Stat::make('Net Position', 'Rs. ' . number_format($data['net_position'], 0))
                 ->description('Assets - Liabilities')
