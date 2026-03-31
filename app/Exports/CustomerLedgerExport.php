@@ -41,6 +41,7 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
             'Balance',
             'Transaction Type',
             'Source',
+            'Aging (Days)',
             'Remarks',
             'Outlet',
             'Created',
@@ -53,6 +54,10 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
         $debit  = $ledger->amount > 0 ? $ledger->amount : null;
         $credit = $ledger->amount < 0 ? abs($ledger->amount) : null;
 
+        $agingDays = $ledger->amount > 0
+            ? (int) now()->diffInDays($ledger->created_at)
+            : null;
+
         $this->runningBalance += $ledger->amount;
 
         return [
@@ -64,6 +69,7 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
                 ? $ledger->source->resolveDocumentNumber()
                 : '-',
+            $agingDays,
             $ledger->remarks,
             $ledger->outlet?->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
