@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="https://unpkg.com/@bprogress/core/dist/index.css" />
 <style>
     :root {
-        --bprogress-color: #000;
+        /* --bprogress-color: #000; */
     }
 </style>
 <script type="module">
@@ -11,7 +11,7 @@
 
     BProgress.configure({
         speed: 180,
-        showSpinner: false,
+        showSpinner: true,
     });
 
     Livewire.hook('commit', ({

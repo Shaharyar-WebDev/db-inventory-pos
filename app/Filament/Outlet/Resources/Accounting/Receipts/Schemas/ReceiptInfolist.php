@@ -2,8 +2,6 @@
 
 namespace App\Filament\Outlet\Resources\Accounting\Receipts\Schemas;
 
-use App\Models\Accounting\Receipt;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
 class ReceiptInfolist
