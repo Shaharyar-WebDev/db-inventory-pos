@@ -42,7 +42,7 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
 
     public function map($customer): array
     {
-        $buckets = $this->getAgingBuckets($customer->id);
+        $buckets = $this->getAgingBuckets($customer->ledgers);
 
         return [
             $customer->name,
