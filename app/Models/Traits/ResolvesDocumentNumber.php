@@ -11,6 +11,14 @@ trait ResolvesDocumentNumber
      * - If the model itself is a parent document → use its own document column
      * - If the model is a line/child → walk via static::$parentRelation
      */
+
+    public function getParentRecord()
+    {
+        $relation = static::$parentRelation;
+        $parent = $this->{$relation};
+        return $parent;
+    }
+
     public function resolveDocumentNumber(): ?string
     {
         // Case 1: This model IS the parent document
@@ -41,6 +49,6 @@ trait ResolvesDocumentNumber
             return null;
         }
 
-        return $parent->{ $parent::$documentNumberColumn } ?? null;
+        return $parent->{$parent::$documentNumberColumn} ?? null;
     }
 }
