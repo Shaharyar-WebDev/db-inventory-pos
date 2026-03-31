@@ -57,7 +57,7 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
             $buckets['days_90'],
             $customer->address,
             Carbon::parse($customer->created_at)->format(app_date_time_format()),
-            $sale->creator?->name ?? '-',
+            $customer->creator?->name ?? '-',
             Carbon::parse($customer->updated_at)->format(app_date_time_format()),
         ];
     }
