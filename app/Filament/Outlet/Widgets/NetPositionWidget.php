@@ -18,8 +18,6 @@ class NetPositionWidget extends StatsOverviewWidget
     {
         $data = NetPositionService::calculate(
             $this->getOutletId(),
-            $this->getStartDate(),
-            $this->getEndDate(),
         );
 
         return [

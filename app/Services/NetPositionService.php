@@ -11,33 +11,22 @@ use Carbon\Carbon;
 
 class NetPositionService
 {
-    public static function calculate(
-        ?int $outletId = null,
-        ?Carbon $startDate = null,
-        ?Carbon $endDate = null,
-    ): array {
+    public static function calculate(?int $outletId = null): array
+    {
         $receivable = CustomerLedger::query()
             ->when($outletId, fn($q) => $q->where('outlet_id', $outletId))
-            ->when($startDate, fn($q) => $q->where('created_at', '>=', $startDate))
-            ->when($endDate, fn($q) => $q->where('created_at', '<=', $endDate))
             ->sum('amount');
 
         $stock = InventoryLedger::query()
             ->when($outletId, fn($q) => $q->where('outlet_id', $outletId))
-            ->when($startDate, fn($q) => $q->where('created_at', '>=', $startDate))
-            ->when($endDate, fn($q) => $q->where('created_at', '<=', $endDate))
             ->sum('value');
 
         $accounts = AccountLedger::query()
             ->when($outletId, fn($q) => $q->where('outlet_id', $outletId))
-            ->when($startDate, fn($q) => $q->where('created_at', '>=', $startDate))
-            ->when($endDate, fn($q) => $q->where('created_at', '<=', $endDate))
             ->sum('amount');
 
         $liabilities = SupplierLedger::query()
             ->when($outletId, fn($q) => $q->where('outlet_id', $outletId))
-            ->when($startDate, fn($q) => $q->where('created_at', '>=', $startDate))
-            ->when($endDate, fn($q) => $q->where('created_at', '<=', $endDate))
             ->sum('amount');
 
         $totalAssets = $receivable + $stock + $accounts;
@@ -53,15 +42,12 @@ class NetPositionService
         ];
     }
 
-    public static function calculateAllOutlets(
-        ?Carbon $startDate = null,
-        ?Carbon $endDate = null,
-    ): array {
+    public static function calculateAllOutlets(): array {
         $outlets = Outlet::all();
         $rows = [];
 
         foreach ($outlets as $outlet) {
-            $data   = self::calculate($outlet->id, $startDate, $endDate);
+            $data   = self::calculate($outlet->id);
             $rows[] = array_merge(['outlet' => $outlet->name], $data);
         }
 
