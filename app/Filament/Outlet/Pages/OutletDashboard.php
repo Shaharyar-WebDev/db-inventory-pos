@@ -6,11 +6,13 @@ use App\Filament\Outlet\Widgets\NetPositionWidget;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
@@ -33,20 +35,31 @@ class OutletDashboard extends BaseDashboard
     {
         return $schema
             ->components([
-                Section::make()
+                Section::make('Filters')
+                    ->columnSpanFull()
+                    ->collapsible()
+                    ->persistCollapsed()
+                    ->compact()
+                    ->columns(4)
+                    ->afterHeader([
+                        Action::make('resetFilters')
+                            ->link()
+                            ->action(function (Set $set) {
+                                $set('startDate', now());
+                                $set('endDate', now());
+                            }),
+                    ])
                     ->schema([
-                        DatePicker::make('start_date')
-                            ->maxDate(fn(Get $get) => $get('end_date') ?? now())
-                            ->helperText(fn($state) => Carbon::parse($state)->format('d M Y'))
+                        DatePicker::make('startDate')
+                            ->native(false)
+                            ->maxDate(fn(Get $get, Set $set) => $get('endDate') ?: now())
                             ->default(now()),
-                        DatePicker::make('end_date')
-                            ->minDate(fn(Get $get) => $get('start_date'))
-                            ->helperText(fn($state) => Carbon::parse($state)->format('d M Y'))
+                        DatePicker::make('endDate')
+                            ->native(false)
+                            ->minDate(fn(Get $get) => $get('startDate') ?: now())
                             ->maxDate(now())
                             ->default(now()),
-                    ])
-                    ->columns(2)
-                    ->columnSpanFull(),
+                    ]),
             ]);
     }
 
