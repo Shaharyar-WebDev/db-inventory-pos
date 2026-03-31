@@ -89,7 +89,7 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             $row[] = $this->runningValuation;
         }
 
-        $transactionType = $ledger->transaction_type === TransactionType::SALE ? $ledger->source->sale->customer->name : $ledger->transaction_type->label();
+        $transactionType = $ledger->transaction_type === TransactionType::SALE ? "{$ledger->transaction_type->label()} - {$ledger->source->sale->customer->name}" : $ledger->transaction_type->label();
 
         return array_merge($row, [
             $transactionType,
