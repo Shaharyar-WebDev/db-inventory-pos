@@ -2,12 +2,13 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Admin\Widgets\NetPositionBreakdownWidget;
+use App\Filament\Admin\Widgets\NetPositionStatsWidget;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 
 class AdminDashboard extends BaseDashboard
 {
@@ -30,7 +31,8 @@ class AdminDashboard extends BaseDashboard
     {
         return [
             AccountWidget::class,
-            // FilamentInfoWidget::class,
+            NetPositionStatsWidget::class,
+            NetPositionBreakdownWidget::class
         ];
     }
 }

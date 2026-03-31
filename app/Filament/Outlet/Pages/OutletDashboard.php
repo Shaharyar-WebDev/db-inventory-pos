@@ -69,7 +69,7 @@ class OutletDashboard extends BaseDashboard
     {
         return [
             AccountWidget::class,
-            NetPositionWidget::class,
+            // NetPositionWidget::class,
         ];
     }
 }
