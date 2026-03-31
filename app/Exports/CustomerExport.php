@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Enums\TransactionType;
 use App\Models\Master\Customer;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -64,22 +65,45 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
     private function getAgingBuckets($ledgers): array
     {
         $buckets = [
-            'current' => 0,
-            'days_30' => 0,
-            'days_60' => 0,
-            'days_90' => 0,
+            'current' => 0, // 0-30
+            'days_30' => 0, // 31-60
+            'days_60' => 0, // 61-90
+            'days_90' => 0, // 90+
         ];
 
-        foreach ($ledgers as $entry) {
-            if ($entry->amount <= 0) continue;
-            if ($entry->transaction_type === TransactionType::OPENING_BALANCE) continue;
+        // Step 1 — separate debits and total credits
+        $debits = $ledgers
+            ->filter(fn($e) => $e->amount > 0 && $e->transaction_type !== TransactionType::OPENING_BALANCE)
+            ->sortBy('created_at')
+            ->values();
 
-            $days = (int) Carbon::parse($entry->created_at)->diffInDays(now());
+        $totalCredits = $ledgers
+            ->filter(fn($e) => $e->amount < 0)
+            ->sum('amount');
 
-            if ($days <= 30)          $buckets['current'] += $entry->amount;
-            elseif ($days <= 60)      $buckets['days_30'] += $entry->amount;
-            elseif ($days <= 90)      $buckets['days_60'] += $entry->amount;
-            else                      $buckets['days_90'] += $entry->amount;
+        $remainingCredits = abs($totalCredits); // positive number to subtract
+
+        // Step 2 — FIFO: knock off oldest invoices first
+        foreach ($debits as $debit) {
+            $outstanding = $debit->amount;
+
+            if ($remainingCredits >= $outstanding) {
+                // this invoice is fully paid
+                $remainingCredits -= $outstanding;
+                continue; // nothing left to bucket
+            }
+
+            // partially or not paid
+            $outstanding -= $remainingCredits;
+            $remainingCredits = 0;
+
+            // Step 3 — bucket whatever is still outstanding
+            $days = (int) Carbon::parse($debit->created_at)->diffInDays(now());
+
+            if ($days <= 30)         $buckets['current'] += $outstanding;
+            elseif ($days <= 60)     $buckets['days_30'] += $outstanding;
+            elseif ($days <= 90)     $buckets['days_60'] += $outstanding;
+            else                     $buckets['days_90'] += $outstanding;
         }
 
         return $buckets;
