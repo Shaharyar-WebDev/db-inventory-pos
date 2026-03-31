@@ -15,6 +15,7 @@ enum TransactionType: string
     case PURCHASE_RETURN = 'purchase_return';
 
     case SALE = 'sale';
+
     case SALE_RETURN = 'sale_return';
 
     case STOCK_TRANSFER_IN = 'stock_transfer_in';
