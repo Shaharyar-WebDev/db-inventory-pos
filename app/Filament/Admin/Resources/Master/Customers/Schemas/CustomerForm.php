@@ -68,6 +68,7 @@ class CustomerForm
                             ->schema([
                                 // StatusToggleButtons::make(),
                                 TextInput::make('opening_balance')
+                                    ->calculator()
                                     ->currency()
                                     ->required()
                                     ->hintIcon(

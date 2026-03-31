@@ -23,6 +23,7 @@ class AccountForm
                         TextInput::make('opening_balance')
                             ->numeric()
                             ->columnSpanFull()
+                            ->calculator()
                             ->default(0)
                             ->required()
                             ->hintIcon(

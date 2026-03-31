@@ -5,12 +5,9 @@ namespace App\Providers\Filament;
 use App\Enums\PanelId;
 use App\Filament\Outlet\Pages\Login;
 use App\Filament\Outlet\Pages\OutletDashboard;
-use App\Filament\Outlet\Pages\Pos;
-use App\Filament\Outlet\Resources\Sale\Sales\Pages\SalesReport;
 use App\Filament\Outlet\Resources\Sale\Sales\Widgets\OutletSaleStats;
 use App\Models\Outlet\Outlet;
 use App\Support\PanelConfiguration;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -24,7 +21,6 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class OutletPanelProvider extends PanelProvider
@@ -64,9 +60,7 @@ class OutletPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->plugins([
-                // FilamentShieldPlugin::make(),
-            ])
+            ->plugins(PanelConfiguration::getPlugins())
             ->plugins([])
             ->tenantMiddleware([], isPersistent: true)
             ->authMiddleware([

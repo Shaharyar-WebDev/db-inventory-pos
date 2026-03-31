@@ -86,6 +86,7 @@ class ExpenseForm
                                     }
                                 }
                             ])
+                            ->calculator()
                             ->currency(),
                         Textarea::make('description')
                             ->nullable()

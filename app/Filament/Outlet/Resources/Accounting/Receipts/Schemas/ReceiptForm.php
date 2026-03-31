@@ -90,6 +90,7 @@ class ReceiptForm
                                     },
                                 ];
                             })
+                            ->calculator()
                             ->currency(),
                         Select::make('status')
                             ->required()

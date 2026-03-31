@@ -27,6 +27,7 @@ class DepositForm
                             ->required(),
                         TextInput::make('amount')
                             ->required()
+                            ->calculator()
                             ->currency(),
                     ]),
                 Textarea::make('remarks')

@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Support;
 
 use App\Settings\GeneralSettings;
+use Ariefng\FilamentCalculator\CalculatorPlugin;
 use Filament\FontProviders\GoogleFontProvider;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
@@ -17,6 +19,13 @@ class PanelConfiguration
     public static function make(Panel $panel)
     {
         return (new static())->apply($panel);
+    }
+
+    public static function getPlugins()
+    {
+        return [
+            CalculatorPlugin::make()
+        ];
     }
 
     public function apply(Panel $panel): Panel

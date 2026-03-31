@@ -4,8 +4,87 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "179a8ec56af11131a41ef1d96639b8bd",
+    "content-hash": "679783cfc5d88b9aa51b8f0802140253",
     "packages": [
+        {
+            "name": "ariefng/filament-calculator",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ariefng/filament-calculator.git",
+                "reference": "7c711b965c1744bb4f68e2cf5e6fea045c1f3c07"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ariefng/filament-calculator/zipball/7c711b965c1744bb4f68e2cf5e6fea045c1f3c07",
+                "reference": "7c711b965c1744bb4f68e2cf5e6fea045c1f3c07",
+                "shasum": ""
+            },
+            "require": {
+                "filament/actions": "^4.0|^5.0",
+                "filament/forms": "^4.0|^5.0",
+                "filament/support": "^4.0|^5.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^8.0",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^3.7|^4.0",
+                "pestphp/pest-plugin-arch": "^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
+                "pestphp/pest-plugin-livewire": "^3.0|^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "FilamentCalculator": "Ariefng\\FilamentCalculator\\Facades\\FilamentCalculator"
+                    },
+                    "providers": [
+                        "Ariefng\\FilamentCalculator\\FilamentCalculatorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ariefng\\FilamentCalculator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arief Nugraha",
+                    "email": "hello@ariefnugraha.my.id",
+                    "role": "Package Maintainer"
+                }
+            ],
+            "description": "Provides a calculator modal action for Filament TextInput fields in Filament panel forms.",
+            "homepage": "https://github.com/ariefng/filament-calculator",
+            "keywords": [
+                "ariefng",
+                "filament",
+                "filament-calculator",
+                "filament-plugin",
+                "filamentphp",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/ariefng/filament-calculator/issues",
+                "source": "https://github.com/ariefng/filament-calculator"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ariefng",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-25T14:56:19+00:00"
+        },
         {
             "name": "asosick/filament-layout-manager",
             "version": "v2.1.2",

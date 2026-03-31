@@ -43,6 +43,7 @@ class SaleItemsRepeater
                     ->required()
                     ->currency()
                     ->afterStateUpdatedJs(SaleForm::calculateTotals())
+                    ->calculator()
                     ->minValue(1)
                     ->step(0.01),
                 // Select::make('discount_type')

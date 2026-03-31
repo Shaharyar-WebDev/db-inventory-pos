@@ -1,4 +1,15 @@
 <?php return array (
+  'ariefng/filament-calculator' => 
+  array (
+    'aliases' => 
+    array (
+      'FilamentCalculator' => 'Ariefng\\FilamentCalculator\\Facades\\FilamentCalculator',
+    ),
+    'providers' => 
+    array (
+      0 => 'Ariefng\\FilamentCalculator\\FilamentCalculatorServiceProvider',
+    ),
+  ),
   'asosick/filament-layout-manager' => 
   array (
     'aliases' => 

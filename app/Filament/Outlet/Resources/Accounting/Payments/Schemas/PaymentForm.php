@@ -92,6 +92,7 @@ class PaymentForm
                                     }
                                 }
                             ])
+                            ->calculator()
                             ->currency(),
                         Textarea::make('remarks')
                             ->nullable()

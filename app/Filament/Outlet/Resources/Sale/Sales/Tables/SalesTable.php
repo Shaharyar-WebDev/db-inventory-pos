@@ -113,11 +113,8 @@ class SalesTable
                     ->preload()
                     ->optionsLimit(10)
             ])
-            // ->filtersApplyAction(function(Action $action){
-            //     return $action->dispatch('refreshWidgetData', [true]);
-            // })
             ->summaries(
-                allTableCondition: false
+                // allTableCondition: false
             )
             ->groupedRecordActions([
                 ViewAction::make(),

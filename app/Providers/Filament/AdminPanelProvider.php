@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                ...PanelConfiguration::getPlugins(),
                 FilamentShieldPlugin::make()
                     ->navigationGroup(false)
                     ->gridColumns([

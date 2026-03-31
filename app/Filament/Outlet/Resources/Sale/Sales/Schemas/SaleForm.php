@@ -87,6 +87,7 @@ class SaleForm
                             ->currency()
                             ->minValue(0)
                             ->rules('min:0')
+                            ->calculator()
                             ->afterStateUpdatedJs(self::calculateGrandTotal())
                             ->required(),
 
@@ -94,6 +95,7 @@ class SaleForm
                             ->currency()
                             ->minValue(0)
                             ->rules('min:0')
+                            ->calculator()
                             ->afterStateUpdatedJs(self::calculateGrandTotal())
                             ->required(),
 

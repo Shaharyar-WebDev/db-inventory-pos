@@ -136,6 +136,7 @@ class PurchaseForm
                         TextInput::make('rate')
                             ->required()
                             ->currency()
+                            ->calculator()
                             ->afterStateUpdatedJs(self::updateGrandTotals())
                             ->minValue(1)
                             ->step(0.01),
