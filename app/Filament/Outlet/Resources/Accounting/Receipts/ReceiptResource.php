@@ -5,6 +5,7 @@ namespace App\Filament\Outlet\Resources\Accounting\Receipts;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\CreateReceipt;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\EditReceipt;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ListReceipts;
+use App\Filament\Outlet\Resources\Accounting\Receipts\Pages\ViewReceipt;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Schemas\ReceiptForm;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Schemas\ReceiptInfolist;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Tables\ReceiptsTable;
