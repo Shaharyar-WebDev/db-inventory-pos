@@ -94,3 +94,4 @@ class ReceiptSalesRelationManager extends RelationManager
             ]);
     }
 }
+
