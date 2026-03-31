@@ -48,21 +48,7 @@ class NetPositionService
         $liabilities = SupplierLedger::withoutGlobalScope(OutletScope::class)
             ->sum('amount');
 
-        // Per outlet — expenses
-        $expensesByOutlet = [];
-        $totalExpenses = 0;
-
-        foreach ($outlets as $outlet) {
-            $amount = ExpenseLedger::where('outlet_id', $outlet->id)
-                ->sum('amount');
-            $expensesByOutlet[] = [
-                'outlet' => $outlet->name,
-                'amount' => $amount,
-            ];
-            $totalExpenses += $amount;
-        }
-
-        $totalLiabilities = $liabilities + $totalExpenses;
+        $totalLiabilities = $liabilities;
         $netPosition      = $totalAssets - $totalLiabilities;
 
         return [
@@ -75,8 +61,6 @@ class NetPositionService
 
             // liabilities
             'liabilities'       => $liabilities,
-            'expenses_by_outlet' => $expensesByOutlet,
-            'total_expenses'    => $totalExpenses,
             'total_liabilities' => $totalLiabilities,
 
             // final
