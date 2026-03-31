@@ -33,6 +33,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStri
             'Created At',
             'Created By',
             'Updated At',
+            'Updated By',
         ];
     }
 
@@ -53,6 +54,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStri
             Carbon::parse($sale->created_at)->format(app_date_time_format()),
             $sale->creator->name,
             Carbon::parse($sale->updated_at)->format(app_date_time_format()),
+            $sale->editor->name,
         ];
     }
 }

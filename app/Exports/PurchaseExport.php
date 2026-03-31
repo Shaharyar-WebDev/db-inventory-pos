@@ -24,8 +24,8 @@ class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithS
             'Grand Total',
             'Description',
             'Outlet',
-            'Created By',
             'Created At',
+            'Created By',
             'Updated At',
         ];
     }
@@ -38,9 +38,10 @@ class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithS
             $purchase->grand_total ?? 0,
             $purchase->description,
             $purchase->outlet?->name ?? '-',
-            $purchase->creator?->name ?? '-',
             Carbon::parse($purchase->created_at)->format(app_date_time_format()),
+            $purchase->creator?->name ?? '-',
             Carbon::parse($purchase->updated_at)->format(app_date_time_format()),
+            $purchase->editor?->name ?? '-',
         ];
     }
 }

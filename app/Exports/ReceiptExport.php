@@ -26,9 +26,10 @@ class ReceiptExport implements FromCollection, WithHeadings, WithMapping, WithSt
             'Status',
             'Remarks',
             'Outlet',
-            'Created By',
             'Created At',
+            'Created By',
             'Updated At',
+            'Updated By',
         ];
     }
 
@@ -42,9 +43,10 @@ class ReceiptExport implements FromCollection, WithHeadings, WithMapping, WithSt
             $receipt->status?->label() ?? '-',
             $receipt->remarks,
             $receipt->outlet?->name ?? '-',
-            $receipt->creator?->name ?? '-',
             Carbon::parse($receipt->created_at)->format(app_date_time_format()),
+            $receipt->creator?->name ?? '-',
             Carbon::parse($receipt->updated_at)->format(app_date_time_format()),
+            $receipt->editor?->name ?? '-',
         ];
     }
 }

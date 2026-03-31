@@ -46,7 +46,9 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
             'Remarks',
             'Outlet',
             'Created',
+            'Created By',
             'Updated',
+            'Updated By',
         ];
     }
 
@@ -75,7 +77,9 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
             $ledger->remarks,
             $ledger->outlet?->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
+            $ledger->source->getParentRecord()?->creator?->name ?? '-',
             Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
+            $ledger->source->getParentRecord()?->editor?->name ?? '-',
         ];
     }
 }

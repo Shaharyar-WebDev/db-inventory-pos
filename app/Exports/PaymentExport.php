@@ -25,9 +25,10 @@ class PaymentExport implements FromCollection, WithHeadings, WithMapping, WithSt
             'Amount',
             'Remarks',
             'Outlet',
-            'Created By',
             'Created At',
+            'Created By',
             'Updated At',
+            'Updated By',
         ];
     }
 
@@ -40,9 +41,10 @@ class PaymentExport implements FromCollection, WithHeadings, WithMapping, WithSt
             $payment->amount ?? 0,
             $payment->remarks,
             $payment->outlet?->name ?? '-',
-            $payment->creator?->name ?? '-',
             Carbon::parse($payment->created_at)->format(app_date_time_format()),
+            $payment->creator?->name ?? '-',
             Carbon::parse($payment->updated_at)->format(app_date_time_format()),
+            $payment->editor?->name ?? '-',
         ];
     }
 }

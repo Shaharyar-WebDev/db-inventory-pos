@@ -37,6 +37,7 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
             'Created At',
             'Created By',
             'Updated At',
+            'Updated By',
         ];
     }
 
@@ -59,6 +60,7 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
             Carbon::parse($customer->created_at)->format(app_date_time_format()),
             $customer->creator?->name ?? '-',
             Carbon::parse($customer->updated_at)->format(app_date_time_format()),
+            $customer->editor?->name ?? '-',
         ];
     }
 
