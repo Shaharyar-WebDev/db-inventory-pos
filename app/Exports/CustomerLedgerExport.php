@@ -55,12 +55,10 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
         $debit  = $ledger->amount > 0 ? $ledger->amount : null;
         $credit = $ledger->amount < 0 ? abs($ledger->amount) : null;
 
-        // $agingDays = $ledger->amount > 0
-        //     && $ledger->transaction_type !== TransactionType::OPENING_BALANCE
-        //     ? (int) Carbon::parse($ledger->created_at)->diffInDays(now())
-        //     : null;
-
-        $agingDays = $ledger->amount < 0 ? (int) Carbon::parse($ledger->created_at)->diffInDays(now()) : null;
+        $agingDays = $ledger->amount > 0
+            && $ledger->transaction_type !== TransactionType::OPENING_BALANCE
+            ? (int) Carbon::parse($ledger->created_at)->diffInDays(now())
+            : null;
 
         $this->runningBalance += $ledger->amount;
 
