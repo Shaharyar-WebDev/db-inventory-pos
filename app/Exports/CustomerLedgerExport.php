@@ -2,13 +2,13 @@
 
 namespace App\Exports;
 
-use App\Enums\TransactionType;
-use App\Models\Accounting\CustomerLedger;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use App\Models\Accounting\CustomerLedger;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use App\Enums\TransactionType;
 
 class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
@@ -55,10 +55,14 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
         $debit  = $ledger->amount > 0 ? $ledger->amount : null;
         $credit = $ledger->amount < 0 ? abs($ledger->amount) : null;
 
-        $agingDays = $ledger->amount > 0
-            && $ledger->transaction_type !== TransactionType::OPENING_BALANCE
-            ? (int) Carbon::parse($ledger->created_at)->diffInDays(now())
-            : null;
+        // $agingDays = $ledger->amount > 0
+        //     && $ledger->transaction_type !== TransactionType::OPENING_BALANCE
+        //     ? (int) Carbon::parse($ledger->created_at)->diffInDays(now())
+        //     : null;
+
+        if ($ledger->amount < 0) {
+            $agingDays = (int) Carbon::parse($ledger->created_at)->diffInDays(now());
+        }
 
         $this->runningBalance += $ledger->amount;
 
