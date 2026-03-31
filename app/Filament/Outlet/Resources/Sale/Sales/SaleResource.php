@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Sale\Sales;
 
 use App\Filament\Outlet\Resources\Sale\Sales\Pages\CreateSale;

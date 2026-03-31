@@ -113,6 +113,9 @@ class SalesTable
                     ->preload()
                     ->optionsLimit(10)
             ])
+            ->summaries(
+                pageCondition: false,
+            )
             ->groupedRecordActions([
                 ViewAction::make(),
                 EditAction::make(),
