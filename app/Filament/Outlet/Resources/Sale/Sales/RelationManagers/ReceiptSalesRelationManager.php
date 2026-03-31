@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Sale\Sales\RelationManagers;
 
 use App\Filament\Outlet\Resources\Accounting\Receipts\ReceiptResource;
@@ -19,6 +20,11 @@ use Illuminate\Validation\Rule;
 class ReceiptSalesRelationManager extends RelationManager
 {
     protected static string $relationship = 'receiptSales';
+
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
 
     public function form(Schema $schema): Schema
     {
