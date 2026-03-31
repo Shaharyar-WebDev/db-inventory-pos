@@ -2,13 +2,11 @@
 
 namespace App\Filament\Outlet\Pages;
 
-use App\Filament\Outlet\Widgets\Stats;
+use App\Filament\Outlet\Widgets\NetPositionWidget;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
-use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Schemas\Components\Section;
@@ -16,7 +14,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 
 class OutletDashboard extends BaseDashboard
 {
@@ -58,9 +55,8 @@ class OutletDashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            // AccountWidget::class,
-            // FilamentInfoWidget::class,
-            // Stats::class,
+            AccountWidget::class,
+            NetPositionWidget::class,
         ];
     }
 }
