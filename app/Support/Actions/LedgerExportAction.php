@@ -92,6 +92,9 @@ class LedgerExportAction
                     ? $fileName($record, $outlet)
                     : $fileName;
 
+                // Sanitize: strip characters invalid in Content-Disposition filenames
+                $resolvedFileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $resolvedFileName);
+
                 return Excel::download(
                     new $exportClass($record?->id, $outletId),
                     "{$resolvedFileName}.xlsx"

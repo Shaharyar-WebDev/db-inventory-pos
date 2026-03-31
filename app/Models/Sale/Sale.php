@@ -207,7 +207,7 @@ class Sale extends Model
         if ($cogs == 0) {
             return 0;
         }
-        
+
         return round(($this->net_profit / $cogs) * 100, 2);
     }
 
