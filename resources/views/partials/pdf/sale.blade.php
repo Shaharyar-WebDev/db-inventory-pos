@@ -11,7 +11,8 @@
         /*-----------------------------------------------
             RESET & BASE STYLES
         -----------------------------------------------*/
-        html, body {
+        html,
+        body {
             height: auto;
             overflow: visible;
             margin: 0;
@@ -51,9 +52,11 @@
             content: "";
             display: table;
         }
+
         .clearfix:after {
             clear: both;
         }
+
         .clearfix {
             zoom: 1;
         }
@@ -459,7 +462,9 @@
     @php
         $getImagePath = function ($setting) use ($generalSettings) {
             $image = $generalSettings->$setting ?? '';
-            if (!$image) return null;
+            if (!$image) {
+                return null;
+            }
 
             $url = filter_var($image, FILTER_VALIDATE_URL)
                 ? $image
@@ -635,7 +640,8 @@
                     </tr>
                     <tr>
                         <td class="label">New balance</td>
-                        <td style="font-weight: bold; font-size: 8.5pt;" class="value {{ $updatedBalance >= 0 ? 'positive' : 'negative' }}">
+                        <td style="font-weight: bold; font-size: 8.5pt;"
+                            class="value {{ $updatedBalance >= 0 ? 'positive' : 'negative' }}">
                             {{ currency_format($updatedBalance) }}
                         </td>
                     </tr>
@@ -647,7 +653,11 @@
             <!-- Footer -->
             <div class="footer-note clearfix">
                 <div class="footer-left">
-                    <span class="disclaimer-text">Computer generated</span>
+                    @if ($copy['footer_right'] === 'signature')
+                        <span class="disclaimer-text">Computer generated</span>
+                    @else
+                        <span class="stamp">Verified By</span>
+                    @endif
                 </div>
                 @if ($footerLogoPath)
                     <div class="footer-center">
@@ -683,4 +693,5 @@
         </div>
     @endforeach
 </body>
+
 </html>
