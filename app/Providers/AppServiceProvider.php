@@ -217,13 +217,13 @@ class AppServiceProvider extends ServiceProvider
                                 DatePicker::make('from')
                                     ->displayFormat(app_date_format())
                                     ->maxDate(fn(Get $get, Set $set) => $get('until') ?: now())
-                                    ->native(false)
+                                    ->live()
                                     ->label('From'),
                                 DatePicker::make('until')
                                     ->displayFormat(app_date_format())
                                     ->minDate(fn(Get $get) => $get('from'))
                                     ->maxDate(now())
-                                    ->native(false)
+                                    ->live()
                                     ->label('Until'),
                             ]),
                     ])
