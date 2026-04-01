@@ -140,7 +140,7 @@ class AppServiceProvider extends ServiceProvider
 
         TextInput::macro('calculator', function(){
             return $this->suffixAction(CalculatorAction::make()
-                    ->overlayParentActions()->disabledOn('view'));
+                    ->overlayParentActions()->disabled(fn($operation)=>$operation==='view'));
         });
 
         TextInput::macro('currency', function () {
