@@ -25,10 +25,7 @@ class ProductSelect
 
                 return in_array($value, $selected) && $state != $value;
             })
-	    ->native(false)
-	    ->preload()
             ->optionsLimit(50)
-	    ->searchable()
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
