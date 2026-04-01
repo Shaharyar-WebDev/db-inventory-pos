@@ -27,6 +27,7 @@ class ProductSelect
             })
 	    ->native(false)
 	    ->searchable(false)
+	    ->searchable()
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
