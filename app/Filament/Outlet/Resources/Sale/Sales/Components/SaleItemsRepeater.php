@@ -33,7 +33,7 @@ class SaleItemsRepeater
                 TableColumn::make('Total'),
             ])
             // ->reorderable()
-            ->compact()
+            // ->compact()
             ->schema([
                 ProductSelect::make(),
                 UnitSelect::make($productsKeyedArray),
