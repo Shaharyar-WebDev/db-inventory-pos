@@ -27,9 +27,9 @@ class ProductSelect
             })
 	    ->native(false)
 	    ->searchable(false)
-	    ->preload(false)
-            ->optionsLimit(0)
-	    ->searchable()
+	    ->preload()
+            ->optionsLimit(100)
+	    ->searchable(false)
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
