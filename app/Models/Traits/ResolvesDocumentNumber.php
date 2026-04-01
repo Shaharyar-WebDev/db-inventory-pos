@@ -14,9 +14,21 @@ trait ResolvesDocumentNumber
 
     public function getParentRecord()
     {
+        // This model IS the parent — return itself
+        if (
+            property_exists(static::class, 'documentNumberColumn')
+            && ! property_exists(static::class, 'parentRelation')
+        ) {
+            return $this;
+        }
+
+        // This model is a child — walk up
+        if (! property_exists(static::class, 'parentRelation')) {
+            return $this; // fallback, nothing to walk up to
+        }
+
         $relation = static::$parentRelation;
-        $parent = $this->{$relation};
-        return $parent;
+        return $this->{$relation};
     }
 
     public function resolveDocumentNumber(): ?string
