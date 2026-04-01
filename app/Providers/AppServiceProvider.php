@@ -336,7 +336,7 @@ class AppServiceProvider extends ServiceProvider
         Select::configureUsing(function (Select $select) {
             $select->searchable()
                 ->preload()
-                ->optionsLimit(10);
+                ->optionsLimit(50);
         });
 
         ForceDeleteAction::configureUsing(function (ForceDeleteAction $action) {
