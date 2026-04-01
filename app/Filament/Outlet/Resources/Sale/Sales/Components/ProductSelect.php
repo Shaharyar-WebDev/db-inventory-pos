@@ -25,8 +25,8 @@ class ProductSelect
 
                 return in_array($value, $selected) && $state != $value;
             })
-            ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->name)
-            // ->optionsLimit(50)
+            // ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->name)
+            ->optionsLimit(50)
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
