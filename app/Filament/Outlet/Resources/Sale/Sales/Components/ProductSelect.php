@@ -27,7 +27,7 @@ class ProductSelect
             })
 	    ->native(false)
 	    ->preload()
-            ->optionsLimit(12)
+            ->optionsLimit(50)
 	    ->searchable()
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
