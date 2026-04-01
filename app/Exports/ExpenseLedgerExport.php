@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Accounting\AccountLedger;
+use App\Exports\Traits\ResolvesParentRecord;
 use App\Models\Accounting\ExpenseLedger;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 class ExpenseLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
+     use ResolvesParentRecord;
     protected float $runningBalance = 0;
 
     public function __construct(
@@ -50,7 +51,9 @@ class ExpenseLedgerExport implements FromCollection, WithHeadings, WithMapping, 
             'Remarks',
             'Outlet',
             'Created',
+            'Created By',
             'Updated',
+            'Updated By',
         ];
     }
 
@@ -60,6 +63,8 @@ class ExpenseLedgerExport implements FromCollection, WithHeadings, WithMapping, 
         $credit = $ledger->amount < 0 ? abs($ledger->amount) : null;
 
         $this->runningBalance += $ledger->amount;
+
+        $parent = $this->resolveParentRecord($ledger->source);
 
         return [
             $ledger->expense?->expense_number,
@@ -76,7 +81,9 @@ class ExpenseLedgerExport implements FromCollection, WithHeadings, WithMapping, 
             $ledger->remarks,
             $ledger->outlet?->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
+            $parent?->creator?->name ?? '-',
             Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
+            $parent?->editor?->name ?? '-',
         ];
     }
 }

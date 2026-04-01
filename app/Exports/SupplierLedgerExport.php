@@ -2,15 +2,18 @@
 
 namespace App\Exports;
 
-use Carbon\Carbon;
+use App\Exports\Traits\ResolvesParentRecord;
 use App\Models\Accounting\SupplierLedger;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 class SupplierLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
+    use ResolvesParentRecord;
+
     protected float $runningBalance = 0;
 
     public function __construct(
@@ -57,6 +60,8 @@ class SupplierLedgerExport implements FromCollection, WithHeadings, WithMapping,
 
         $this->runningBalance += $ledger->amount;
 
+        $parent = $this->resolveParentRecord($ledger->source);
+
         return [
             $ledger->supplier?->name,
             $debit ?: 0,
@@ -69,9 +74,9 @@ class SupplierLedgerExport implements FromCollection, WithHeadings, WithMapping,
             $ledger->remarks,
             $ledger->outlet?->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
-            $ledger->source->getParentRecord()?->creator?->name ?? '-',
+            $parent?->creator?->name ?? '-',
             Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
-            $ledger->source->getParentRecord()?->editor?->name ?? '-',
+            $parent?->editor?->name ?? '-',
         ];
     }
 }

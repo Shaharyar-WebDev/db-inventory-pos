@@ -2,16 +2,19 @@
 
 namespace App\Exports;
 
-use Carbon\Carbon;
-use App\Models\Accounting\CustomerLedger;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use App\Enums\TransactionType;
+use App\Exports\Traits\ResolvesParentRecord;
+use App\Models\Accounting\CustomerLedger;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
+    use ResolvesParentRecord;
+
     protected float $runningBalance = 0;
 
     public function __construct(
@@ -64,6 +67,8 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
 
         $this->runningBalance += $ledger->amount;
 
+        $parent = $this->resolveParentRecord($ledger->source);
+
         return [
             $ledger->customer?->name,
             $debit ?: 0,
@@ -77,9 +82,9 @@ class CustomerLedgerExport implements FromCollection, WithHeadings, WithMapping,
             $ledger->remarks,
             $ledger->outlet?->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
-            $ledger->source->getParentRecord()?->creator?->name ?? '-',
+            $parent?->creator?->name ?? '-',
             Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
-            $ledger->source->getParentRecord()?->editor?->name ?? '-',
+            $parent?->editor?->name ?? '-',
         ];
     }
 }

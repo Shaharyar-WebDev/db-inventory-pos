@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Enums\TransactionType;
+use App\Exports\Traits\ResolvesParentRecord;
 use App\Models\Inventory\InventoryLedger;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -12,6 +13,8 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping, WithStrictNullComparison
 {
+    use ResolvesParentRecord;
+
     protected float $runningBalance = 0;
     protected float $runningValuation = 0;
 
@@ -93,6 +96,8 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
 
         $transactionType = $ledger->transaction_type === TransactionType::SALE ? "{$ledger->transaction_type->label()} - {$ledger->source->sale->customer->name}" : $ledger->transaction_type->label();
 
+        $parent = $this->resolveParentRecord($ledger->source);
+
         return array_merge($row, [
             $transactionType,
             $ledger->source && method_exists($ledger->source, 'resolveDocumentNumber')
@@ -101,9 +106,9 @@ class InventoryLedgerExport implements FromCollection, WithHeadings, WithMapping
             $ledger->remarks,
             $ledger->outlet->name,
             Carbon::parse($ledger->created_at)->format(app_date_time_format()),
-            $ledger->source->getParentRecord()?->creator?->name ?? '-',
+            $parent?->creator?->name ?? '-',
             Carbon::parse($ledger->updated_at)->format(app_date_time_format()),
-            $ledger->source->getParentRecord()?->editor?->name ?? '-',
+            $parent?->editor?->name ?? '-',
         ]);
     }
 }

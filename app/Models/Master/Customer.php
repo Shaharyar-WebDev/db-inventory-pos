@@ -10,6 +10,7 @@ use App\Models\Master\City;
 use App\Models\Master\CustomerProductRate;
 use App\Models\Sale\Sale;
 use App\Models\Scopes\OutletScope;
+use App\Models\Traits\HasSelfAsParent;
 use App\Models\Traits\HasStatus;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
