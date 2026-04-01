@@ -4,6 +4,7 @@ namespace App\Filament\Outlet\Resources\Sale\Sales\Components;
 
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductSelect
 {
@@ -16,7 +17,6 @@ class ProductSelect
                 ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))
                 ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%")))
-
             ->disableOptionWhen(function ($value, $state, $get) {
                 $selected = collect($get('../../items'))
                     ->pluck('product_id')
@@ -25,7 +25,8 @@ class ProductSelect
 
                 return in_array($value, $selected) && $state != $value;
             })
-            ->optionsLimit(50)
+            ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->name)
+            // ->optionsLimit(50)
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
