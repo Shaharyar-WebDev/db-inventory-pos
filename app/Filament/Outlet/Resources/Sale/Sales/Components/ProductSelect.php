@@ -26,6 +26,7 @@ class ProductSelect
                 return in_array($value, $selected) && $state != $value;
             })
 	    ->native(false)
+	    ->searchable(false)
             ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
