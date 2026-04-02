@@ -56,7 +56,7 @@ class InventoryAdjustmentResource extends Resource
         return [
             'index' => ListInventoryAdjustments::route('/'),
             'create' => CreateInventoryAdjustment::route('/create'),
-            // 'view' => ViewInventoryAdjustment::route('/{record}'),
+            'view' => ViewInventoryAdjustment::route('/{record}'),
             'edit' => EditInventoryAdjustment::route('/{record}/edit'),
         ];
     }

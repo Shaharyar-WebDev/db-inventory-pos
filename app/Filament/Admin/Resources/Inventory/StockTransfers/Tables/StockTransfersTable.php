@@ -2,16 +2,15 @@
 
 namespace App\Filament\Admin\Resources\Inventory\StockTransfers\Tables;
 
-use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
+use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class StockTransfersTable
 {
@@ -35,13 +34,22 @@ class StockTransfersTable
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                // TrashedFilter::make(),
+            ->moreFilters([
+                SelectFilter::make('from_outlet_id')
+                    ->label('From Outlet')
+                    ->relationship('fromOutlet', 'name'),
+                SelectFilter::make('to_outlet_id')
+                    ->label('To Outlet')
+                    ->relationship('toOutlet', 'name'),
             ])
             ->groupedRecordActions([
                 // ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make()
+                DeleteAction::make(),
+                PdfDownloadAction::make('partials.pdf.stock-transfer', fn(Model $record) => $record->transfer_number)
+                    ->download(),
+                PdfDownloadAction::make('partials.pdf.stock-transfer', fn(Model $record) => $record->transfer_number)
+                    ->print()
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -432,12 +432,12 @@
         $totalValue = 0;
         $totalQty = 0;
 
-        foreach ($record->items as $item) {
-            $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
-            $value = $item->qty * $avgRate;
-            $totalValue += $value;
-            $totalQty += $item->qty;
-        }
+        // foreach ($record->items as $item) {
+            // $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
+            // $value = $item->qty * $avgRate;
+            // $totalValue += $value;
+            // $totalQty += $item->qty;
+        // }
     @endphp
 
     <!-- Office Copy -->
@@ -516,8 +516,8 @@
                     <th width="5%">#</th>
                     <th width="15%">Qty</th>
                     <th width="45%">Product</th>
-                    <th width="15%">Rate</th>
-                    <th width="20%">Value</th>
+                    {{-- <th width="15%">Rate</th> --}}
+                    {{-- <th width="20%">Value</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -526,9 +526,9 @@
                 @endphp
                 @foreach ($record->items as $index => $item)
                     @php
-                        $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
-                        $value = $item->qty * $avgRate;
-                        $displayTotalValue += $value;
+                        // $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
+                        // $value = $item->qty * $avgRate;
+                        // $displayTotalValue += $value;
 
                         $productDetails = collect([$item->product->brand?->name, $item->product->category?->name])
                             ->filter()
@@ -539,8 +539,8 @@
                         <td>{{ $index + 1 }}</td>
                         <td class="qty-cell">{{ qty_format($item->qty) }} {{ $item->product->unit->symbol }}</td>
                         <td>{{ $item->product->name }} {{ $productDetails }}</td>
-                        <td class="qty-cell">{{ currency_format($avgRate) }}</td>
-                        <td class="value-cell">{{ currency_format($value) }}</td>
+                        {{-- <td class="qty-cell">{{ currency_format($avgRate) }}</td> --}}
+                        {{-- <td class="value-cell">{{ currency_format($value) }}</td> --}}
                     </tr>
                 @endforeach
             </tbody>
@@ -557,10 +557,10 @@
                     <td class="label">Total qty</td>
                     <td class="value">{{ qty_format($totalQty) }}</td>
                 </tr>
-                <tr class="total-row">
+                {{-- <tr class="total-row">
                     <td class="label">Transfer value</td>
                     <td class="value">{{ currency_format($displayTotalValue) }}</td>
-                </tr>
+                </tr> --}}
             </table>
         </div>
 

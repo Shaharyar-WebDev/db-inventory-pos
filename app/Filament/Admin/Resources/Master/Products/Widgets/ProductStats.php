@@ -60,7 +60,7 @@ class ProductStats extends StatsOverviewWidget
         return [
             $this->getProductCountStat(),
             $this->getInventoryValuationStat(),
-            $this->getAverageRateStat(),
+            // $this->getAverageRateStat(),
         ];
     }
 }

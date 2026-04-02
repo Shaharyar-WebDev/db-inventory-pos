@@ -6,8 +6,6 @@ use App\Filament\Admin\Resources\Inventory\StockTransfers\StockTransferResource;
 use App\Support\Actions\PdfDownloadAction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +39,7 @@ class EditStockTransfer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            // ViewAction::make(),
+            ViewAction::make(),
             DeleteAction::make(),
             PdfDownloadAction::make('partials.pdf.stock-transfer', fn(Model $record) => $record->transfer_number)
                 ->download(),

@@ -102,7 +102,7 @@ class SalesTable
                     ->searchable()
                     ->optionsLimit(10)
                     ->preload(),
-                SelectFilter::make('category')
+                SelectFilter::make('brand')
                     ->relationship('items.product.brand', 'name')
                     ->preload()
                     ->searchable()

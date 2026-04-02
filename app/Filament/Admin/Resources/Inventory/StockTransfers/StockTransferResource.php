@@ -56,7 +56,7 @@ class StockTransferResource extends Resource
         return [
             'index' => ListStockTransfers::route('/'),
             'create' => CreateStockTransfer::route('/create'),
-            // 'view' => ViewStockTransfer::route('/{record}'),
+            'view' => ViewStockTransfer::route('/{record}'),
             'edit' => EditStockTransfer::route('/{record}/edit'),
         ];
     }
