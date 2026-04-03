@@ -4,6 +4,7 @@ namespace App\Models\Master;
 use App\Models\Inventory\InventoryLedger;
 use App\Models\Master\Brand;
 use App\Models\Master\Category;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\Master\CustomerProductRate;
 use App\Models\Master\Unit;
 use App\Models\Traits\CalculatesInventoryAvgRate;
@@ -81,6 +82,17 @@ class Product extends Model
     public function scopeWithStockValue($query)
     {
         return $query->withSum('ledgers as current_value', 'value');
+    }
+
+    public function fullName(): Attribute
+    {
+        $name = $this->name;
+        $brand = $this->brand?->name;
+        $category = $this->category?->name;
+
+        return Attribute::make(
+            get: fn () => collect([$name, $brand, $category])->filter()->implode(' - ')
+        );
     }
 
     public function scopeWithStockAvgRate($query)
