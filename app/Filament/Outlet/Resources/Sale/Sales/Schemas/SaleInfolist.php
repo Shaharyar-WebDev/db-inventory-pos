@@ -64,7 +64,7 @@ class SaleInfolist
                                 TableColumn::make('Total'),
                             ])
                             ->schema([
-                                TextEntry::make('product.name'),
+                                TextEntry::make('product.full_name'),
                                 TextEntry::make('unit.name'),
                                 TextEntry::make('qty'),
                                 TextEntry::make('product.selling_price')->state(function(Model $record){
