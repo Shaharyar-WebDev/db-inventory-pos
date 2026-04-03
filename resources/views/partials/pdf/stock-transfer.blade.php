@@ -257,7 +257,7 @@
 
         .qty-cell,
         .value-cell {
-            text-align: right;
+            text-align: left;
             font-weight: bold;
         }
 
@@ -432,12 +432,12 @@
         $totalValue = 0;
         $totalQty = 0;
 
-        // foreach ($record->items as $item) {
+        foreach ($record->items as $item) {
             // $avgRate = $item->product->getAvgRateAsOf($item->created_at) ?: $item->product->cost_price;
             // $value = $item->qty * $avgRate;
             // $totalValue += $value;
-            // $totalQty += $item->qty;
-        // }
+            $totalQty += $item->qty;
+        }
     @endphp
 
     <!-- Office Copy -->
@@ -513,7 +513,7 @@
         <table class="items-table" cellspacing="0">
             <thead>
                 <tr>
-                    <th width="5%">#</th>
+                    <th width="5%">S>No</th>
                     <th width="15%">Qty</th>
                     <th width="45%">Product</th>
                     {{-- <th width="15%">Rate</th> --}}
