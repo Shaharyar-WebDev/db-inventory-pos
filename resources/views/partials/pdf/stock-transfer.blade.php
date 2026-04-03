@@ -513,7 +513,7 @@
         <table class="items-table" cellspacing="0">
             <thead>
                 <tr>
-                    <th width="5%">S>No</th>
+                    <th width="5%">S.No</th>
                     <th width="15%">Qty</th>
                     <th width="45%">Product</th>
                     {{-- <th width="15%">Rate</th> --}}
