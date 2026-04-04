@@ -63,19 +63,19 @@ class LedgerExportAction
         return (new static($exportClass));
     }
 
-    public function make(): Action
+    public function make(?string $name = null): Action
     {
-        return $this->getAction();
+        return $this->getAction($name);
     }
 
 
 
-    public function getAction(): Action
+    public function getAction(?string $name): Action
     {
         $exportClass = $this->getExportClass();
         $fileName = $this->getFileName();
 
-        return Action::make('export_ledger')
+        return Action::make($name ?? 'export_ledger')
             ->icon('heroicon-o-document-text')
             ->color('info')
             ->schema($this->getHasOutletSelectionSchema() ? [
