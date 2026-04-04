@@ -13,6 +13,7 @@ class ProductSelect
         return Select::make('product_id')
             ->relationship('product', 'name',    modifyQueryUsing: fn(Builder $query, $search) => $query
                 ->where('name', 'like', "%{$search}%")
+                ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))

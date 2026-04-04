@@ -16,6 +16,11 @@ class NetPositionStatsWidget extends StatsOverviewWidget
         // InteractsWithPageFilters,
         DefaultPageFIlters;
 
+    public static function canView(): bool
+    {
+        return filament()->auth()->user()->isSuperAdmin();
+    }
+
     protected function getStats(): array
     {
         $data = NetPositionService::calculate();

@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\Master\Products\Pages\CreateProduct;
 use App\Filament\Admin\Resources\Master\Products\Pages\EditProduct;
 use App\Filament\Admin\Resources\Master\Products\Pages\ListProducts;
 use App\Filament\Admin\Resources\Master\Products\Pages\ViewProduct;
+use App\Filament\Admin\Resources\Master\Products\RelationManagers\VariantsRelationManager;
 use App\Filament\Admin\Resources\Master\Products\Schemas\ProductForm;
 use App\Filament\Admin\Resources\Master\Products\Schemas\ProductInfolist;
 use App\Filament\Admin\Resources\Master\Products\Tables\ProductsTable;
@@ -48,7 +49,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            VariantsRelationManager::make(),
         ];
     }
 

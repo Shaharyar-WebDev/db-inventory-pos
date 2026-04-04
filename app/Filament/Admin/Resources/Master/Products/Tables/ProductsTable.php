@@ -11,10 +11,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
@@ -45,6 +41,8 @@ class ProductsTable
                     ->copyable(),
                 TextColumn::make('unit.name')
                     ->copyable(),
+                // TextColumn::make('group.name')
+                //     ->copyable(),
                 TextColumn::make('cost_price')
                     ->currency()
                     ->copyable(),
@@ -85,9 +83,6 @@ class ProductsTable
                             }),
                     ])
                     ->sortable(),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -102,6 +97,10 @@ class ProductsTable
                     ->relationship('brand', 'name'),
                 SelectFilter::make('unit')
                     ->relationship('unit', 'name'),
+                // SelectFilter::make('group')
+                //     ->relationship('group', 'name'),
+                SelectFilter::make('parent')
+                    ->relationship('parent', 'name'),
             ])
             ->groupedRecordActions([
                 EditAction::make(),

@@ -16,12 +16,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -88,9 +89,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() === PanelId::ADMIN->id()) {
-            return $this->isSuperAdmin();
-        };
+        // if ($panel->getId() === PanelId::ADMIN->id()) {
+        //     return $this->isSuperAdmin();
+        // };
 
         return true;
     }

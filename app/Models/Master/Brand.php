@@ -15,6 +15,11 @@ class Brand extends Model
         'description',
     ];
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
     public static function options()
     {
         return Brand::get()->pluck('name', 'id');

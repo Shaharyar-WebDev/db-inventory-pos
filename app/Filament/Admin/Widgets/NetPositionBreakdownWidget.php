@@ -3,10 +3,19 @@
 namespace App\Filament\Admin\Widgets;
 
 use App\Services\NetPositionService;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Widgets\Widget;
 
 class NetPositionBreakdownWidget extends Widget
 {
+    use HasPageShield;
+
+    public static function canView(): bool
+    {
+        return filament()->auth()->user()->isSuperAdmin();
+    }
+
+
     protected string $view = 'filament.admin.widgets.net-position-breakdown-widget';
 
     protected int | string | array $columnSpan = 'full';

@@ -6,17 +6,18 @@ use App\Filament\Admin\Resources\Master\Brands\Pages\CreateBrand;
 use App\Filament\Admin\Resources\Master\Brands\Pages\EditBrand;
 use App\Filament\Admin\Resources\Master\Brands\Pages\ListBrands;
 use App\Filament\Admin\Resources\Master\Brands\Pages\ViewBrand;
+use App\Filament\Admin\Resources\Master\Brands\RelationManagers\ProductsRelationManager;
 use App\Filament\Admin\Resources\Master\Brands\Schemas\BrandForm;
 use App\Filament\Admin\Resources\Master\Brands\Schemas\BrandInfolist;
 use App\Filament\Admin\Resources\Master\Brands\Tables\BrandsTable;
 use App\Models\Master\Brand;
+use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Traits\IgnoresSoftDeleteRouteBinding;
 
 class BrandResource extends Resource
 {
@@ -45,7 +46,7 @@ class BrandResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProductsRelationManager::class
         ];
     }
 
@@ -53,9 +54,9 @@ class BrandResource extends Resource
     {
         return [
             'index' => ListBrands::route('/'),
-            // 'create' => CreateBrand::route('/create'),
-            // 'view' => ViewBrand::route('/{record}'),
-            // 'edit' => EditBrand::route('/{record}/edit'),
+            'create' => CreateBrand::route('/create'),
+            'view' => ViewBrand::route('/{record}'),
+            'edit' => EditBrand::route('/{record}/edit'),
         ];
     }
 

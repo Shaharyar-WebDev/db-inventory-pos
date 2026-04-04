@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\Master\Products\Schemas;
+namespace App\Filament\Admin\Resources\Master\Products\RelationManagers;
 
 use App\Filament\Admin\Resources\Master\Brands\Schemas\BrandForm;
 use App\Filament\Admin\Resources\Master\Categories\Schemas\CategoryForm;
@@ -8,21 +8,39 @@ use App\Filament\Admin\Resources\Master\Units\Schemas\UnitForm;
 use App\Models\Master\Brand;
 use App\Models\Master\Category;
 use App\Models\Master\Unit;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 
-class ProductForm
+class VariantsRelationManager extends RelationManager
 {
-    public static function configure(Schema $schema): Schema
+    protected static string $relationship = 'variants';
+
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -229,6 +247,78 @@ class ProductForm
                                     ]),
                             ]),
                     ]),
+            ]);
+    }
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                // TextEntry::make('name'),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('name')
+            ->columns([
+                ImageColumn::make('thumbnail')
+                    ->circular()
+                    ->imageSize(80)
+                    ->placeholder('---')
+                    ->disk('public')
+                    ->visibility('public'),
+                TextColumn::make('name')
+                    ->copyable(),
+                // TextColumn::make('code')
+                //     ->toggleable(isToggledHiddenByDefault: true)
+                //     ->copyable(),
+                TextColumn::make('category.name')
+                    ->copyable(),
+                TextColumn::make('brand.name')
+                    ->copyable(),
+                TextColumn::make('unit.name')
+                    ->copyable(),
+                TextColumn::make('group.name')
+                    ->copyable(),
+                TextColumn::make('cost_price')
+                    ->currency()
+                    ->copyable(),
+                TextColumn::make('selling_price')
+                    ->currency()
+                    ->copyable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->headerActions([
+                CreateAction::make()->slideOver()->modalWidth(Width::FiveExtraLarge),
+                AssociateAction::make(),
+            ])
+            ->recordActions([
+                // ViewAction::make(),
+                EditAction::make()->slideOver()->modalWidth(Width::FiveExtraLarge),
+                DissociateAction::make(),
+                DeleteAction::make(),
+                ReplicateAction::make()->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->rules('unique:products,name')
+                        ->default(fn(Get $get) => $get('name') . ' Copy'),
+                ]),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DissociateBulkAction::make(),
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }

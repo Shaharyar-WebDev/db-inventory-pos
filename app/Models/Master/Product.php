@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Master;
 
 use App\Models\Inventory\InventoryLedger;
@@ -86,12 +87,13 @@ class Product extends Model
 
     public function fullName(): Attribute
     {
+        $parentName = $this->parent?->name;
         $name = $this->name;
         $brand = $this->brand?->name;
         $category = $this->category?->name;
 
         return Attribute::make(
-            get: fn () => collect([$name, $brand, $category])->filter()->implode(' - ')
+            get: fn() => collect([$parentName, $name, $brand, $category])->filter()->implode(' - ')
         );
     }
 
@@ -151,6 +153,20 @@ class Product extends Model
             ->with('outlet');
     }
 
-    public function scopeWithTotalSaleQty()
-    {}
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Product::class, 'parent_product_id');
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(Product::class, 'parent_product_id');
+    }
+
+    public function scopeWithTotalSaleQty() {}
 }
