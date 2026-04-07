@@ -18,5 +18,5 @@ Route::get('/optimize/clear', function () {
 })->name('optimize:clear');
 
 Route::get('terminal/{any?}', function () {
-    return file_get_contents(public_path('pos/index.html'));
+    return file_get_contents(public_path('terminal/index.html'));
 })->where('any', '.*');
