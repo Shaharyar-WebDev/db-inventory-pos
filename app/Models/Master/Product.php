@@ -35,6 +35,7 @@ class Product extends Model
         'brand_id',
         'cost_price',
         'selling_price',
+        'parent_product_id',
         'sub_unit_selling_price',
         'tags',
     ];

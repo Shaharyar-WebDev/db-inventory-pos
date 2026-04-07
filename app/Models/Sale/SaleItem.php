@@ -10,8 +10,6 @@ use App\Models\Master\Unit;
 use App\Models\Sale\Sale;
 use App\Models\Traits\HasTransactionType;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Filament\Notifications\Notification;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -95,20 +93,29 @@ class SaleItem extends Model
 
             $baseQty = $item->product->toBaseQty($item->qty, $item->unit_id);
 
+            $data =  [
+                'product_id'     => $item->product_id,
+                'unit_id'        => $product->unit_id, // base unit
+                'qty'            => -$baseQty,
+                'rate'           => $avgRate,
+                'value'          => - ($avgRate * $baseQty),
+                'transaction_type' => TransactionType::SALE,
+                'remarks'        => 'Sale Saved',
+            ];
+
+
+            if (!filament()->getPanel()) {
+                $data = array_merge($data, [
+                    'outlet_id' => $item->sale->outlet_id,
+                ]);
+            }
+
             InventoryLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
                     'source_id'   => $item->id,
                 ],
-                [
-                    'product_id'     => $item->product_id,
-                    'unit_id'        => $product->unit_id, // base unit
-                    'qty'            => -$baseQty,
-                    'rate'           => $avgRate,
-                    'value'          => - ($avgRate * $baseQty),
-                    'transaction_type' => TransactionType::SALE,
-                    'remarks'        => 'Sale Saved',
-                ]
+                $data
             );
         });
 

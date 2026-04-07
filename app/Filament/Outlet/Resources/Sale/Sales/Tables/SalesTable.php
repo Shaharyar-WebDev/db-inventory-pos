@@ -13,9 +13,12 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -60,6 +63,10 @@ class SalesTable
                 TextColumn::make('grand_total')
                     ->sumCurrency()
                     ->currency(),
+                IconColumn::make('is_pos')
+                    ->boolean(),
+                TextColumn::make('pos_receipt_number')
+                    ->copyable(),
                 TextColumn::make('rider.name'),
                 TextColumn::make('description')
                     ->desc(),
@@ -111,7 +118,11 @@ class SalesTable
                     ->relationship('rider', 'name')
                     ->searchable()
                     ->preload()
-                    ->optionsLimit(10)
+                    ->optionsLimit(10),
+                TernaryFilter::make('is_pos')
+                    ->label('POS')
+                    ->trueLabel('POS Sales Only')
+                    ->falseLabel('Normal Sales Only'),
             ])
             ->summaries(
                 // allTableCondition: false

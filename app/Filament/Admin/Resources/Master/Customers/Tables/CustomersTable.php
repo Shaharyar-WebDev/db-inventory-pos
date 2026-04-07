@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Master\Customers\Tables;
 
 use App\Filament\Admin\Resources\Master\Customers\Actions\CustomerLedgerExportAction;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -12,11 +13,13 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CustomersTable
 {
@@ -89,6 +92,16 @@ class CustomersTable
                 // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                Action::make('delete_opening_balance_entry')
+                    ->action(function ($record) {
+                        $record->ledger?->delete();
+                    })
+                    ->visible(fn(Model $record) => $record->ledger)
+                    ->color('danger')
+                    ->icon(Heroicon::XCircle)
+                    ->tooltip('This will delete the opening balance entry for this customer. use if you accidentally create a customer and want to delete it.')
+                    ->label('Delete Opening Balance Entry')
+                    ->requiresConfirmation(),
                 // RestoreAction::make(),
                 // ForceDeleteAction::make(),
                 CustomerLedgerExportAction::make(),

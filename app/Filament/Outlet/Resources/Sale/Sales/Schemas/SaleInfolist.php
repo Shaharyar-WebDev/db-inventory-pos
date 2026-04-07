@@ -28,6 +28,7 @@ class SaleInfolist
                             ->collapsible()
                             ->schema([
                                 TextEntry::make('customer.name')->label('Customer'),
+                                TextEntry::make('pos_receipt_number')->label('POS Receipt Number'),
                                 TextEntry::make('total')->currency(),
                                 TextEntry::make('tax_charges')->currency(),
                                 TextEntry::make('delivery_charges')->currency(),

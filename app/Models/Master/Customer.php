@@ -151,15 +151,12 @@ class Customer extends Model
 
                 throw new \Exception('Walk-in customer cannot be deleted');
             }
-
-            if (! $customer->receipts()->exists() && ! $customer->sales()->exists()) {
-                if ($customer->ledger && $customer->amount === 0) {
-                    $customer->ledger->customer_id = null;
-                    $customer->ledger->save();
-
-                    // $customer->ledger()->delete();
-                }
-            }
+            
+            // if (! $customer->receipts()->exists() && ! $customer->sales()->exists()) {
+            //     if ($customer->ledgers->count() === 1 && $customer->ledger->amount === 0) {
+            //         $customer->ledger->delete();
+            //     }
+            // }
         });
     }
 }

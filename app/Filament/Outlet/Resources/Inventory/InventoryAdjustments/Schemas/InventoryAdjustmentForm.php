@@ -2,6 +2,7 @@
 
 namespace App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas;
 
+use App\Filament\Schemas\Components\ProductSelect;
 use App\Models\Master\Product;
 use Carbon\Unit;
 use Filament\Forms\Components\Repeater;
@@ -31,8 +32,7 @@ class InventoryAdjustmentForm
                     ->addable(fn($operation) => $operation !== 'edit')
                     ->minItems(fn($operation) => $operation === 'edit' ? 0 : 1)
                     ->schema([
-                        Select::make('product_id')
-                            ->relationship('product', 'name')
+                        ProductSelect::make()
                             ->searchable()
                             ->disabledOn('edit')
                             ->preload()

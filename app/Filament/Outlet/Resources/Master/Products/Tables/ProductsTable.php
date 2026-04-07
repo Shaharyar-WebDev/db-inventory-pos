@@ -27,6 +27,7 @@ class ProductsTable
                     ->disk('public')
                     ->visibility('public'),
                 TextColumn::make('name')
+                    ->extraAttributes(['data-disable-numeric' => true])
                     ->copyable(),
                 // TextColumn::make('code')
                 //     ->toggleable(isToggledHiddenByDefault: true)

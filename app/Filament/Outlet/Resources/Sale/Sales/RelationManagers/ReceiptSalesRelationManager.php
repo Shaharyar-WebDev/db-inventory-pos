@@ -2,6 +2,7 @@
 
 namespace App\Filament\Outlet\Resources\Sale\Sales\RelationManagers;
 
+use App\Enums\ReceiptStatus;
 use App\Filament\Outlet\Resources\Accounting\Receipts\ReceiptResource;
 use App\Filament\Outlet\Resources\Accounting\Receipts\Schemas\ReceiptForm;
 use App\Filament\Outlet\Resources\Sale\Sales\SaleResource;
@@ -13,6 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Validation\Rule;
@@ -76,6 +78,22 @@ class ReceiptSalesRelationManager extends RelationManager
                     ]), true)
                     ->visible(fn($livewire) => self::shouldShowOnResource($livewire, ReceiptResource::class))
                     ->searchable(),
+                TextColumn::make('receipt.amount')
+                    ->label('Amount')
+                    ->visible(fn($livewire) => !self::shouldShowOnResource($livewire, ReceiptResource::class))
+                    ->sumCurrency()
+                    ->currency(),
+                SelectColumn::make('receipt.status')
+                    ->label('Status')
+                    ->options(ReceiptStatus::class)
+                    ->sortable()
+                    ->visible(fn($livewire) => !self::shouldShowOnResource($livewire, ReceiptResource::class))
+                    ->searchable()
+                    ->disabled(fn() => !filament()->auth()->user()->can('UpdateStatus:Receipt')),
+                TextColumn::make('receipt.remarks')
+                    ->label('Remarks')
+                    ->visible(fn($livewire) => !self::shouldShowOnResource($livewire, ReceiptResource::class))
+                    ->desc(),
             ])
             ->filters([
                 //
@@ -94,4 +112,3 @@ class ReceiptSalesRelationManager extends RelationManager
             ]);
     }
 }
-

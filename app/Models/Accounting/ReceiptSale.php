@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Accounting;
 
 use App\Models\Sale\Sale;
@@ -9,7 +10,6 @@ class ReceiptSale extends Model
     protected $fillable = [
         'receipt_id',
         'sale_id',
-        'amount',
     ];
 
     public function sale()
@@ -20,5 +20,14 @@ class ReceiptSale extends Model
     public function receipt()
     {
         return $this->belongsTo(Receipt::class);
+    }
+
+    public static function booted()
+    {
+        static::created(function ($receiptSale) {
+            $receiptSale->receipt->update([
+                'remarks' => $receiptSale->receipt->remarks . ' | Sale : ' . $receiptSale->sale->sale_number,
+            ]);
+        });
     }
 }

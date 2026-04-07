@@ -9,6 +9,7 @@ use App\Models\Accounting\ReceiptSale;
 use App\Models\Master\Customer;
 use App\Models\Sale\SaleItem;
 use App\Models\Sale\SaleReturn;
+use App\Models\Scopes\OutletScope;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
 use App\Models\Traits\ResolvesDocumentNumber;
@@ -33,11 +34,13 @@ class Sale extends Model
         'sale_number',
         'customer_id',
         'description',
+        'pos_receipt_number',
         'total',
         'discount_type',
         'discount_value',
         'discount_amount',
         'delivery_charges',
+        'is_pos',
         'tax_charges',
         'grand_total',
         'outlet_id',
@@ -45,6 +48,7 @@ class Sale extends Model
 
     protected $casts = [
         'discount_type' => DiscountType::class,
+        'is_pos' => 'boolean',
     ];
 
     public function customer(): BelongsTo
@@ -259,7 +263,7 @@ class Sale extends Model
                     'customer_id'      => $sale->customer_id,
                     'amount'           => $sale->grand_total,
                     'transaction_type' => TransactionType::SALE,
-                    'remarks'          => 'Sale Saved',
+                    'remarks'          => "Sale Saved {$sale->sale_number} for customer {$sale->customer->name}",
                 ]
             );
             // } else {
@@ -277,8 +281,18 @@ class Sale extends Model
 
                 throw new Exception();
             }
-            $sale->ledger()->delete();
             $sale->items->each->delete();
+            $sale->receiptSales->each(function ($receiptSale) {
+                $receipt = $receiptSale->receipt;
+
+                if ($receipt) {
+                    $receipt->receiptSales()->delete(); // remove all pivot rows for this receipt
+                    $receipt->delete();
+                } else {
+                    $receiptSale->delete(); // orphaned pivot, clean it up anyway
+                }
+            });
+            $sale->ledger()->withoutGlobalScope(OutletScope::class)->delete();
             // if ($sale->ledger) {
             //     Notification::make('record_deletion_error')
             //         ->danger()
