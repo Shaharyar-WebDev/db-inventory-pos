@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Pos\PosBootstrapController;
 use App\Http\Controllers\Api\Pos\PosSaleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Middleware\Api\EnsureOutletAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,19 +43,3 @@ Route::prefix('pos')->group(function () {
 
 });
 
-
-class EnsureOutletAccess
-{
-    public function handle($request, Closure $next)
-    {
-        $outletId = $request->header('x-outlet-id');
-
-        $outlet = $request->user()->outlets()->find($outletId);
-
-        if (!$outlet) {
-            return response()->json(['message' => 'Outlet access revoked'], 403);
-        }
-
-        return $next($request);
-    }
-}
