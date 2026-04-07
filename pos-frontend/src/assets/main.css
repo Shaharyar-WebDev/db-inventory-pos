@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@source "../**/*.{vue,js}";
+
+:root {
+    /* Typography */
+    --font-family: "Space Grotesk", sans-serif;
+    --mono-font-family:
+        "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas",
+        monospace;
+    --serif-font-family:
+        "ui-serif", "Georgia", "Cambria", "Times New Roman", serif;
+}
+
+html {
+    scrollbar-gutter: stable;
+}
+
+html::-webkit-scrollbar {
+    width: 10px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Applying the Mono font to code elements */
+code,
+pre,
+kbd {
+    font-family: var(--mono-font-family);
+}
+
+.gradient-body {
+    margin: 0;
+    background-color: #fff;
+    background-image:
+        radial-gradient(closest-side, #deff93, rgba(222, 255, 147, 0)),
+        radial-gradient(closest-side, #c6befc, rgba(198, 190, 252, 0)),
+        radial-gradient(closest-side, #deff93, rgba(222, 255, 147, 0)),
+        radial-gradient(closest-side, #c6befc, rgba(198, 190, 252, 0)),
+        radial-gradient(closest-side, #deff93, rgba(222, 255, 147, 0));
+    background-size:
+        130vmax 130vmax,
+        80vmax 80vmax,
+        90vmax 90vmax,
+        110vmax 110vmax,
+        90vmax 90vmax;
+    background-position:
+        -80vmax -80vmax,
+        60vmax -30vmax,
+        10vmax 10vmax,
+        -30vmax -10vmax,
+        50vmax 50vmax;
+    background-repeat: no-repeat;
+    /* animation: movement 4s linear infinite; */
+}
+
+@keyframes movement {
+    0%,
+    100% {
+        background-size:
+            130vmax 130vmax,
+            80vmax 80vmax,
+            90vmax 90vmax,
+            110vmax 110vmax,
+            90vmax 90vmax;
+        background-position:
+            -80vmax -80vmax,
+            60vmax -30vmax,
+            10vmax 10vmax,
+            -30vmax -10vmax,
+            50vmax 50vmax;
+    }
+    25% {
+        background-size:
+            100vmax 100vmax,
+            90vmax 90vmax,
+            100vmax 100vmax,
+            90vmax 90vmax,
+            60vmax 60vmax;
+        background-position:
+            -60vmax -90vmax,
+            50vmax -40vmax,
+            0 -20vmax,
+            -40vmax -20vmax,
+            40vmax 60vmax;
+    }
+    50% {
+        background-size:
+            80vmax 80vmax,
+            110vmax 110vmax,
+            80vmax 80vmax,
+            60vmax 60vmax,
+            80vmax 80vmax;
+        background-position:
+            -50vmax -70vmax,
+            40vmax -30vmax,
+            10vmax 0,
+            20vmax 10vmax,
+            30vmax 70vmax;
+    }
+
+    75% {
+        background-size:
+            90vmax 90vmax,
+            90vmax 90vmax,
+            100vmax 100vmax,
+            90vmax 90vmax,
+            70vmax 70vmax;
+        background-position:
+            -50vmax -40vmax,
+            50vmax -30vmax,
+            20vmax 0,
+            -10vmax 10vmax,
+            40vmax 60vmax;
+    }
+}
+
+#app-loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.2s ease;
+}
+
+#app-loading.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#app-loading .spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #1f2937;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

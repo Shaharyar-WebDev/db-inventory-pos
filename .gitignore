@@ -23,6 +23,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /.ddev
-/pos-frontend/*
-/public/pos/*
+# /pos-frontend/*
+# /public/pos/*
 /.misc/*
