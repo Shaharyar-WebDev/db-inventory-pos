@@ -143,7 +143,7 @@ async function login() {
 
   try {
     await session.login(email.value, password.value);
-    window.location.href = "/pos/outlets";
+    window.location.href = "/terminal/outlets";
   } catch (err) {
     error.value = err.response?.data?.message || "Invalid email or password";
   } finally {

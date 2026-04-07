@@ -2,7 +2,7 @@ import axios from 'axios'
 import { db } from './db'
 
 const api = axios.create({
-    baseURL: '/api/pos',
+    baseURL: '/api/terminal',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -38,7 +38,7 @@ api.interceptors.response.use(
         }
         if (error.response?.status === 403 && !window.location.pathname.includes('/login')) {
             await db.session.clear()
-            window.location.href = '/pos/login'
+            window.location.href = '/terminal/login'
         }
         return Promise.reject(error)
     }

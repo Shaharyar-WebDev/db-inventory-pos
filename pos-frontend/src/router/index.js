@@ -14,7 +14,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/pos/'),
+    history: createWebHistory('/terminal/'),
     routes,
 })
 

@@ -62,7 +62,7 @@ export const useSessionStore = defineStore('session', () => {
         outlet.value = null
 
         await db.session.clear()
-        window.location.href = '/pos/login'
+        window.location.href = '/terminal/login'
     }
 
     async function getLoggedInUserOutlets() {
