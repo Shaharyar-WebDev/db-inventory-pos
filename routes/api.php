@@ -14,7 +14,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::prefix('pos')->group(function () {
+Route::prefix('terminal')->group(function () {
 
     // Public
     Route::post('/login', [PosAuthController::class, 'login']);
