@@ -29,7 +29,13 @@ class Purchase extends Model
         'supplier_id',
         'description',
         'outlet_id',
+        'total',
         'grand_total',
+        'tax_charges',
+        'delivery_charges',
+        'discount_amount',
+        'discount_value',
+        'discount_type',
     ];
 
     protected $casts = [

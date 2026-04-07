@@ -1,6 +1,13 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Purchase\Purchases\Schemas;
 
+use App\Filament\Outlet\Resources\Sale\Sales\Components\DiscountAmountInput;
+use App\Filament\Outlet\Resources\Sale\Sales\Components\DiscountTypeSelect;
+use App\Filament\Outlet\Resources\Sale\Sales\Components\DiscountValueInput;
+use App\Filament\Outlet\Resources\Sale\Sales\Components\GrandTotalInput;
+use App\Filament\Outlet\Resources\Sale\Sales\Components\TotalAmountInput;
+use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleForm;
 use App\Models\Master\Product;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -32,7 +39,7 @@ class PurchaseForm
                     ->dehydrated(false),
                 Group::make()
                     ->columnSpanFull()
-                    ->columns(3)
+                    ->columns(2)
                     ->schema([
                         Section::make()
                             ->columnSpan(2)
@@ -42,26 +49,58 @@ class PurchaseForm
                                     ->columnSpanFull()
                                     ->required(),
                             ]),
-                        Section::make()
-                            ->columnSpan(1)
-                            ->schema([
-                                TextInput::make('grand_total')
-                                    ->label('Total Amount')
-                                    ->numeric()
-                                    ->readonly()
-                                    ->saved()
-                                    ->dehydrateStateUsing(function (Get $get) {
-                                        $items = $get('items') ?? [];
-                                        $total = 0;
-                                        foreach ($items as $item) {
-                                            $qty  = $item['qty'] ?? 0;
-                                            $rate = $item['rate'] ?? 0;
+                    ]),
+                Section::make()
+                    ->columnSpan(2)
+                    ->columnSpanFull()
+                    ->schema([
+                        // TextInput::make('grand_total')
+                        //     ->label('Total Amount')
+                        //     ->numeric()
+                        //     ->readonly()
+                        //     ->saved()
+                        //     ->dehydrateStateUsing(function (Get $get) {
+                        //         $items = $get('items') ?? [];
+                        //         $total = 0;
+                        //         foreach ($items as $item) {
+                        //             $qty  = $item['qty'] ?? 0;
+                        //             $rate = $item['rate'] ?? 0;
 
-                                            $total += ($qty * $rate);
-                                        }
-                                        return $total;
-                                    })
-                                    ->currency(),
+                        //             $total += ($qty * $rate);
+                        //         }
+                        //         return $total;
+                        //     })
+                        //     ->currency(),
+
+                        Group::make()
+                            ->columnSpanFull()
+                            ->columns(4)
+                            ->schema([
+                                TotalAmountInput::make(),
+                                DiscountTypeSelect::make(),
+                                DiscountValueInput::make(),
+                                DiscountAmountInput::make(),
+                            ]),
+
+                        Group::make()
+                            ->columnSpanFull()
+                            ->columns(3)
+                            ->schema([
+                                TextInput::make('delivery_charges')
+                                    ->currency()
+                                    ->minValue(0)
+                                    ->rules('min:0')
+                                    ->calculator()
+                                    ->afterStateUpdatedJs(SaleForm::calculateGrandTotal())
+                                    ->required(),
+                                TextInput::make('tax_charges')
+                                    ->currency()
+                                    ->minValue(0)
+                                    ->rules('min:0')
+                                    ->calculator()
+                                    ->afterStateUpdatedJs(SaleForm::calculateGrandTotal())
+                                    ->required(),
+                                GrandTotalInput::make(),
                             ]),
                     ]),
                 Repeater::make('items')
@@ -70,21 +109,22 @@ class PurchaseForm
                     ->minItems(fn($operation) => $operation == 'edit' ? 0 : 1)
                     ->columnSpanFull()
                     ->columns(4)
-                    ->afterStateUpdatedJs(<<<'JS'
-                        const items = $get('items') ?? {};
-                        let grandTotal = 0;
+                    // ->afterStateUpdatedJs(<<<'JS'
+                    //     const items = $get('items') ?? {};
+                    //     let grandTotal = 0;
 
-                        Object.keys(items).forEach(key => {
-                            const item = items[key];
-                            const qty  = parseFloat(item.qty) || 0;
-                            const rate = parseFloat(item.rate) || 0;
-                            item.total = qty * rate;
-                            grandTotal += item.total;
-                        });
+                    //     Object.keys(items).forEach(key => {
+                    //         const item = items[key];
+                    //         const qty  = parseFloat(item.qty) || 0;
+                    //         const rate = parseFloat(item.rate) || 0;
+                    //         item.total = qty * rate;
+                    //         grandTotal += item.total;
+                    //     });
 
-                        $set('items', items);
-                        $set('grand_total', grandTotal);
-                    JS)
+                    //     $set('items', items);
+                    //     $set('grand_total', grandTotal);
+                    // JS)
+                    ->afterStateUpdatedJs(SaleForm::calculateGrandTotal())
                     ->table([
                         TableColumn::make('Product'),
                         TableColumn::make('Quantity'),
@@ -125,19 +165,20 @@ class PurchaseForm
                             ->label('Quantity')
                             ->numeric()
                             ->required()
-                        // ->suffix(function(Get $get) use ($productsKeyedArray){
-                        //     $productId = $get('product_id');
-                        //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
-                        // })
-                            ->afterStateUpdatedJs(self::updateGrandTotals())
+                            // ->suffix(function(Get $get) use ($productsKeyedArray){
+                            //     $productId = $get('product_id');
+                            //     return $productsKeyedArray[$productId]['unit']['symbol'] ?? null;
+                            // })
+                            // ->afterStateUpdatedJs(self::updateGrandTotals())
+                            ->afterStateUpdatedJs(SaleForm::calculateTotals())
                             ->default(0)
-                            ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
-                            ->step(1),
+                            ->minValue(fn($operation) => $operation === "edit" ? 0 : 1),
                         TextInput::make('rate')
                             ->required()
                             ->currency()
                             ->calculator()
-                            ->afterStateUpdatedJs(self::updateGrandTotals())
+                            // ->afterStateUpdatedJs(self::updateGrandTotals())
+                            ->afterStateUpdatedJs(SaleForm::calculateTotals())
                             ->minValue(1)
                             ->step(0.01),
                         TextInput::make('total')
