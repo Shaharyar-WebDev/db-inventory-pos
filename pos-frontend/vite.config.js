@@ -15,13 +15,11 @@ export default defineConfig({
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
                 navigateFallback: "/terminal/index.html",
-                navigateFallbackAllowlist: [/^\/terminal/],
             },
             manifest: {
                 name: "POS",
                 short_name: "POS",
                 start_url: "/terminal/",
-                scope: "/terminal/",
                 display: "standalone",
                 background_color: "#ffffff",
                 theme_color: "#000000",
@@ -36,7 +34,7 @@ export default defineConfig({
     },
 
     build: {
-        outDir: "../public/pos-terminal",
+        outDir: "../public/terminal",
         emptyOutDir: true,
     },
 
