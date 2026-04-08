@@ -17,7 +17,7 @@ Route::get('/optimize/clear', function () {
     return back();
 })->name('optimize:clear');
 
-Route::get('/terminal', fn() => redirect('/terminal/', 301));
+Route::get('/terminal', fn() => redirect('/terminal/login', 301));
 
 Route::get('/terminal/{any?}', function () {
     $html = file_get_contents(public_path('pos-terminal/index.html'));
