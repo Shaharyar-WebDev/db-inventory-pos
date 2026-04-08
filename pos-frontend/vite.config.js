@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-    base: "/terminal/",
+    base: "/pos-terminal/",
 
     plugins: [
         tailwindcss(),
@@ -14,12 +14,12 @@ export default defineConfig({
             registerType: "autoUpdate",
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-                navigateFallback: "/terminal/index.html",
+                navigateFallback: "/pos-terminal/index.html",
             },
             manifest: {
                 name: "POS",
                 short_name: "POS",
-                start_url: "/terminal/",
+                start_url: "/pos-terminal/",
                 display: "standalone",
                 background_color: "#ffffff",
                 theme_color: "#000000",
