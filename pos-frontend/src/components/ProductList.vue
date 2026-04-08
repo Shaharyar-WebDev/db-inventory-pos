@@ -215,7 +215,7 @@
         class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] items-start gap-3.5"
       >
         <div
-          v-for="product in filteredProducts"
+          v-for="product in paginatedProducts"
           :key="product.id"
           @click="product.current_outlet_stock > 0 && cart.addItem(product)"
           class="product-card relative bg-white border border-gray-200 rounded-xl overflow-hidden transition-all"
@@ -333,12 +333,21 @@
           </div>
         </div>
       </TransitionGroup>
+
+      <div v-if="hasMore" class="flex justify-center pt-4 pb-2">
+        <button
+          @click="currentPage++"
+          class="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
+        >
+          Load more ({{ filteredProducts.length - paginatedProducts.length }} remaining)
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useSessionStore } from "@/stores/session";
 import { useCartStore } from "@/stores/cart";
 
@@ -460,6 +469,22 @@ const filteredProducts = computed(() => {
     );
   });
 });
+
+const PAGE_SIZE = 20;
+const currentPage = ref(1);
+
+watch(filteredProducts, () => {
+  currentPage.value = 1;
+});
+
+const paginatedProducts = computed(() => {
+  const end = currentPage.value * PAGE_SIZE;
+  return filteredProducts.value.slice(0, end);
+});
+
+const hasMore = computed(
+  () => paginatedProducts.value.length < filteredProducts.value.length
+);
 </script>
 
 <style scoped>
