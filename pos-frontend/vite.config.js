@@ -34,7 +34,7 @@ export default defineConfig({
     },
 
     build: {
-        outDir: "../public/terminal",
+        outDir: "../public/pos-terminal",
         emptyOutDir: true,
     },
 
