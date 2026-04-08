@@ -114,7 +114,6 @@
             <span class="text-xs text-gray-400">Copyright by Shaharyar Ahmed</span>
           </div>
         </form>
-        
       </div>
     </div>
   </div>
@@ -124,6 +123,7 @@
 import { ref } from "vue";
 import { useSessionStore } from "@/stores/session";
 import { Loader } from "@lucide/vue";
+import { onMounted } from "vue";
 
 const email = ref("");
 const password = ref("");

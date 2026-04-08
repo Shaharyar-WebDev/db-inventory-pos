@@ -22,8 +22,12 @@
         <div class="p-6 space-y-5">
           <!-- Grand Total -->
           <div class="bg-gray-50 rounded-full p-4 text-center">
-            <p class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-1">Grand Total</p>
-            <p class="text-3xl font-bold text-gray-900">₨ {{ formatPrice(cart.grandTotal) }}</p>
+            <p class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-1">
+              Grand Total
+            </p>
+            <p class="text-3xl font-bold text-gray-900">
+              ₨ {{ formatPrice(cart.grandTotal) }}
+            </p>
           </div>
 
           <!-- Account Selection -->
@@ -31,33 +35,83 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               Account <span class="text-red-500">*</span>
             </label>
-            <div
-              class="relative border rounded-full overflow-hidden transition-all focus-within:ring-2 focus-within:ring-gray-200"
-              :class="!cart.accountId ? 'border-red-300' : 'border-gray-200'"
+            <Combobox
+              :model-value="cart.accountId"
+              @update:model-value="cart.accountId = $event"
             >
-              <select
-                :value="cart.accountId"
-                @change="cart.accountId = Number($event.target.value) || null"
-                class="w-full px-4 py-3 text-sm bg-white focus:outline-none appearance-none cursor-pointer"
+              <!-- outer: just border + focus ring, NO overflow-hidden -->
+              <div
+                class="border rounded-full transition-all focus-within:ring-2 focus-within:ring-gray-200"
+                :class="!cart.accountId ? 'border-red-300' : 'border-gray-200'"
               >
-                <option :value="null">-- Select Account --</option>
-                <option v-for="account in session.accounts" :key="account.id" :value="account.id">
-                  {{ account.name }}{{ account.account_number ? ` (${account.account_number})` : '' }}
-                </option>
-              </select>
-              <ChevronDown class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            </div>
-            <p v-if="!cart.accountId" class="text-red-500 text-sm mt-1">Account is required</p>
+                <!-- inner: relative for dropdown positioning -->
+                <div class="relative">
+                  <ComboboxButton class="w-full">
+                    <ComboboxInput
+                      class="w-full px-4 py-3 text-sm bg-white rounded-full focus:outline-none cursor-pointer"
+                      :display-value="
+                        (id) => session.accounts.find((a) => a.id === id)?.name ?? ''
+                      "
+                      @change="accountQuery = $event.target.value"
+                      placeholder="-- Select Account --"
+                    />
+                  </ComboboxButton>
+                  <ComboboxOptions
+                    class="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-2xl shadow-lg overflow-auto max-h-48 text-sm focus:outline-none"
+                  >
+                    <ComboboxOption :value="null" v-slot="{ active }">
+                      <div
+                        :class="[
+                          'px-4 py-2 cursor-pointer text-gray-400 italic',
+                          active ? 'bg-gray-100' : '',
+                        ]"
+                      >
+                        Select Account
+                      </div>
+                    </ComboboxOption>
+                    <ComboboxOption
+                      v-for="account in filteredAccounts"
+                      :key="account.id"
+                      :value="account.id"
+                      v-slot="{ active }"
+                    >
+                      <div
+                        :class="[
+                          'px-4 py-2 cursor-pointer',
+                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        ]"
+                      >
+                        {{ account.name
+                        }}{{
+                          account.account_number ? ` (${account.account_number})` : ""
+                        }}
+                      </div>
+                    </ComboboxOption>
+                  </ComboboxOptions>
+                </div>
+              </div>
+            </Combobox>
+            <p v-if="!cart.accountId" class="text-red-500 text-sm mt-1">
+              Account is required
+            </p>
           </div>
 
           <!-- Amount Paid -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Amount Paid (₨)</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Amount Paid (₨)</label
+            >
             <div
               class="flex items-center border rounded-full overflow-hidden transition-all focus-within:ring-2 focus-within:ring-gray-200"
-              :class="isWalkIn && cart.amountPaid < cart.grandTotal ? 'border-red-300' : 'border-gray-200'"
+              :class="
+                isWalkIn && cart.amountPaid < cart.grandTotal
+                  ? 'border-red-300'
+                  : 'border-gray-200'
+              "
             >
-              <span class="px-4 py-3 text-gray-500 bg-gray-50 border-r border-gray-200">₨</span>
+              <span class="px-4 py-3 text-gray-500 bg-gray-50 border-r border-gray-200"
+                >₨</span
+              >
               <input
                 type="number"
                 min="0"
@@ -70,25 +124,36 @@
             </div>
           </div>
 
-          <!-- Payment Status Banner -->
+          <Transition name="alert">
+            <!-- Payment Status Banner -->
             <div
               v-if="paymentBanner"
               :key="paymentBanner.key"
               class="flex items-center gap-2 rounded-full px-4 py-3"
               :class="paymentBanner.classes"
             >
-              <component :is="paymentBanner.icon" class="w-4 h-4 shrink-0" :class="paymentBanner.iconClass" />
-              <p class="text-sm font-medium" :class="paymentBanner.textClass">{{ paymentBanner.message }}</p>
+              <component
+                :is="paymentBanner.icon"
+                class="w-4 h-4 shrink-0"
+                :class="paymentBanner.iconClass"
+              />
+              <p class="text-sm font-medium" :class="paymentBanner.textClass">
+                {{ paymentBanner.message }}
+              </p>
             </div>
-
+          </Transition>
           <!-- Balance Due -->
-          <div
-            v-if="cart.amountPaid <= cart.grandTotal"
-            class="flex justify-between items-center pt-2 border-t border-gray-100"
-          >
-            <span class="text-sm text-gray-500">Balance Due</span>
-            <span class="text-xl font-bold text-gray-900">₨ {{ formatPrice(cart.grandTotal - cart.amountPaid) }}</span>
-          </div>
+          <Transition name="alert">
+            <div
+              v-if="cart.amountPaid <= cart.grandTotal"
+              class="flex justify-between items-center py-2"
+            >
+              <span class="text-sm text-gray-500">Balance Due</span>
+              <span class="text-xl font-bold text-gray-900">
+                ₨ {{ formatPrice(cart.grandTotal - cart.amountPaid) }}
+              </span>
+            </div>
+          </Transition>
         </div>
 
         <!-- Footer Actions -->
@@ -101,12 +166,22 @@
           </button>
           <button
             @click="$emit('submit')"
-            :disabled="submitting || !cart.accountId || (isWalkIn && cart.amountPaid < cart.grandTotal)"
+            :disabled="
+              submitting ||
+              !cart.accountId ||
+              (isWalkIn && cart.amountPaid < cart.grandTotal)
+            "
             class="flex-1 cursor-pointer px-4 py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation flex items-center justify-center gap-2"
           >
             <Loader v-if="submitting" class="w-4 h-4 animate-spin" />
             <Save v-else class="w-4 h-4" />
-            {{ submitting ? 'Processing...' : session.appIsOnline ? 'Save Sale' : 'Queue Offline' }}
+            {{
+              submitting
+                ? "Processing..."
+                : session.appIsOnline
+                ? "Save Sale"
+                : "Queue Offline"
+            }}
           </button>
         </div>
       </div>
@@ -115,80 +190,128 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useCartStore } from '@/stores/cart'
-import { useSessionStore } from '@/stores/session'
-import { X, ChevronDown, AlertCircle, Info, Wallet, Loader, Save } from '@lucide/vue'
+import { computed, ref } from "vue";
+import { useCartStore } from "@/stores/cart";
+import { useSessionStore } from "@/stores/session";
+import { X, ChevronDown, AlertCircle, Info, Wallet, Loader, Save } from "@lucide/vue";
+import {
+  Combobox,
+  ComboboxButton,
+  ComboboxInput,
+  ComboboxOptions,
+  ComboboxOption,
+} from "@headlessui/vue";
 
 const props = defineProps({
   show: Boolean,
   submitting: Boolean,
   isWalkIn: Boolean,
-})
+});
 
-defineEmits(['close', 'submit'])
+defineEmits(["close", "submit"]);
 
-const cart = useCartStore()
-const session = useSessionStore()
+const accountQuery = ref("");
+
+const filteredAccounts = computed(() =>
+  accountQuery.value === ""
+    ? session.accounts
+    : session.accounts.filter(
+        (a) =>
+          a.name.toLowerCase().includes(accountQuery.value.toLowerCase()) ||
+          a.account_number?.toString().includes(accountQuery.value)
+      )
+);
+
+const cart = useCartStore();
+const session = useSessionStore();
 
 const paymentBanner = computed(() => {
-  const { amountPaid, grandTotal } = cart
+  const { amountPaid, grandTotal } = cart;
   if (props.isWalkIn && amountPaid < grandTotal) {
     return {
-      key: 'walkin',
-      classes: 'bg-red-50 border border-red-200',
+      key: "walkin",
+      classes: "bg-red-50 border border-red-200",
       icon: AlertCircle,
-      iconClass: 'text-red-500',
-      textClass: 'text-red-700',
+      iconClass: "text-red-500",
+      textClass: "text-red-700",
       message: `Walk-in customers must pay in full (₨ ${formatPrice(grandTotal)})`,
-    }
+    };
   }
   if (!props.isWalkIn && amountPaid < grandTotal) {
     return {
-      key: 'credit',
-      classes: 'bg-yellow-50 border border-yellow-200',
+      key: "credit",
+      classes: "bg-yellow-50 border border-yellow-200",
       icon: Info,
-      iconClass: 'text-yellow-600',
-      textClass: 'text-yellow-800',
-      message: `Balance ₨ ${formatPrice(grandTotal - amountPaid)} will be added to customer's credit`,
-    }
+      iconClass: "text-yellow-600",
+      textClass: "text-yellow-800",
+      message: `Balance ₨ ${formatPrice(
+        grandTotal - amountPaid
+      )} will be added to customer's credit`,
+    };
   }
   if (amountPaid > grandTotal) {
     return {
-      key: 'change',
-      classes: 'bg-green-50 border border-green-200',
+      key: "change",
+      classes: "bg-green-50 border border-green-200",
       icon: Wallet,
-      iconClass: 'text-green-600',
-      textClass: 'text-green-700',
+      iconClass: "text-green-600",
+      textClass: "text-green-700",
       message: `Change to return: ₨ ${formatPrice(amountPaid - grandTotal)}`,
-    }
+    };
   }
-  return null
-})
+  return null;
+});
 
 function formatPrice(price) {
-  return price?.toLocaleString() || '0'
+  return price?.toLocaleString() || "0";
 }
 </script>
 
 <style scoped>
-.modal-enter-active { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
-.modal-leave-active { transition: all 0.15s cubic-bezier(0.4, 0, 1, 1); }
+.modal-enter-active {
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.modal-leave-active {
+  transition: all 0.15s cubic-bezier(0.4, 0, 1, 1);
+}
 .modal-enter-from,
-.modal-leave-to { opacity: 0; }
+.modal-leave-to {
+  opacity: 0;
+}
 .modal-enter-from > div,
-.modal-leave-to > div { transform: scale(0.96) translateY(-8px); }
-.modal-enter-active > div { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
-.modal-leave-active > div { transition: transform 0.15s cubic-bezier(0.4, 0, 1, 1); }
-
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button { opacity: 0.5; }
-input[type='number'] { -moz-appearance: textfield; }
-
-@media (max-width: 768px) {
-  button, select, input { min-height: 48px; }
+.modal-leave-to > div {
+  transform: scale(0.96) translateY(-8px);
+}
+.modal-enter-active > div {
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.modal-leave-active > div {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 1, 1);
 }
 
-*:focus-visible { outline: 2px solid #1f2937; outline-offset: 2px; }
-select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media (max-width: 768px) {
+  button,
+  select,
+  input {
+    min-height: 48px;
+  }
+}
+
+*:focus-visible {
+  outline: 2px solid #1f2937;
+  outline-offset: 2px;
+}
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="cart-panel h-full flex flex-col bg-white">
+  <div class="cart-panel h-full flex flex-col bg-white transition-all">
     <!-- Empty State -->
     <div
       v-if="cart.items.length === 0"
@@ -19,7 +19,7 @@
       <div
         v-for="item in cart.items"
         :key="item.id"
-        class="bg-white border-b border-gray-200 p-2 transition-all hover:border-gray-300"
+        class="bg-white border-b border-gray-200 p-2 hover:border-gray-300 transition-colors"
       >
         <!-- Item Header -->
         <div class="flex justify-between items-start mb-3">
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Row: Unit + Qty + Rate -->
-        <div class="grid grid-cols-3 gap-2 mb-2">
+        <div class="grid grid-cols-3 gap-2 mb-4">
           <div>
             <label
               class="text-[12px] font-medium text-gray-400 block mb-1 uppercase tracking-wide"
@@ -72,14 +72,14 @@
             >
               Qty
               <span class="text-gray-300 font-normal"
-                >/{{ parseFloat(effectiveStock(item)) }}</span
+                >/{{ parseFloat(cart.getEffectiveStock(item)) }}</span
               >
             </label>
-            <!-- Custom Rate Stepper Input  -->
+            <!-- Custom Qty Stepper Input  -->
             <div
               class="flex items-center border rounded-full overflow-hidden touch-manipulation"
               :class="
-                item.qty > effectiveStock(item)
+                item.qty > cart.getEffectiveStock(item) || !item.qty || item.qty <= 0
                   ? 'border-red-300 bg-red-50'
                   : 'border-gray-200'
               "
@@ -87,7 +87,7 @@
               <button
                 type="button"
                 @click="cart.updateQty(item, Math.max(1, item.qty - 1))"
-                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-all shrink-0"
+                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-[background-color,transform] shrink-0"
               >
                 <svg
                   class="w-3.5 h-3.5"
@@ -107,12 +107,12 @@
               <input
                 type="number"
                 min="1"
-                :max="effectiveStock(item)"
+                :max="cart.getEffectiveStock(item)"
                 :value="item.qty"
                 @input="cart.updateQty(item, Number($event.target.value))"
                 class="w-full py-2 text-sm text-center bg-transparent focus:outline-none"
                 :class="
-                  item.qty > effectiveStock(item)
+                  item.qty > cart.getEffectiveStock(item) || !item.qty || item.qty <= 0
                     ? 'border-red-300 bg-red-50'
                     : 'border-gray-200'
                 "
@@ -121,7 +121,7 @@
               <button
                 type="button"
                 @click="cart.updateQty(item, item.qty + 1)"
-                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-all shrink-0"
+                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-[background-color,transform] shrink-0"
               >
                 <svg
                   class="w-3.5 h-3.5"
@@ -138,7 +138,7 @@
                 </svg>
               </button>
             </div>
-            <!-- End Custom Rate Stepper Input  -->
+            <!-- End Custom Qty Stepper Input  -->
           </div>
 
           <div>
@@ -146,7 +146,7 @@
               class="text-[12px] font-medium text-gray-400 block mb-1 uppercase tracking-wide"
               >Rate (₨)</label
             >
-            <!-- Custom Qty Stepper Input  -->
+            <!-- Custom Rate Stepper Input  -->
             <div
               class="flex items-center border rounded-full overflow-hidden touch-manipulation"
               :class="
@@ -158,7 +158,7 @@
               <button
                 type="button"
                 @click="cart.updateRate(item, Math.max(0.01, item.rate - 1))"
-                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-all shrink-0"
+                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-[background-color,transform] shrink-0"
               >
                 <svg
                   class="w-3.5 h-3.5"
@@ -188,7 +188,7 @@
               <button
                 type="button"
                 @click="cart.updateRate(item, item.rate + 1)"
-                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-all shrink-0"
+                class="w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 active:bg-gray-200 active:scale-95 transition-[background-color,transform] shrink-0"
               >
                 <svg
                   class="w-3.5 h-3.5"
@@ -205,24 +205,36 @@
                 </svg>
               </button>
             </div>
-            <!-- End Custom Qty Stepper Input  -->
+            <!-- End Custom Rate Stepper Input  -->
           </div>
         </div>
 
         <!-- Validation hints -->
-        <div class="space-y-1 mb-2">
-          <p
-            v-if="item.qty > effectiveStock(item)"
-            class="text-red-500 text-[12px] flex items-center gap-1"
-          >
-            <span>⚠</span> Exceeds available stock
-          </p>
-          <p
-            v-if="!item.rate || item.rate <= 0"
-            class="text-red-500 text-[12px] flex items-center gap-1"
-          >
-            <span>⚠</span> Rate is required
-          </p>
+        <div>
+          <Transition name="alert">
+            <p
+              v-if="item.qty > cart.getEffectiveStock(item)"
+              class="text-red-500 text-[12px] flex items-center gap-1 my-2"
+            >
+              <span><TriangleAlert class="w-4 h-4" /></span> Exceeds available stock
+            </p>
+          </Transition>
+          <Transition name="alert">
+            <p
+              v-if="!item.qty || item.qty <= 0"
+              class="text-red-500 text-[12px] flex items-center gap-1 my-2"
+            >
+              <span><TriangleAlert class="w-4 h-4" /></span> Quantity is required
+            </p>
+          </Transition>
+          <Transition name="alert">
+            <p
+              v-if="!item.rate || item.rate <= 0"
+              class="text-red-500 text-[12px] flex items-center gap-1 my-2"
+            >
+              <span><TriangleAlert class="w-4 h-4" /></span> Rate is required
+            </p>
+          </Transition>
         </div>
 
         <!-- Item Total -->
@@ -244,7 +256,7 @@
         <div class="flex justify-between items-center">
           <span class="text-sm text-gray-500">Subtotal</span>
           <span class="text-base font-semibold text-gray-900"
-            >₨ {{ formatPrice(cart.total) }}</span
+            >₨ {{ formatPrice(Math.round(animatedCartTotal)) }}</span
           >
         </div>
 
@@ -282,13 +294,14 @@
               -₨ {{ formatPrice(cart.discountAmount) }}
             </span>
           </div>
-          <p
-            v-if="cart.discountAmount >= cart.total && cart.total > 0"
-            class="text-red-500 text-xs ml-16"
-          >
-            Discount exceeds subtotal
-          </p>
-
+          <Transition name="alert">
+            <p
+              v-if="cart.discountAmount >= cart.total && cart.total > 0"
+              class="text-red-500 text-xs ml-20"
+            >
+              Discount exceeds subtotal
+            </p>
+          </Transition>
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-500 w-16">Delivery</span>
             <div
@@ -397,9 +410,11 @@
           </button>
         </div>
 
-        <p v-if="!cart.customerId" class="text-red-500 text-xs mt-1">
-          Customer is required
-        </p>
+        <Transition name="alert">
+          <p v-if="!cart.customerId" class="text-red-500 text-xs mt-1">
+            Customer is required
+          </p>
+        </Transition>
 
         <!-- Description -->
         <input
@@ -410,25 +425,29 @@
           placeholder="Add notes (optional)"
         />
 
-        <!-- Warnings -->
-        <div
-          v-if="hasCartIssue"
-          class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-3 py-2"
-        >
-          <span class="text-red-500 text-sm">⚠</span>
-          <span class="text-red-700 text-xs font-medium"
-            >Some items have stock or rate issues</span
+        <Transition name="alert">
+          <div
+            v-if="hasCartIssue"
+            class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-3 py-2"
           >
-        </div>
-        <div
-          v-if="!session.appIsOnline"
-          class="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-3 py-2"
-        >
-          <span class="text-yellow-600 text-sm">⚠</span>
-          <span class="text-yellow-800 text-xs font-medium"
-            >Offline — sale will sync when reconnected</span
+            <span class="text-red-500 text-sm">⚠</span>
+            <span class="text-red-700 text-xs font-medium"
+              >Some items have stock or rate issues</span
+            >
+          </div>
+        </Transition>
+
+        <Transition name="alert">
+          <div
+            v-if="!session.appIsOnline"
+            class="flex items-center gap-2 bg-yellow-50 border border-yellow-200 rounded-full px-3 py-2"
           >
-        </div>
+            <span class="text-yellow-600 text-sm">⚠</span>
+            <span class="text-yellow-800 text-xs font-medium"
+              >Offline — sale will sync when reconnected</span
+            >
+          </div>
+        </Transition>
 
         <!-- Grand Total + Actions -->
         <div class="flex items-center gap-3 pt-2 border-t border-gray-200">
@@ -437,7 +456,7 @@
               Grand Total
             </p>
             <p class="text-2xl font-bold text-gray-900 leading-tight">
-              ₨ {{ formatPrice(cart.grandTotal) }}
+              ₨ {{ formatPrice(Math.round(animatedGrandTotal)) }}
             </p>
           </div>
           <button
@@ -466,14 +485,15 @@ import { useCartStore } from "@/stores/cart";
 import { useSessionStore } from "@/stores/session";
 import { UserRoundPlus } from "@lucide/vue";
 import { CircleDollarSign } from "@lucide/vue";
-import { ShoppingCart } from "@lucide/vue";
+import { ShoppingCart, TriangleAlert } from "@lucide/vue";
+import { useAnimatedNumber } from "@/composables/useAnimatedNumber";
 
 import {
   Combobox,
   ComboboxInput,
   ComboboxOptions,
   ComboboxOption,
-  ComboboxButton
+  ComboboxButton,
 } from "@headlessui/vue";
 
 const query = ref("");
@@ -490,18 +510,17 @@ defineEmits(["open-payment", "open-new-customer"]);
 const cart = useCartStore();
 const session = useSessionStore();
 
-function effectiveStock(item) {
-  return item.selected_unit_id === item.sub_unit_id
-    ? item.current_outlet_stock_sub_unit
-    : item.current_outlet_stock;
-}
-
 const hasCartIssue = computed(() => {
   const itemIssue = cart.items.some(
-    (i) => i.qty > effectiveStock(i) || !i.rate || i.rate <= 0 // ← changed
+    (i) =>
+      i.qty > cart.getEffectiveStock(i) || !i.qty || i.qty <= 0 || !i.rate || i.rate <= 0
   );
   return itemIssue || (cart.discountAmount >= cart.total && cart.total > 0);
 });
+
+const animatedGrandTotal = useAnimatedNumber(computed(() => cart.grandTotal));
+
+const animatedCartTotal = useAnimatedNumber(computed(() => cart.total));
 
 function formatPrice(price) {
   return price?.toLocaleString() || "0";

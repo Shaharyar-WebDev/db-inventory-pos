@@ -1,7 +1,7 @@
 import api from "@/lib/api";
 import { db } from "@/lib/db";
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import '@bprogress/core/css';
 import { BProgress } from '@bprogress/core';
 import { useCartStore } from "./cart";
@@ -22,14 +22,49 @@ export const useSessionStore = defineStore('session', () => {
 
     const products = ref([])
 
-    const appIsOnline = ref(navigator.onLine)
+    const appIsOnline = ref(self.navigator.onLine)
 
-    window.addEventListener('online', async () => {
-        appIsOnline.value = true
-        await restore()
+    async function pingCheck() {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 3000)
+
+        try {
+            await fetch('https://www.google.com/favicon.ico', {
+                method: 'HEAD',
+                cache: 'no-store',
+                mode: 'no-cors',
+                signal: controller.signal
+            })
+            appIsOnline.value = true
+        } catch {
+            appIsOnline.value = false
+        } finally {
+            clearTimeout(timeout)
+        }
+    }
+
+    // Real internet check every 5 seconds
+    setInterval(pingCheck, 5000)
+
+    watch(appIsOnline, async (isOnline) => {
+        if (isOnline) {
+            await restore()
+            console.log('Back online, session restored and data refreshed')
+        } else {
+            console.log('Offline, switching to cached data')
+        }
     })
 
-    window.addEventListener('offline', () => appIsOnline.value = false)
+    // window.addEventListener('online', async () => {
+    //     appIsOnline.value = true
+    //     await restore()
+    //     console.log('Back online, session restored and data refreshed')
+    // })
+
+    // window.addEventListener('offline', () => {
+    //     appIsOnline.value = false
+    //     console.log('Offline, switching to cached data')
+    // })
 
     async function login(email, password) {
         const { data } = await api.post('/login', { email, password });
@@ -198,6 +233,7 @@ export const useSessionStore = defineStore('session', () => {
 
     async function restore() {
         BProgress.start()
+        await pingCheck()
         try {
             const sessionData = await db.session.get("auth");
             if (sessionData) {
@@ -226,12 +262,22 @@ export const useSessionStore = defineStore('session', () => {
     }
 
     async function selectOutlet(selectedOutlet) {
+        BProgress.start()
+        await pingCheck()
+
+        if (!appIsOnline.value) {
+            alert('Cannot change outlet while offline')
+            BProgress.done()
+            return
+        }
+
         outlet.value = selectedOutlet
 
         const sessionData = (await db.session.get("auth")) || { key: 'auth' };
         sessionData.outlet = JSON.parse(JSON.stringify(selectedOutlet));
         await db.session.put(sessionData, "auth");
+        BProgress.done()
     }
 
-    return { login, user, outlets, token, outlet, selectOutlet, restore, isLoggedIn, logout, getLoggedInUserOutlets, appIsOnline, products, customers, fetchCustomers, accounts, createCustomer, refreshing }
+    return { login, user, outlets, token, outlet, selectOutlet, restore, isLoggedIn, logout, getLoggedInUserOutlets, appIsOnline, products, customers, fetchCustomers, accounts, createCustomer, refreshing, pingCheck }
 });

@@ -16,7 +16,7 @@
         </div>
 
         <!-- Outlets List -->
-        <div class="space-y-2">
+        <div v-if="session.appIsOnline" class="space-y-2">
           <div
             v-for="outlet in session.outlets"
             :key="outlet.id"
@@ -24,6 +24,20 @@
             @click="setOutlet(outlet)"
           >
             {{ outlet.name }}
+          </div>
+        </div>
+        <div v-else class="space-y-2">
+          <div
+            class="cursor-pointer px-4 py-3 border border-gray-200 rounded-full text-sm text-gray-700 transition-all duration-200 bg-white hover:border-gray-400 hover:bg-gray-50 active:scale-[0.98]"
+            @click="goBack()"
+          >
+            Go back
+          </div>
+
+          <div class="text-center mb-6">
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+              Outlet selction is unavailable while offline.
+            </p>
           </div>
         </div>
 
@@ -44,6 +58,12 @@ import { useSessionStore } from "@/stores/session";
 
 const session = useSessionStore();
 const loading = ref(false);
+
+setInterval(() => session.pingCheck(), 1000);
+
+async function goBack() {
+  window.history.back();
+}
 
 async function setOutlet(outlet) {
   loading.value = true;

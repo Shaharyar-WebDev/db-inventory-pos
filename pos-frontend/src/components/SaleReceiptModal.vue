@@ -125,7 +125,7 @@
                 <span>₨ {{ formatAmount(sale?.delivery_charges) }}</span>
               </div>
               <div v-if="sale?.tax_charges > 0" class="receipt-row">
-                <span>Tax ({{ sale?.tax_rate || 0 }}%)</span>
+                <span>Tax</span>
                 <span>₨ {{ formatAmount(sale?.tax_charges) }}</span>
               </div>
               <div class="divider">────────────────</div>
@@ -200,8 +200,6 @@ const receiptRef = ref(null);
 const formattedDate = computed(() => {
   return new Date().toLocaleString();
 });
-
-console.log(props);
 
 const customerName = computed(() => {
   const c = props.sale?.customer || props.customer;

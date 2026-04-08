@@ -6,6 +6,7 @@ import { useSessionStore } from '@/stores/session'
 import Login from '@/views/Login.vue'
 import Outlets from '@/views/Outlets.vue'
 import Pos from '@/views/Pos.vue'
+import { BProgress } from '@bprogress/core';
 
 const routes = [
     { path: '/login', component: Login },
@@ -19,7 +20,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
+    BProgress.start()
+
     const session = useSessionStore()
+    await session.pingCheck()
     await session.restore()
 
     if (to.meta.requiresAuth && !session.isLoggedIn) {
@@ -33,6 +37,11 @@ router.beforeEach(async (to) => {
     if (to.path === '/' && session.isLoggedIn && !session.outlet) {
         return '/outlets'
     }
+})
+
+
+router.afterEach(() => {
+    BProgress.done()
 })
 
 export default router

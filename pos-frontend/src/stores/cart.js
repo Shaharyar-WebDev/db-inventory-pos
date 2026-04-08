@@ -221,6 +221,6 @@ export const useCartStore = defineStore("cart", () => {
         updateUnit: withProgress(updateUnit),
         clearCart: withProgress(clearCart),
         submitSale: withProgress(submitSale),
-        getEffectiveStock: withProgress(getEffectiveStock),
+        getEffectiveStock,
     }
 })

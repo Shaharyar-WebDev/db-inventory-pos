@@ -49,8 +49,8 @@
         <!-- Switch Outlet -->
         <button
           @click="router.push('/outlets')"
-          :disabled="session.refreshing"
-          class="inline-flex items-center gap-2 py-1.5 px-3 sm:px-4 text-[0.813rem] font-medium rounded-full transition-all duration-200 bg-gray-800 border border-gray-800 text-white hover:bg-gray-900 hover:border-gray-900 active:scale-[0.98]"
+          :disabled="session.refreshing || !session.appIsOnline"
+          class="inline-flex items-center gap-2 py-1.5 px-3 sm:px-4 text-[0.813rem] font-medium rounded-full transition-all duration-200 bg-gray-800 border border-gray-800 disabled:cursor-not-allowed text-white hover:bg-gray-900 hover:border-gray-900 active:scale-[0.98]"
         >
           <ArrowLeftRight class="w-4 h-4 shrink-0" />
           <span class="hidden sm:inline">Switch Outlet</span>
