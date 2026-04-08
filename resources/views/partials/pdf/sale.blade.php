@@ -1296,6 +1296,7 @@
                 <div class="desc-card">
                     <div class="desc-label">note</div>
                     <div class="desc-text">{{ Str::limit($record->description, 90) }}</div>
+                    <div class="desc-text">{{ $record->description }}</div>
                 </div>
             @endif
 
