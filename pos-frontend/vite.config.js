@@ -10,16 +10,31 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         vue(),
+        // VitePWA({
+        //     registerType: "autoUpdate",
+        //     workbox: {
+        //         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+        //         navigateFallback: "/pos-terminal/index.html",
+        //     },
+        //     manifest: {
+        //         name: "POS",
+        //         short_name: "POS",
+        //         start_url: "/pos-terminal/",
+        //         display: "standalone",
+        //         background_color: "#ffffff",
+        //         theme_color: "#000000",
+        //     },
+        // }),
         VitePWA({
             registerType: "autoUpdate",
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-                navigateFallback: "/pos-terminal/index.html",
+                navigateFallback: "/terminal/index.html", // ✅ public URL, not build folder
             },
             manifest: {
                 name: "POS",
                 short_name: "POS",
-                start_url: "/pos-terminal/",
+                start_url: "/terminal/",  // ✅ public URL, not build folder
                 display: "standalone",
                 background_color: "#ffffff",
                 theme_color: "#000000",
