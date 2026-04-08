@@ -29,7 +29,7 @@ export default defineConfig({
             registerType: "autoUpdate",
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-                navigateFallback: "/pos-terminal/index.html",
+                navigateFallback: "/terminal/index.html",
             },
             manifest: {
                 name: "POS",
