@@ -33,7 +33,7 @@ api.interceptors.response.use(
             // Not if this is just a failed login attempt
             if (session?.token) {
                 await db.session.clear()
-                window.location.href = '/pos/login'
+                window.location.href = '/terminal/login'
             }
         }
         if (error.response?.status === 403 && !window.location.pathname.includes('/login')) {
