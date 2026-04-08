@@ -70,7 +70,7 @@ async function setOutlet(outlet) {
 
   try {
     await session.selectOutlet(outlet);
-    window.location.href = "/terminal/";
+    window.location.href = "/terminal";
   } catch (error) {
     loading.value = false;
     console.error("Failed to select outlet:", error);
