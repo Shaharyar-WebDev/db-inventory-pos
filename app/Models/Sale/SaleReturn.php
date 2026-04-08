@@ -112,15 +112,15 @@ class SaleReturn extends Model
         });
 
         static::deleting(function ($return) {
-            if ($return->sale->saleReturns()->exists()) {
-                Notification::make()
-                    ->title('Cannot Delete')
-                    ->body('This record cannot be deleted because the purchase has been returned.')
-                    ->danger()
-                    ->send();
+            // if ($return->sale->saleReturns()->exists()) {
+            //     Notification::make()
+            //         ->title('Cannot Delete')
+            //         ->body('This record cannot be deleted because the purchase has been returned.')
+            //         ->danger()
+            //         ->send();
 
-                throw new Halt("This record cannot be deleted because the purchase has been returned.");
-            }
+            //     throw new Halt("This record cannot be deleted because the purchase has been returned.");
+            // }
             $return->ledger()->delete();
             $return->items->each->delete();
         });
