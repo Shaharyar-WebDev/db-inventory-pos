@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\Inventory\StockTransfers\Tables;
 use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -43,7 +44,7 @@ class StockTransfersTable
                     ->relationship('toOutlet', 'name'),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 PdfDownloadAction::make('partials.pdf.stock-transfer', fn(Model $record) => $record->transfer_number)
