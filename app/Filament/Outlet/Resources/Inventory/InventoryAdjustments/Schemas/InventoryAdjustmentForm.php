@@ -36,6 +36,7 @@ class InventoryAdjustmentForm
                             ->searchable()
                             ->disabledOn('edit')
                             ->preload()
+                            ->optionsLimit(50)
                             ->disableOptionWhen(
                                 function ($value, $state, $get) {
                                     $selected = collect($get('../../items'))
