@@ -3,16 +3,11 @@
 namespace App\Filament\Outlet\Resources\Inventory\InventoryAdjustments\Schemas;
 
 use App\Filament\Schemas\Components\ProductSelect;
-use App\Models\Master\Product;
-use Carbon\Unit;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class InventoryAdjustmentForm
 {
