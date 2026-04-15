@@ -24,6 +24,8 @@ class ProductsTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 ImageColumn::make('thumbnail')
                     ->circular()
                     ->imageSize(80)

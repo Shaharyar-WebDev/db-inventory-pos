@@ -16,7 +16,7 @@ class SaleItemsRepeater
 {
     public static function make($productsKeyedArray)
     {
-        return   Repeater::make('items')
+        return Repeater::make('items')
             ->relationship('items')
             ->statePath('items')
             ->minItems(fn($operation) => $operation == 'edit' ? 0 : 1)
