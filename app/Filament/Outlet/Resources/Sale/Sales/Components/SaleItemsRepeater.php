@@ -51,17 +51,17 @@ class SaleItemsRepeater
                             // ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))
                             // ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"))
                     )
-                    // ->disableOptionWhen(function ($value, $state, $get) {
-                    //     $selected = collect($get('../../items'))
-                    //         ->pluck('product_id')
-                    //         ->filter()
-                    //         ->toArray();
+                    ->disableOptionWhen(function ($value, $state, $get) {
+                        $selected = collect($get('../../items'))
+                            ->pluck('product_id')
+                            ->filter()
+                            ->toArray();
 
-                    //     return in_array($value, $selected) && $state != $value;
-                    // })
+                        return in_array($value, $selected) && $state != $value;
+                    })
                     ->distinct()
                     ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->full_name)
-                    ->optionsLimit(20)
+                    // ->optionsLimit(20)
                     ->afterStateUpdatedJs(<<<'JS'
                                 const productId = $get('product_id');
                                 const customerId = $get('../../customer_id');
