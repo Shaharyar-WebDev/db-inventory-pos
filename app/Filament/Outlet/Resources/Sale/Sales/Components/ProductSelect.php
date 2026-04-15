@@ -16,12 +16,14 @@ class ProductSelect
                 'product',
                 'name',
                 modifyQueryUsing: fn(Builder $query, $search) => $query
-                    ->where('name', 'like', "%{$search}%")
-                    // ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                    // ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                    // ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                    // ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))
-                    // ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                    ->where(function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                            ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                            ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%")
+                                ->orWhere('symbol', 'like', "%{$search}%"))
+                            ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"));
+                    })
             )
             ->disableOptionWhen(function ($value, $state, $get) {
                 $selected = collect($get('../../items'))
