@@ -46,7 +46,7 @@ class SaleItemsRepeater
                         modifyQueryUsing: fn(Builder $query, $search) => $query
                             ->where('name', 'like', "%{$search}%")
                             // ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                            ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                            // ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
                             // ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%"))
                             // ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))
                             // ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"))
