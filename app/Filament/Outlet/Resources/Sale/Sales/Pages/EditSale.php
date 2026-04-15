@@ -1,11 +1,14 @@
 <?php
+
 namespace App\Filament\Outlet\Resources\Sale\Sales\Pages;
 
 use App\Filament\Outlet\Resources\Sale\Sales\SaleResource;
 use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 
 class EditSale extends EditRecord
@@ -20,7 +23,11 @@ class EditSale extends EditRecord
             PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
                 ->download(),
             PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
-                ->print(),
+                ->print()
+                ->modalWidth(Width::Medium)
+                ->schema([
+                    Toggle::make('group_variants')->default(true)
+                ]),
             // ForceDeleteAction::make(),
             // RestoreAction::make(),
         ];

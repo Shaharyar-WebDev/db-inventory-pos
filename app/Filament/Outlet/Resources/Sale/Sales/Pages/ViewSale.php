@@ -7,8 +7,10 @@ use App\Filament\Outlet\Resources\Sale\Sales\SaleResource;
 use App\Support\Actions\PdfDownloadAction;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewSale extends ViewRecord
@@ -45,7 +47,11 @@ class ViewSale extends ViewRecord
             PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
                 ->download(),
             PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
-                ->print(),
+                ->print()
+                ->modalWidth(Width::Medium)
+                ->schema([
+                    Toggle::make('group_variants')->default(true)
+                ]),
         ];
     }
 }

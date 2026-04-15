@@ -11,6 +11,7 @@ class ProductSelect
     public static function make()
     {
         return Select::make('product_id')
+            // ->options(Product::pluck('name', 'id')->toArray())
             ->relationship('product', 'name',    modifyQueryUsing: fn(Builder $query, $search) => $query
                 ->where('name', 'like', "%{$search}%")
                 ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
@@ -18,14 +19,15 @@ class ProductSelect
                 ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->orWhereHas('unit', fn($q) => $q->where('symbol', 'like', "%{$search}%"))
                 ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%")))
-            ->disableOptionWhen(function ($value, $state, $get) {
-                $selected = collect($get('../../items'))
-                    ->pluck('product_id')
-                    ->filter()
-                    ->toArray();
+            // ->disableOptionWhen(function ($value, $state, $get) {
+            //     $selected = collect($get('../../items'))
+            //         ->pluck('product_id')
+            //         ->filter()
+            //         ->toArray();
 
-                return in_array($value, $selected) && $state != $value;
-            })
+            //     return in_array($value, $selected) && $state != $value;
+            // })
+            ->distinct()
             ->getOptionLabelFromRecordUsing(fn(Model $record) => $record->full_name)
             ->optionsLimit(50)
             ->afterStateUpdatedJs(<<<'JS'

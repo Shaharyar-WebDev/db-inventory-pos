@@ -43,6 +43,7 @@ class UnitSelect
                 ];
             })
             ->afterStateUpdatedJs(<<<'JS'
+                                $set('qty', 0);
                                 const productId = $get('product_id');
                                 const selectedUnitId = $get('unit_id');
                                 const customerId = $get('../../customer_id');

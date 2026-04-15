@@ -58,10 +58,11 @@ class PdfDownloadAction
             ->icon(Heroicon::OutlinedDocumentDuplicate)
             ->color('success')
             ->keyBindings(['ctrl+p'])
-            ->action(function (Model $record, Component $livewire) {
+            ->action(function (Model $record, Component $livewire, array $data) {
 
                 $html = view($this->getViewName(), [
-                    'record' => $record
+                    'record' => $record,
+                    'params' => $data
                 ])->render();
 
                 $pdfBase64 = base64_encode(

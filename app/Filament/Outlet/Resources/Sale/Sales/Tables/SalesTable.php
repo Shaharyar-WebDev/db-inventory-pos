@@ -13,6 +13,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Toggle;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
@@ -148,7 +150,11 @@ class SalesTable
                 PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
                     ->download(),
                 PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
-                    ->print(),
+                    ->print()
+                    ->modalWidth(Width::Medium)
+                    ->schema([
+                        Toggle::make('group_variants')->default(true)
+                    ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
