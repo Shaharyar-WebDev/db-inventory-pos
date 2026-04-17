@@ -34,6 +34,8 @@ enum TransactionType: string
 
     case EXPENSE = 'expense';
 
+    case TRANSFER_BETWEEN_ACCOUNTS = 'transfer_between_accounts';
+
     public function label(): string
     {
         return str($this->value)->replace('_', ' ')->title()->toString();

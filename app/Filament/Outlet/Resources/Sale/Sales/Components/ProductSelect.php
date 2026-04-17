@@ -20,8 +20,7 @@ class ProductSelect
                         $q->where('name', 'like', "%{$search}%")
                             ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
                             ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                            ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%")
-                                ->orWhere('symbol', 'like', "%{$search}%"))
+                            ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%")->orWhere('symbol', 'like', "%{$search}%"))
                             ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"));
                     })
             )
