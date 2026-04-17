@@ -187,6 +187,7 @@
                 border: 0.8px solid #a5d6a7;
                 padding: 0.15cm;
                 margin: 0.15cm 0;
+                word-break:break-all;
             }
 
             .desc-label {
