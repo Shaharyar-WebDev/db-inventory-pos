@@ -36,6 +36,11 @@ class Deposit extends Model
         return $this->belongsTo(Account::class);
     }
 
+    public function accountLedger()
+    {
+        return $this->morphOne(AccountLedger::class, 'source');
+    }
+
     public static function booted()
     {
         static::saved(function ($deposit) {
@@ -49,6 +54,10 @@ class Deposit extends Model
                 'remarks'          => 'Deposit created',
                 'outlet_id'        => null,
             ]);
+        });
+
+        static::deleting(function ($deposit) {
+            $deposit->accountLedger()->delete();
         });
     }
 }

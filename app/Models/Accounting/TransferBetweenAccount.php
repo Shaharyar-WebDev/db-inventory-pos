@@ -46,6 +46,13 @@ class TransferBetweenAccount extends Model
         return $this->belongsTo(Account::class, 'to_account_id');
     }
 
+
+    public function accountLedger()
+    {
+        return $this->morphOne(AccountLedger::class, 'source');
+    }
+
+
     public static function booted()
     {
         static::saved(function ($transfer) {
@@ -72,6 +79,10 @@ class TransferBetweenAccount extends Model
                 'remarks'          => "Transferred From Account '{$transfer->toAccount->name}'",
                 'outlet_id'        => null,
             ]);
+        });
+
+        static::deleting(function ($transfer) {
+            $transfer->accountLedger()->delete();
         });
     }
 }
