@@ -29,7 +29,13 @@ class TransferBetweenAccountForm
                             ->manageOptionForm(AccountForm::configure(new Schema())->getComponents())
                             ->required(),
                         Select::make('to_account_id')
-                            ->relationship('toAccount', 'name')
+                            ->relationship(
+                                'toAccount',
+                                'name',
+                                modifyQueryUsing: function (Get $get, $query) {
+                                    return $query->whereNot('id', $get('from_account_id'));
+                                }
+                            )
                             ->manageOptionForm(AccountForm::configure(new Schema())->getComponents())
                             ->required(),
                         TextInput::make('amount')
