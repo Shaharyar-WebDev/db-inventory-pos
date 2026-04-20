@@ -2,14 +2,12 @@
 
 namespace App\Filament\Outlet\Pages;
 
-use App\Filament\Outlet\Widgets\NetPositionWidget;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Dashboard as BaseDashboard;
-use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -21,16 +19,12 @@ class OutletDashboard extends BaseDashboard
 {
     use HasPageShield;
     // use HasFiltersForm;
-
     protected static ?string $title = 'Outlet Dashboard';
-
     protected static string|BackedEnum|null $navigationIcon =  Heroicon::Home;
-
     public function getColumns(): int|array
     {
         return 2;
     }
-
     public function filtersForm(Schema $schema): Schema
     {
         return $schema
@@ -62,7 +56,6 @@ class OutletDashboard extends BaseDashboard
                     ]),
             ]);
     }
-
     protected int|string|array $columnSpan = 'full';
 
     public function getWidgets(): array

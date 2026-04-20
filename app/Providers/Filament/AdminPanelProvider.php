@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Enums\PanelId;
 use App\Filament\Admin\Pages\AdminDashboard;
 use App\Filament\Admin\Pages\Login;
+use App\Filament\Outlet\Resources\Sale\Sales\Widgets\OutletSaleStats;
 use App\Support\PanelConfiguration;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -35,7 +36,9 @@ class AdminPanelProvider extends PanelProvider
                 AdminDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
-            ->widgets([])
+            ->widgets([
+                OutletSaleStats::class
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
