@@ -38,14 +38,14 @@ class PdfDownloadAction
         return Action::make('download_pdf')
             ->icon(Heroicon::OutlinedDocumentArrowDown)
             ->color('info')
-            ->action(function (Model $record, Component $livewire) {
+            ->action(function (Model $record, Component $livewire, array $data) {
 
                 if ($this->getFileName() instanceof Closure) {
                     $this->fileName = $this->getFileName()($record);
                 }
 
-                return response()->streamDownload(function () use ($record) {
-                    echo Pdf::loadView($this->getViewName(), ['record' => $record])
+                return response()->streamDownload(function () use ($record, $data) {
+                    echo Pdf::loadView($this->getViewName(), ['record' => $record, 'params' => $data])
                         ->setOption('defaultFont', 'DejaVu Sans')
                         ->output();
                 }, $this->getFileName() . '.pdf');
