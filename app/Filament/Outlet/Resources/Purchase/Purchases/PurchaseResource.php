@@ -56,7 +56,7 @@ class PurchaseResource extends Resource
         return [
             'index' => ListPurchases::route('/'),
             'create' => CreatePurchase::route('/create'),
-            // 'view' => ViewPurchase::route('/{record}'),
+            'view' => ViewPurchase::route('/{record}'),
             'edit' => EditPurchase::route('/{record}/edit'),
         ];
     }

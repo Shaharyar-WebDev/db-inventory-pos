@@ -51,7 +51,7 @@ class AccountsTable
                 // TrashedFilter::make(),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 // ForceDeleteAction::make(),

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Outlet\Resources\Sale\Sales\Components;
 
+use App\Models\Master\Product;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductSelect
@@ -11,19 +11,25 @@ class ProductSelect
     public static function make()
     {
         return Select::make('product_id')
-            // ->options(Product::pluck('name', 'id')->toArray())
             ->relationship(
                 'product',
                 'name',
-                modifyQueryUsing: fn(Builder $query, $search) => $query
+            )
+            ->getSearchResultsUsing(function (?string $search) {
+                $query = Product::query()
                     ->where(function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
+                        return $q->where('name', 'like', "%{$search}%")
                             ->orWhereHas('parent', fn($q) => $q->where('name', 'like', "%{$search}%"))
                             ->orWhereHas('brand', fn($q) => $q->where('name', 'like', "%{$search}%"))
                             ->orWhereHas('unit', fn($q) => $q->where('name', 'like', "%{$search}%")->orWhere('symbol', 'like', "%{$search}%"))
                             ->orWhereHas('category', fn($q) => $q->where('name', 'like', "%{$search}%"));
                     })
-            )
+                    ->limit(10)
+                    ->get()
+                    ->mapWithKeys(fn($product) => [$product->id => $product->full_name]);
+
+                return $query;
+            })
             ->disableOptionWhen(function ($value, $state, $get) {
                 $selected = collect($get('../../items'))
                     ->pluck('product_id')
@@ -79,8 +85,6 @@ class ProductSelect
 
                                 $set('../../grand_total', grandTotal);
                             JS)
-            // ->live()
-            // ->partiallyRenderComponentsAfterStateUpdated(['qty'])
             ->required();
     }
 }

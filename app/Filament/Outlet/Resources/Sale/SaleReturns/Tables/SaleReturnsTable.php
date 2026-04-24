@@ -62,7 +62,7 @@ class SaleReturnsTable
                     ->relationship('sale', 'sale_number'),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()
             ])

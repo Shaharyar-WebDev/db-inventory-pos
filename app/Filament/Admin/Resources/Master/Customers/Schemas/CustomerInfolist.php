@@ -8,9 +8,6 @@ class CustomerInfolist
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                //
-            ]);
+        return $schema;
     }
 }

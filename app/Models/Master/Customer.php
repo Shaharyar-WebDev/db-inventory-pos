@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models\Master;
 
 use App\Enums\CustomerType;
@@ -76,6 +77,30 @@ class Customer extends Model
         return $this->hasMany(CustomerProductRate::class);
     }
 
+    public function businessToDate(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $this->loadMissing('sales.items', 'sales.saleReturns.items');
+                return $this->sales->sum(fn($sale) => $sale->revenue);
+            }
+        );
+    }
+
+    public function lastSaleDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->sales()->max('created_at')
+        );
+    }
+
+    public function lastReceiptDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->receipts()->max('created_at')
+        );
+    }
+
     public function fullName(): Attribute
     {
         $name = $this->name;
@@ -151,7 +176,7 @@ class Customer extends Model
 
                 throw new \Exception('Walk-in customer cannot be deleted');
             }
-            
+
             // if (! $customer->receipts()->exists() && ! $customer->sales()->exists()) {
             //     if ($customer->ledgers->count() === 1 && $customer->ledger->amount === 0) {
             //         $customer->ledger->delete();

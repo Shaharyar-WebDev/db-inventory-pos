@@ -43,7 +43,7 @@ class UsersTable
                 //
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()
                     ->hidden(fn($record) => $record->isSuperAdmin()),

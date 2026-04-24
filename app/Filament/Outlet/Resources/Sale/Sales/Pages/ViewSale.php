@@ -45,7 +45,11 @@ class ViewSale extends ViewRecord
                     ]]);
                 }, true),
             PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
-                ->download(),
+                ->download()
+                ->modalWidth(Width::Medium)
+                ->schema([
+                    Toggle::make('group_variants')->default(true)
+                ]),
             PdfDownloadAction::make('partials.pdf.sale', fn(Model $record) => $record->sale_number)
                 ->print()
                 ->modalWidth(Width::Medium)

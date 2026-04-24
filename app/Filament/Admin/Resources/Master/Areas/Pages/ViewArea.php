@@ -15,9 +15,8 @@ class ViewArea extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-           RestoreAction::make(),
-           ForceDeleteAction::make(),
            EditAction::make(),
+           ViewAction::make(),
         ];
     }
 }

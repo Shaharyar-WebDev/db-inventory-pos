@@ -4,7 +4,6 @@ namespace App\Filament\Outlet\Resources\Accounting\Expenses\Tables;
 
 use App\Enums\PanelId;
 use App\Filament\Admin\Resources\Accounting\Accounts\AccountResource;
-use App\Filament\Admin\Resources\Master\Suppliers\SupplierResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -70,7 +69,7 @@ class ExpensesTable
                     ->searchable(),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

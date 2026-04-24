@@ -52,7 +52,7 @@ class TransferBetweenAccountsTable
                     ->relationship('toAccount', 'name'),
             ])
             ->recordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

@@ -8,6 +8,7 @@ use App\Filament\Outlet\Resources\Sale\Sales\Components\DiscountValueInput;
 use App\Filament\Outlet\Resources\Sale\Sales\Components\GrandTotalInput;
 use App\Filament\Outlet\Resources\Sale\Sales\Components\TotalAmountInput;
 use App\Filament\Outlet\Resources\Sale\Sales\Schemas\SaleForm;
+use App\Filament\Schemas\Components\ProductSelect;
 use App\Models\Master\Product;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -133,8 +134,7 @@ class PurchaseForm
                     ])
                     ->reorderable()
                     ->schema([
-                        Select::make('product_id')
-                            ->relationship('product', 'name')
+                        ProductSelect::make()
                             ->disableOptionWhen(function ($value, $state, $get) {
                                 $selected = collect($get('../../items'))
                                     ->pluck('product_id')

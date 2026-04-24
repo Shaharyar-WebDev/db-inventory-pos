@@ -10,12 +10,9 @@ use Filament\Actions\DeleteAction;
 use App\Exports\SupplierLedgerExport;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Tables\Filters\TrashedFilter;
 use App\Support\Actions\LedgerExportAction;
-use Filament\Actions\ForceDeleteBulkAction;
 
 class SuppliersTable
 {
@@ -58,7 +55,7 @@ class SuppliersTable
                 // TrashedFilter::make(),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 LedgerExportAction::configure(SupplierLedgerExport::class)

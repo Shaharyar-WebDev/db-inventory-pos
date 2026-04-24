@@ -8,16 +8,11 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -64,6 +59,16 @@ class CustomersTable
                 TextColumn::make('address')
                     ->limit(30)
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('business_to_date')
+                    ->sortable(false)
+                    ->searchable(false)
+                    ->currency(),
+                TextColumn::make('last_sale_date')
+                    ->sortable(false)
+                    ->dateTime(),
+                TextColumn::make('last_receipt_date')
+                    ->searchable(false)
+                    ->dateTime(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -89,7 +94,7 @@ class CustomersTable
                     ->optionsLimit(10),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 Action::make('delete_opening_balance_entry')

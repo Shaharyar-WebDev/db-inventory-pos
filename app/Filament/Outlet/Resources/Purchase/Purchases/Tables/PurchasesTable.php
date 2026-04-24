@@ -48,7 +48,7 @@ class PurchasesTable
                     ->relationship('supplier', 'name'),
             ])
             ->groupedRecordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 CreatePurchaseReturnAction::make(),
