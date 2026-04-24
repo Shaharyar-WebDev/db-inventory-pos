@@ -14,6 +14,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomersTable
@@ -60,14 +61,45 @@ class CustomersTable
                     ->limit(30)
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('business_to_date')
-                    ->sortable(false)
-                    ->searchable(false)
+                    ->sortable(query: function (Builder $query, string $direction) {
+                        $query->orderByRaw("
+            (
+                SELECT
+                    COALESCE((
+                        SELECT SUM(si.qty * si.rate)
+                        FROM sales s
+                        JOIN sale_items si ON si.sale_id = s.id
+                        WHERE s.customer_id = customers.id
+                    ), 0)
+                    -
+                    COALESCE((
+                        SELECT SUM(sri.qty * sri.rate)
+                        FROM sales s
+                        JOIN sale_returns sr ON sr.sale_id = s.id
+                        JOIN sale_return_items sri ON sri.sale_return_id = sr.id
+                        WHERE s.customer_id = customers.id
+                    ), 0)
+            ) $direction
+        ");
+                    })
                     ->currency(),
                 TextColumn::make('last_sale_date')
-                    ->sortable(false)
+                    ->searchable(false)
+                    ->sortable(query: function (Builder $query, string $direction) {
+                        $query->orderByRaw("
+            (SELECT MAX(created_at) FROM sales
+             WHERE sales.customer_id = customers.id) $direction
+        ");
+                    })
                     ->dateTime(),
                 TextColumn::make('last_receipt_date')
                     ->searchable(false)
+                    ->sortable(query: function (Builder $query, string $direction) {
+                        $query->orderByRaw("
+            (SELECT MAX(created_at) FROM receipts
+             WHERE receipts.customer_id = customers.id) $direction
+        ");
+                    })
                     ->dateTime(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
