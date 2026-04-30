@@ -27,9 +27,11 @@ class UsersTable
                 // ->sortable(),
                 TextColumn::make('roles.name')
                     ->placeholder('---')
+                    ->sortable(false)
                     ->badge(),
                 TextColumn::make('outlets.name')
                     ->placeholder('---')
+                    ->sortable(false)
                     ->color('info')
                     ->badge(),
                 TextColumn::make('created_at')

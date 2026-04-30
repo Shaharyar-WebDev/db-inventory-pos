@@ -82,6 +82,7 @@ class CustomersTable
             ) $direction
         ");
                     })
+                    ->searchable(false)
                     ->currency(),
                 TextColumn::make('last_sale_date')
                     ->searchable(false)
@@ -91,6 +92,7 @@ class CustomersTable
              WHERE sales.customer_id = customers.id) $direction
         ");
                     })
+                    ->searchable(false)
                     ->dateTime(),
                 TextColumn::make('last_receipt_date')
                     ->searchable(false)
@@ -100,6 +102,7 @@ class CustomersTable
              WHERE receipts.customer_id = customers.id) $direction
         ");
                     })
+                    ->searchable(false)
                     ->dateTime(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
