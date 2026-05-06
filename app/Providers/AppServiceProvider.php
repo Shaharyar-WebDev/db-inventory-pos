@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\DiscountType;
 use App\Enums\Status;
+use App\Filament\Support\VIew\LucideLoadingIndicator;
 use App\Support\Actions\CalculatorAction;
 use Carbon\Carbon;
 use Filament\Actions\ActionGroup;
@@ -18,6 +19,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Columns\Column;
@@ -65,6 +67,8 @@ class AppServiceProvider extends ServiceProvider
                 // ->topbar($topbar)
                 ->maxContentWidth($width) : null;
         });
+
+         $this->app->bind(LoadingIndicator::class, LucideLoadingIndicator::class);
 
         TextEntry::configureUsing(function (TextEntry $entry) {
             // $entry->size(TextSize::Large);
