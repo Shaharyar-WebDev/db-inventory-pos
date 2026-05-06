@@ -77,7 +77,7 @@ class ProductRatesRelationManager extends RelationManager
             ->recordTitleAttribute('product.name')
             ->columns([
                 TextColumn::make('product.full_name')
-                    ->searchable(['product.name'])
+                    ->searchable(false)
                     ->copyable(),
                 TextColumn::make('selling_price')
                     ->copyable()
