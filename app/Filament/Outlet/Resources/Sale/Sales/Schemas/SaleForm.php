@@ -35,12 +35,22 @@ class SaleForm
             ->withOutletStock()
             ->get(['id', 'name', 'selling_price', 'unit_id', 'sub_unit_id', 'sub_unit_conversion']);
 
+        $productsForState = $products->map(fn($p) => [
+    'id'                   => $p->id,
+    'name'                 => $p->name,
+    'selling_price'        => $p->selling_price,
+    'unit_id'              => $p->unit_id,
+    'sub_unit_id'          => $p->sub_unit_id,
+    'sub_unit_conversion'  => $p->sub_unit_conversion,
+    'current_outlet_stock' => $p->current_outlet_stock,
+])->keyBy('id')->toArray();
+
         $productsKeyedArray = $products->keyBy('id')->toArray();
 
         return $schema
             ->components([
                 Hidden::make('products')
-                    ->afterStateHydrated(fn(Set $set) => $set('products', $productsKeyedArray))
+                    ->afterStateHydrated(fn(Set $set) => $set('products', $productsForState))
                     ->dehydrated(false),
 
                 Section::make()
