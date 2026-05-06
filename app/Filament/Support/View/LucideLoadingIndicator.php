@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Support\VIew;
+namespace App\Filament\Support\View;
 
 use Filament\Support\Contracts\LoadingIndicator;
 use Illuminate\View\ComponentAttributeBag;
