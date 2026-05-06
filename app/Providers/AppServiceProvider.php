@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Enums\DiscountType;
 use App\Enums\Status;
-use App\Filament\Support\VIew\LucideLoadingIndicator;
+use App\Filament\Support\View\LucideLoadingIndicator;
 use App\Support\Actions\CalculatorAction;
 use Carbon\Carbon;
 use Filament\Actions\ActionGroup;
