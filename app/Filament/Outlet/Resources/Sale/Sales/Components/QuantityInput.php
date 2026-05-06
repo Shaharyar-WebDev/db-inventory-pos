@@ -18,12 +18,12 @@ class QuantityInput
             ->required()
             ->afterStateUpdatedJs(SaleForm::calculateTotals())
             ->default(0)
-            ->minValue(fn($operation) => $operation === "edit" ? 0 : 1)
+            ->minValue(fn($operation) => $operation === "edit" ? 0 : 0.1)
             ->rules(function (Get $get, ?Model $record, $livewire) use ($productsKeyedArray) {
                 return [
                     'required',
                     'numeric',
-                    fn($operation) => $operation === "edit" ? 'min:0' : 'min:1',
+                    fn($operation) => $operation === "edit" ? 'min:0' : 'min:0.1',
                     function (string $attribute, float $value, Closure $fail) use ($get, $productsKeyedArray, $record, $livewire) {
                         $productId = (int) $get('product_id');
                         $validateConversion = function ($conversion) use ($fail) {
