@@ -19,7 +19,7 @@ class QuantityInput
             ->afterStateUpdatedJs(SaleForm::calculateTotals())
             // ->default(0)
             // ->minValue(fn($operation) => $operation === "edit" ? 0 : 0.1)
-            // ->minValue(fn(string $operation) => $operation === 'edit' ? 0 : 0.001)
+            ->minValue(fn(string $operation) => $operation === 'edit' ? 0 : 0.001)
             ->rules(function (Get $get, ?Model $record, $livewire) use ($productsKeyedArray) {
                 return [
                     'required',
