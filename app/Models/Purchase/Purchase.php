@@ -10,6 +10,7 @@ use App\Models\Master\Supplier;
 use App\Models\Purchase\PurchaseItem;
 use App\Models\Purchase\PurchaseReturn;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\Printable;
 use App\Models\Traits\ResolvesDocumentNumber;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
@@ -22,6 +23,7 @@ class Purchase extends Model
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     // SoftDeletes,
     use Userstamps;
+    use Printable;
 
     protected $fillable = [
         'purchase_number',

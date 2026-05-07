@@ -4,6 +4,7 @@ namespace App\Models\Inventory;
 use App\BelongsToOutlet;
 use App\Models\Inventory\InventoryAdjustmentItem;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\Printable;
 use Illuminate\Database\Eloquent\Model;
 use Mattiverse\Userstamps\Traits\Userstamps;
 
@@ -11,6 +12,7 @@ class InventoryAdjustment extends Model
 {
     use BelongsToOutlet, HasDocumentNumber;
     use Userstamps;
+    use Printable;
 
     protected $fillable = [
         'adjustment_number',

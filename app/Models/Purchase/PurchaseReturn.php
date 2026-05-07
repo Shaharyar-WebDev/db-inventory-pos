@@ -7,6 +7,7 @@ use App\Models\Purchase\Purchase;
 use App\Models\Purchase\PurchaseReturnItem;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\Printable;
 use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,7 @@ class PurchaseReturn extends Model
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     // SoftDeletes,
     use Userstamps;
+    use Printable;
 
     protected $fillable = [
         'return_number',

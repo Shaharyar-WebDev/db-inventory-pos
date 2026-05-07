@@ -5,8 +5,6 @@ namespace App\Support\Actions;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Closure;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
-use Filament\Schemas\Components\Livewire;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -30,7 +28,7 @@ class PdfDownloadAction
 
     public static function make(string $viewName, string|Closure $fileName)
     {
-        return (new static($viewName, $fileName));
+        return new static($viewName, $fileName);
     }
 
     public function download()
@@ -48,7 +46,7 @@ class PdfDownloadAction
                     echo Pdf::loadView($this->getViewName(), ['record' => $record, 'params' => $data])
                         ->setOption('defaultFont', 'DejaVu Sans')
                         ->output();
-                }, $this->getFileName() . '.pdf');
+                }, $this->getFileName().'.pdf');
             });
     }
 
@@ -58,26 +56,40 @@ class PdfDownloadAction
             ->icon(Heroicon::OutlinedDocumentDuplicate)
             ->color('success')
             ->keyBindings(['ctrl+p'])
+            // ->action(function (Model $record, Component $livewire, array $data) {
+
+            //     $html = view($this->getViewName(), [
+            //         'record' => $record,
+            //         'params' => $data
+            //     ])->render();
+
+            //     $pdfBase64 = base64_encode(
+            //         Pdf::loadHTML($html)
+            //             ->setOption('defaultFont', 'DejaVu Sans')
+            //             ->setPaper('A4', 'portrait')
+            //             ->output()
+            //     );
+
+            //     if ($this->getFileName() instanceof Closure) {
+            //         $this->fileName = $this->getFileName()($record);
+            //     }
+
+            //     // One clean line — all logic lives in pdf-print.js
+            //     $livewire->js("window.printPdf('{$pdfBase64}', 'Stock Transfer {$this->getFileName()}')");
+            // })
             ->action(function (Model $record, Component $livewire, array $data) {
-
-                $html = view($this->getViewName(), [
-                    'record' => $record,
-                    'params' => $data
-                ])->render();
-
-                $pdfBase64 = base64_encode(
-                    Pdf::loadHTML($html)
-                        ->setOption('defaultFont', 'DejaVu Sans')
-                        ->setPaper('A4', 'portrait')
-                        ->output()
-                );
-
                 if ($this->getFileName() instanceof Closure) {
-                    $this->fileName = $this->getFileName()($record);
+                    $this->fileName = ($this->getFileName())($record);
                 }
 
-                // One clean line — all logic lives in pdf-print.js
-                $livewire->js("window.printPdf('{$pdfBase64}', 'Stock Transfer {$this->getFileName()}')");
+                $url = route('print.pdf', [
+                    'model' => $record::class,
+                    'id' => $record->id,
+                    'view' => $this->getViewName(),
+                    'params' => $data,
+                ]);
+
+                $livewire->js("window.printPdf('{$url}', '{$this->fileName}')");
             });
     }
 }

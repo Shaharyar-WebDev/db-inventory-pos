@@ -12,6 +12,7 @@ use App\Models\Sale\SaleReturn;
 use App\Models\Scopes\OutletScope;
 use App\Models\Traits\BelongsToOutlet;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\Printable;
 use App\Models\Traits\ResolvesDocumentNumber;
 use App\Models\User;
 use Exception;
@@ -25,7 +26,8 @@ class Sale extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     use Userstamps;
-
+    use Printable;
+    
     public static string $documentNumberColumn = 'sale_number';
 
     public static string $documentNumberPrefix = 'SALE';

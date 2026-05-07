@@ -6,9 +6,8 @@ use App\BelongsToOutlet;
 use App\Enums\TransactionType;
 use App\Models\Accounting\CustomerLedger;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\Printable;
 use App\Models\Traits\ResolvesDocumentNumber;
-use Filament\Notifications\Notification;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,6 +18,7 @@ class SaleReturn extends Model
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     // SoftDeletes,
     use Userstamps;
+    use Printable;
 
     public static string $documentNumberColumn = 'return_number';
 

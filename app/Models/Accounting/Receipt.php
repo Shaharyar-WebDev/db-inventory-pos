@@ -11,6 +11,7 @@ use App\Models\Accounting\CustomerLedger;
 use App\Models\Accounting\PaymentMethod;
 use App\Models\Master\Customer;
 use App\Models\Traits\HasDocumentNumber;
+use App\Models\Traits\Printable;
 use App\Models\Traits\ResolvesDocumentNumber;
 use Illuminate\Database\Eloquent\Model;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -19,7 +20,7 @@ class Receipt extends Model
 {
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     use Userstamps;
-
+    use Printable;
     protected $fillable = [
         'receipt_number',
         'customer_id',
