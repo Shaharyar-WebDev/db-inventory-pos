@@ -40,6 +40,7 @@ class PanelConfiguration
             ->darkModeBrandLogo(fn() => $this->generalSettings->site_logo_dark_mode ? asset('storage/' . $this->generalSettings->site_logo_dark_mode) : null)
             ->spa(fn() => $this->generalSettings->spa_mode)
             ->maxContentWidth($this->generalSettings->content_width ?? Width::Full)
+            ->favicon(fn() => $this->generalSettings->site_logo ? asset('storage/' . $this->generalSettings->site_logo) : null)
             // ->topNavigation(fn() => $this->generalSettings->navigation_type === 'topbar')
             // ->topbar(fn() => $this->generalSettings->navigation_type === 'topbar')
             ->topbar(false)
