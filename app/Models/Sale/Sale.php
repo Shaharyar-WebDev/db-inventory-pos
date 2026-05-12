@@ -27,7 +27,7 @@ class Sale extends Model
     use BelongsToOutlet, HasDocumentNumber, ResolvesDocumentNumber;
     use Userstamps;
     use Printable;
-    
+
     public static string $documentNumberColumn = 'sale_number';
 
     public static string $documentNumberPrefix = 'SALE';
@@ -219,47 +219,14 @@ class Sale extends Model
 
     public static function booted()
     {
-        // static::addGlobalScope(new WithSaleMetricsScope);
 
         static::saved(function ($sale) {
 
-            // $total = $sale->items()->sum('total');
-
-            // dd($total);
-
-            // $deliveryCharges = $sale->delivery_charges ?? 0;
-            // $taxCharges      = $sale->tax_charges ?? 0;
-
-            // $discountAmount = 0;
-
-            // if ($sale->discount_type === DiscountType::PERCENT) {
-
-            //     $discountAmount = ($total * $sale->discount_value) / 100;
-            // } elseif ($sale->discount_type === DiscountType::FIXED) {
-
-            //     $discountAmount = $sale->discount_value;
-            // }
-
-            // $grandTotal = $total - $discountAmount;
-
-            // $finalGrandTotal = $grandTotal + $deliveryCharges + $taxCharges;
-
-            // if (
-            //     $sale->total !== $total ||
-            //     $sale->grand_total !== $finalGrandTotal
-            // ) {
-            //     $sale->updateQuietly([
-            //         'total'       => $total,
-            //         'grand_total' => $finalGrandTotal,
-            //         'discount_amount' => $discountAmount
-            //     ]);
-            // }
-
-            // if ($total > 0) {
             CustomerLedger::updateOrCreate(
                 [
                     'source_type' => self::class,
                     'source_id'   => $sale->id,
+                    'outlet_id'        => $sale->outlet_id,
                 ],
                 [
                     'customer_id'      => $sale->customer_id,
@@ -268,9 +235,7 @@ class Sale extends Model
                     'remarks'          => "Sale Saved {$sale->sale_number} for customer {$sale->customer->name}",
                 ]
             );
-            // } else {
-            // $sale->ledger()->delete();
-            // }
+
         });
 
         static::deleting(function ($sale) {
